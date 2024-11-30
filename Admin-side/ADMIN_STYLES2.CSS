@@ -35,7 +35,6 @@ body {
     width: 300px;
     height: 100%;
     background: var(--blue);
-    border-left: 10px solid var(--blue);
     transition: 0.5s;
     overflow: hidden;
     
@@ -91,6 +90,7 @@ body {
     height: 60px;
     line-height: 75px;
     text-align: center;
+    margin-left: 10px;
 }
 
 .navigation ul li a .icon ion-icon {
@@ -116,7 +116,7 @@ body {
     white-space: nowrap;
     font-size: 20px;
     margin-top: 7%;
-    margin-left:8%;
+    margin-left:10%;
 }
 
 /* --------- curve outside ---------- */
@@ -202,8 +202,8 @@ body {
     font-style: normal;
   }
   .admin-icon {
-    width: 63px;   
-    height: 63px;   
+    width: 63px; 
+    height: 63px;  
     margin-top: 30%;
 }
 /* Time and Date Display Styling */
@@ -223,7 +223,7 @@ body {
 
 .admin-gradient {
     background: linear-gradient(to top, #1C2E5C, #343536); /* Gradient direction */
-    background-size: 100% 170%; /* Make the gradient cover the entire div */
+    background-size: 500px 190px 120px; /* Make the gradient cover the entire div */
     background-position: 0 0; /* Ensure it starts from the top */
     height: 100px;
     padding: 0;
