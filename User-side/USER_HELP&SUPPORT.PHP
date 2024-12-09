@@ -140,26 +140,89 @@
             </div>
 
             <!-- Content HERE -->
-           
-    
 
-    
+            <div style="display: flex; justify-content: space-between; margin-top: 5%; border: 1px solid #ccc; padding: 20px; border-radius: 10px;">
+    <div style="margin: auto;">
+        <img src="helpsup1.png" alt="Left Image" style="max-width: 200px;max-height:200px;">
+    </div>
+    <div class="center" style="text-align: center;">
+        <div style="margin-bottom: 10px;margin-top:8%;">
+            <h3 style="margin: 0; font-size: 1.5rem; color: #333;">HELP CENTER</h3>
+            <p style="margin: 5px 0; font-size: 0.9rem; color: gray;">How can we assist you today?</p>
+        </div>
+        <input type="text" placeholder="Search..." style="border-radius: 20px; max-height: 100%; width: 500px; height: 40px; padding: 10px; font-size: 16px; border: 1px solid #ccc;">
+    </div>
+    <div style="margin: auto;">
+        <img src="helpsup2.png" alt="Right Image" style="max-width:300px;max-height:250px;">
+    </div>
+</div>
+
+<div style="display: flex; justify-content: space-between; align-items: flex-start; padding: 20px; margin-top:2%;">
+    <!-- FAQ Section (Left Content) -->
+    <div class="faq" style="font-size: 200%; margin-left: 8%;margin-top:2%;">
+        <h4 style="font-weight: 800;">FAQ</h4>
+        <h2>FREQUENTLY</h2>
+        <h2>ASKED</h2>
+        <h2>QUESTIONS.</h2>
+    </div>
+
+    <!-- Dropdown Section (Right Content) -->
+    <div style="width: 100%; max-width:850px;margin-right:5%; margin-top:2%;">
+        <!-- 2x2 Grid for Dropdowns with Adjusted Space and Width -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%;">
+            <!-- Dropdown 1 -->
+            <div 
+                id="dropdownToggle1" 
+                style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 15px; background-color: #F9F9F9; border-radius: 8px; border: 1px solid #ccc; width: 100%;">
+                <span style="font-size: 1rem; color: #333;">Problem with my account?</span>
+                <i id="chevron1" class="bx bx-chevron-down" style="font-size: 1.5rem; color: #333; transition: transform 0.3s;"></i>
+            </div>
+            <!-- Dropdown 2 -->
+            <div 
+                id="dropdownToggle2" 
+                style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 15px; background-color: #F9F9F9; border-radius: 8px; border: 1px solid #ccc; width: 100%;">
+                <span style="font-size: 1rem; color: #333;">Billing Issues</span>
+                <i id="chevron2" class="bx bx-chevron-down" style="font-size: 1.5rem; color: #333; transition: transform 0.3s;"></i>
+            </div>
+            <!-- Dropdown 3 -->
+            <div 
+                id="dropdownToggle3" 
+                style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 15px; background-color: #F9F9F9; border-radius: 8px; border: 1px solid #ccc; width: 100%;">
+                <span style="font-size: 1rem; color: #333;">Account Settings</span>
+                <i id="chevron3" class="bx bx-chevron-down" style="font-size: 1.5rem; color: #333; transition: transform 0.3s;"></i>
+            </div>
+            <!-- Dropdown 4 -->
+            <div 
+                id="dropdownToggle4" 
+                style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 15px; background-color: #F9F9F9; border-radius: 8px; border: 1px solid #ccc; width: 100%;">
+                <span style="font-size: 1rem; color: #333;">Other Issues</span>
+                <i id="chevron4" class="bx bx-chevron-down" style="font-size: 1.5rem; color: #333; transition: transform 0.3s;"></i>
+            </div>
+        </div>
+        
+        
 </div>
 
 
 
         </div>
-        <!-- ========================= Main END ==================== -->
 
 
 
-        <!-- =========== Scripts =========  -->
-        <script src="USER.js"></script>
+    </div>
+    <!-- ========================= Main END ==================== -->
 
 
-        <!-- ====== ionicons ======= -->
-        <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-        <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+    <!-- =========== Scripts =========  -->
+    <script src="USER.js"></script>
+    
+
+
+
+    <!-- ====== ionicons ======= -->
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 
 </body>
 
