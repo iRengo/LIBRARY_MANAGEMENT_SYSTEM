@@ -1,7 +1,5 @@
-/* =========== Google Fonts ============ */
 @import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap");
 
-/* =============== Globals ============== */
 * {
     font-family: "Ubuntu", sans-serif;
     margin: 0;
@@ -22,20 +20,20 @@
     margin: 20px;
 }
 .left-content p {
-    margin-top: 20px; /* Add space at the top of each paragraph */
-    margin-bottom: 20px; /* Add space at the bottom of each paragraph */
+    margin-top: 20px; 
+    margin-bottom: 20px; 
     font-family: Arial, Helvetica, sans-serif;
 }
 
 .left-content {
-    flex: 3; /* Larger width */
+    flex: 3; 
     padding: 40px 20px;
 }
 .right-content {
-    flex: 1; /* Smaller width */
+    flex: 1; 
     padding: 20px;
-    background-color: #ffffff; /* Light background for the right side */
-    box-shadow: 2px 4px 6px rgba(255, 255, 255, 0.1); /* Box shadow */
+    background-color: #ffffff; 
+    box-shadow: 2px 4px 6px rgba(255, 255, 255, 0.1); 
     height: 20%;    
     margin-top: 5%;
 }
@@ -43,7 +41,6 @@ h2, h3 {
     margin-top: 0;
 }
 ul {
-    
     padding-left: 0;
     margin-left:6%;
     margin-top: 4%;
@@ -57,24 +54,23 @@ ul li a {
 ul li a:hover {
     text-decoration: underline;
 }
-/* Topbar styles */
+
 .topbar {
     width: 100%;
     height: 60px;
     display: flex;
-    justify-content: space-between; /* Space out the elements */
-    align-items: center; /* Align items vertically centered */
-    padding: 0 20px; /* Add some more padding for better spacing */
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 0 20px; 
     box-shadow: 0 4px 6px rgba(150, 150, 150, 0.2);
-    background-color: #fff; /* Background color for the top bar */
-    position: fixed; /* Fix the topbar at the top */
-    top: 0; /* Align to the top of the page */
-    left: 0; /* Align to the left */
-    right: 0; /* Align to the right */
-    z-index: 1000; /* Make sure the topbar stays above other content */
+    background-color: #fff; 
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
 }
 
-/* Logo and title section */
 .logo-and-title {
     display: flex;
     align-items: center;
@@ -104,19 +100,18 @@ ul li a:hover {
     margin: 0;
 }
 
-/* Navbar links centered with increased gap */
 .navbar-links {
     flex-grow: 1;
     display: flex;
-    justify-content: center; /* Center navbar links */
+    justify-content: center;
     position: relative;
-    left: -50px; /* Move navbar slightly to the left to center it */
+    left: -50px;
     padding-bottom: 2.5%;
 }
 
 .navbar-links .nav {
     display: flex;
-    gap: 50px; /* Increase space between navbar items */
+    gap: 50px;
     list-style: none;
 }
 
@@ -130,53 +125,51 @@ ul li a:hover {
     color: #333;
     padding: 10px;
     border-radius: 5px;
-    transition: background-color 0.3s ease, padding 0.3s ease; /* Smooth hover effect without shifting position */
+    transition: background-color 0.3s ease, padding 0.3s ease;
 }
 
-/* Hover effect on navbar links covering full height */
 .navbar-links .nav-link:hover {
-    background-color: #1C2E5C; /* Background color on hover */
-    color: #fff; /* Change text color on hover */
-    padding: 10px 30px; /* Increase padding on hover without affecting layout */
+    background-color: #1C2E5C;
+    color: #fff;
+    padding: 10px 30px;
 }
 
-/* Login Button */
 .login-btn button {
-    background-color: #343536; /* Background color */
-    color: #fff; /* Text color */
-    border-radius: 10px; /* Border radius adjusted to 10 */
-    border: none; /* Remove border */
-    padding: 10px 25px; /* Slightly longer width */
+    background-color: #343536;
+    color: #fff;
+    border-radius: 10px;
+    border: none;
+    padding: 10px 25px;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
 .login-btn button:hover {
-    background-color: #5a5a5a; /* Darker shade on hover */
+    background-color: #5a5a5a;
 }
 
 .signup {
     display: flex;
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
-    position: absolute; /* Position relative to the screen */
-    top: 0; /* Start at the top */
-    left: 0; /* Start at the left */
-    width: 100vw; /* Full width of the viewport */
-    height: 100vh; /* Full height of the viewport */
-    background-color: #f4f4f4; /* Optional: Background color */
-    overflow: hidden; /* Prevent overflow */
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #f4f4f4;
+    overflow: hidden;
 }
 
 .signup img {
-    width: 60%; /* Scale image to fit the container width */
-    height: 70%; /* Scale image to fit the container height */
-    object-position: center; /* Center the image inside the container */
+    width: 60%;
+    height: 70%;
+    object-position: center;
 }
 .login-form {
     position:absolute;
-
 }
+
 .signup {
     display: flex;
     justify-content: center;
@@ -205,7 +198,7 @@ ul li a:hover {
     padding: 20px;
     width: 50%; 
     gap:75px;
-    height:80%; /* Added height to the overlay container */
+    height:80%;
 }
 
 .left-image {
@@ -215,14 +208,12 @@ ul li a:hover {
     align-items: center;
     padding: 20px;
     border-radius: 4px;
-
 }
 
 .left-image img {
-    width: 50; /* Let the width adjust automatically */
-    height: 80%; /* Set the height to fill the container */
+    width: 50;
+    height: 80%;
     padding-top:3%;
-
 }
 
 .login-form-container {
@@ -231,13 +222,13 @@ ul li a:hover {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    height: 80%; /* Added height to the login form container */
+    height: 80%;
 }
 
 .login-form-container h2 {
-    text-align: left; /* Left-align the text */
+    text-align: left;
     margin-bottom: 20px;
-    font-size: 30px; /* You can adjust the font size to fit your design */
+    font-size: 30px;
     padding-bottom: 10px;
 }
 .form-group {
@@ -246,7 +237,7 @@ ul li a:hover {
 }
 
 .btn-primary {
-    width: 100%; /* Full width button */
+    width: 100%;
     background-color: #353232;
     border: none;
     border-radius: 5px;
@@ -263,7 +254,7 @@ ul li a:hover {
     border: none;
     border-radius: 3%;
     width: 100%;
-    padding-left: 10px; /* Adjust left padding to prevent overlap with label */
+    padding-left: 10px;
     font-size: 16px;
 }
 .form-group label {
@@ -275,10 +266,8 @@ ul li a:hover {
     pointer-events: none;
     transform: translateY(-50%);
     transition: all 0.3s ease-in-out;
-    
 }
 
-/* Move label up when input is focused or has a value */
 .form-control:focus + label,
 .form-control:not(:placeholder-shown) + label {
     top: 0;
@@ -287,19 +276,17 @@ ul li a:hover {
     color: #07416d;
 }
 
-/* Add focus effect */
 .form-control:focus {
     outline: none;
-    background-color: #f0f0f0; /* Optional: change background on focus */
+    background-color: #f0f0f0;
 }
 
-/* Styling for form inputs and button */
 .form-control {
     background-color: #E6E6E6;
     padding: 10px;
     border: none;
     border-radius: 3%;
-    width: 100%; /* Full width */
+    width: 100%;
 }
 
 .btn-primary {
@@ -320,9 +307,9 @@ ul li a:hover {
     margin-top: 10px;
 }
 .small-font {
-    font-size: 12px; /* Adjust the size as needed */
-    color: #555; /* Optional: Adjust color */
-    text-decoration: none; /* Optional: Remove underline */
+    font-size: 12px;
+    color: #555;
+    text-decoration: none;
 }
 .forgot-password {
     text-align: center;
@@ -361,16 +348,16 @@ ul li a:hover {
     background-color: #fff;
     padding: 40px; 
     border: 1px solid #ccc; 
-    width: 95%; /* Increased width */
-    max-width: 1200px; /* Increased max-width */
+    width: 95%;
+    max-width: 1200px;
     position: relative;
     border-radius: 10px; 
     font-family: 'Times New Roman', serif; 
     line-height: 1.6; 
     letter-spacing: 0.5px; 
-    min-height: 400px; /* Reduced minimum height */
-    max-height: 600px; /* Added maximum height to prevent excessive vertical growth */
-    overflow-y: auto; /* Add scrollbar if content exceeds max-height */
+    min-height: 400px;
+    max-height: 600px;
+    overflow-y: auto;
     top: -25%;
 }
 

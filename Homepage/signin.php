@@ -8,9 +8,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhgj9UU2gEpeHXKuDjc8+aJBBZ/YYz7wkmP5zPpsjLh4RxJMfP5Jxs6t" crossorigin="anonymous">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ionicons@5.5.4/dist/ionicons/ionicons.min.css"> <!-- Ionicons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ionicons@5.5.4/dist/ionicons/ionicons.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Teachers:ital,wght@0,400..800;1,400..800&family=Viga&family=Zilla+Slab+Highlight:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="signin.css"> <!-- Link to your external CSS -->
+    <link rel="stylesheet" href="signin.css"> 
 
     <link href="https://cdn.jsdelivr.net/npm/boxicons/css/boxicons.min.css" rel="stylesheet">
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
@@ -69,7 +69,7 @@
         </div>
     </div>
 
-    <!-- Navbar links -->
+  
     <div class="navbar-links">
         <ul class="nav">
             <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
@@ -80,7 +80,7 @@
         </ul>
     </div>
 
-    <!-- Login Button -->
+   
     <div class="login-btn">
         <button class="btn btn-dark"><b> SIGN IN </b></button>
     </div>
@@ -109,7 +109,7 @@
                     </div>
                 </div>
 
-                <!--Terms and Conditions and Checkbox here-->
+               
                 <div class="terms">
                     <input type="checkbox" required>
                     <p class="small-font"> &nbsp;&nbsp; I agree to the <a href="#" id="termsLink">Terms and Conditions </a></p>
@@ -117,12 +117,12 @@
 
 
                 <button type="submit" class="btn btn-primary"> LOGIN </button>
-                <!-- Forgot Password Link -->
+              
                 <div class="forgot-password">
                     <p class="small-font"><a href="forgot_password.php">Forgot your password?</a></p>
                 </div>
 
-                <!-- No Account? Create now! -->
+             
                 <div class="no-account">
                     <p class="small-font">Don't have an account? <a href="signup.php">Create now!</a></p>
                 </div>
@@ -130,7 +130,7 @@
         </div>
     </div>
 </div>
-<!-- Modal -->
+
  
 <div id="termsModal" class="modal" style="z-index: 999999;overflow:hidden;">
     <div class="modal-content">
