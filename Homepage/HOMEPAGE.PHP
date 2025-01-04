@@ -40,7 +40,7 @@
 
         <!-- Login Button -->
         <div class="login-btn">
-            <button class="btn btn-dark"><b> SIGN IN </b></button>
+            <button class="btn btn-dark"><b> <a href="signin.php" style="color:white;text-decoration:none;"> SIGN IN </b></a></button>
         </div>
     </div>
     <!-- Image section (Hero Section) with Overlay Text -->
