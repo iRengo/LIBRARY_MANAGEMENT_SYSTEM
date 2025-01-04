@@ -1,3 +1,4 @@
+
 @import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap");
 
 * {
@@ -33,7 +34,7 @@
     flex: 1; 
     padding: 20px;
     background-color: #ffffff; 
-    box-shadow: 2px 4px 6px rgba(255, 255, 255, 0.1); 
+    box-shadow: 2px 4px 6px rgba(255, 255, 255, 0.1);
     height: 20%;    
     margin-top: 5%;
 }
@@ -41,6 +42,7 @@ h2, h3 {
     margin-top: 0;
 }
 ul {
+    
     padding-left: 0;
     margin-left:6%;
     margin-top: 4%;
@@ -65,11 +67,12 @@ ul li a:hover {
     box-shadow: 0 4px 6px rgba(150, 150, 150, 0.2);
     background-color: #fff; 
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
+    top: 0; 
+    left: 0; 
+    right: 0; 
+    z-index: 1000; 
 }
+
 
 .logo-and-title {
     display: flex;
@@ -100,12 +103,13 @@ ul li a:hover {
     margin: 0;
 }
 
+
 .navbar-links {
     flex-grow: 1;
     display: flex;
-    justify-content: center;
+    justify-content: center; 
     position: relative;
-    left: -50px;
+    left: -50px; 
     padding-bottom: 2.5%;
 }
 
@@ -125,51 +129,53 @@ ul li a:hover {
     color: #333;
     padding: 10px;
     border-radius: 5px;
-    transition: background-color 0.3s ease, padding 0.3s ease;
+    transition: background-color 0.3s ease, padding 0.3s ease; 
 }
 
+
 .navbar-links .nav-link:hover {
-    background-color: #1C2E5C;
-    color: #fff;
+    background-color: #1C2E5C; 
+    color: #fff; 
     padding: 10px 30px;
 }
 
+
 .login-btn button {
-    background-color: #343536;
-    color: #fff;
-    border-radius: 10px;
-    border: none;
-    padding: 10px 25px;
+    background-color: #343536; 
+    color: #fff; 
+    border-radius: 10px; 
+    border: none; 
+    padding: 10px 25px; 
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
 .login-btn button:hover {
-    background-color: #5a5a5a;
+    background-color: #5a5a5a; 
 }
 
 .signup {
     display: flex;
-    justify-content: center;
+    justify-content: center; 
     align-items: center;
-    position: absolute;
-    top: 0;
-    left: 0;
+    position: absolute; 
+    top: 0; 
+    left: 0; 
     width: 100vw;
     height: 100vh;
-    background-color: #f4f4f4;
-    overflow: hidden;
+    background-color: #f4f4f4; 
+    overflow: hidden; 
 }
 
 .signup img {
-    width: 60%;
-    height: 70%;
-    object-position: center;
+    width: 60%; 
+    height: 70%; 
+    object-position: center; 
 }
 .login-form {
     position:absolute;
-}
 
+}
 .signup {
     display: flex;
     justify-content: center;
@@ -198,7 +204,7 @@ ul li a:hover {
     padding: 20px;
     width: 50%; 
     gap:75px;
-    height:80%;
+    height:80%; 
 }
 
 .left-image {
@@ -208,12 +214,14 @@ ul li a:hover {
     align-items: center;
     padding: 20px;
     border-radius: 4px;
+
 }
 
 .left-image img {
-    width: 50;
-    height: 80%;
+    width: 50; 
+    height: 80%; 
     padding-top:3%;
+
 }
 
 .login-form-container {
@@ -222,22 +230,27 @@ ul li a:hover {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    height: 80%;
+    height: 80%; 
 }
 
 .login-form-container h2 {
-    text-align: left;
+    text-align: left; 
     margin-bottom: 20px;
-    font-size: 30px;
+    font-size: 30px; 
     padding-bottom: 10px;
 }
 .form-group {
     position: relative;
     margin-bottom: 20px;
 }
+.form-group-row {
+    display: flex;
+    gap: 5px;
+    margin:0px;
+}
 
 .btn-primary {
-    width: 100%;
+    width: 100%; 
     background-color: #353232;
     border: none;
     border-radius: 5px;
@@ -254,9 +267,15 @@ ul li a:hover {
     border: none;
     border-radius: 3%;
     width: 100%;
-    padding-left: 10px;
-    font-size: 16px;
+    padding-left: 10px; 
+    font-size: 10px;
 }
+
+.form-group {
+    position: relative;
+    margin-bottom: 8px; /* Adjust spacing between fields */
+}
+
 .form-group label {
     position: absolute;
     top: 50%;
@@ -278,15 +297,36 @@ ul li a:hover {
 
 .form-control:focus {
     outline: none;
+    background-color: #f0f0f0; 
+}
+.form-group input[type="file"] {
+    background-color: #E6E6E6;
+    padding: 10px;
+    border: none;
+    border-radius: 3%;
+    width: 100%;
+    font-size: 16px;
+}
+
+.form-group input[type="file"]:focus {
+    outline: none;
     background-color: #f0f0f0;
 }
+
+.form-group label[for="upload_id"] {
+    position: static; /* File input label should not overlap */
+    transform: none;
+    font-size: 14px;
+    color: #07416d;
+}
+
 
 .form-control {
     background-color: #E6E6E6;
     padding: 10px;
     border: none;
     border-radius: 3%;
-    width: 100%;
+    width: 100%; 
 }
 
 .btn-primary {
@@ -307,19 +347,11 @@ ul li a:hover {
     margin-top: 10px;
 }
 .small-font {
-    font-size: 12px;
-    color: #555;
-    text-decoration: none;
-}
-.forgot-password {
-    text-align: center;
-    margin-top: 10px;
+    font-size: 14px; 
+    color: #555; 
+    text-decoration: none; 
 }
 
-.forgot-password a {
-    color: #07416d;
-    text-decoration: none;
-}
 
 .forgot-password a:hover {
     text-decoration: underline;

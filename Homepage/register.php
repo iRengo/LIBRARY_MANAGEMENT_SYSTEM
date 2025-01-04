@@ -4,16 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Sigin </title>
+    <title> Signup </title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhgj9UU2gEpeHXKuDjc8+aJBBZ/YYz7wkmP5zPpsjLh4RxJMfP5Jxs6t" crossorigin="anonymous">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ionicons@5.5.4/dist/ionicons/ionicons.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Teachers:ital,wght@0,400..800;1,400..800&family=Viga&family=Zilla+Slab+Highlight:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="signin.css">
-
+    <link rel="stylesheet" href="register.css">
     <link href="https://cdn.jsdelivr.net/npm/boxicons/css/boxicons.min.css" rel="stylesheet">
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
     <style>
         .recaptcha-container {
             width: 250px;
@@ -33,7 +32,7 @@
         }
 
         .modal-content {
-            background-color: rgb(231, 231, 231);
+            background-color:rgb(231, 231, 231);
             margin: 15% auto;
             padding: 20px;
             border: 1px solid #888;
@@ -53,7 +52,6 @@
             cursor: pointer;
         }
     </style>
-
 </head>
 
 <div class="topbar">
@@ -91,44 +89,65 @@
             <img src="loginpic.png" alt="Left Side Image">
         </div>
         <div class="login-form-container">
-            <h2>LOGIN TO YOUR ACCOUNT</h2>
-            <form action="login_handler.php" method="POST">
-                <div class="form-group">
-                    <input type="text" id="username" name="username" class="form-control" placeholder=" " required>
-                    <label for="username">Username</label>
-                </div>
-                <div class="form-group">
-                    <input type="password" id="password" name="password" class="form-control" placeholder=" " required>
-                    <label for="password">Password</label>
-                </div>
-                <div class="form-group">
-                    <div class="recaptcha-container">
-                        <div class="g-recaptcha" data-sitekey="6LcbyK0qAAAAAD3K5wZbObRk5Z2_bbEVgir6thO7"></div>
+            <h2>CREATE YOUR ACCOUNT</h2>
+            <form action="register_handler.php" method="POST" enctype="multipart/form-data">
+                <!-- First Name and Last Name -->
+                <div class="form-group-row">
+                    <div class="form-group" style="flex: 1; margin-right: 10px;">
+                        <input type="text" id="firstname" name="firstname" class="form-control" placeholder=" " required>
+                        <label for="firstname">First Name</label>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <input type="text" id="lastname" name="lastname" class="form-control" placeholder=" " required>
+                        <label for="lastname">Last Name</label>
                     </div>
                 </div>
 
+                <!-- Email Address -->
+                <div class="form-group">
+                    <input type="email" id="email" name="email" class="form-control" placeholder=" " required>
+                    <label for="email">Email Address</label>
+                </div>
+
+                <!-- Password and Confirm Password -->
+                <div class="form-group-row">
+                    <div class="form-group" style="flex: 1; margin-right: 10px;">
+                        <input type="password" id="password" name="password" class="form-control" placeholder=" " required>
+                        <label for="password">Password</label>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <input type="password" id="confirm_password" name="confirm_password" class="form-control" placeholder=" " required>
+                        <label for="confirm_password">Confirm pass</label>
+                    </div>
+                </div>
+
+                <!-- Contact Number -->
+                <div class="form-group">
+                    <input type="text" id="contact" name="contact" class="form-control" placeholder=" " required>
+                    <label for="contact">Contact Number</label>
+                </div>
+
+
+                <div class="form-group">
+                    <label for="upload_id" class="form-label">Upload ID</label>
+                    <input type="file" id="upload_id" name="upload_id" class="form-control" required>
+                </div>
 
                 <div class="terms">
                     <input type="checkbox" required>
                     <p class="small-font"> &nbsp;&nbsp; I agree to the <a href="#" id="termsLink">Terms and Conditions </a></p>
                 </div>
 
-
-                <button type="submit" class="btn btn-primary"> LOGIN </button>
-
-                <div class="forgot-password">
-                    <p class="small-font"><a href="forgot_password.php">Forgot your password?</a></p>
-                </div>
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary">SUBMIT</button>
 
 
-                <div class="no-account">
-                    <p class="small-font">Don't have an account? <a href="signup.php">Create now!</a></p>
-                </div>
+
+                <p class="small-font" style="margin-top:3%;">Already have an account? <a href="#" style="color:black;">Login now!</a></p>
             </form>
         </div>
     </div>
 </div>
-
 
 <div id="termsModal" class="modal" style="z-index: 999999; overflow: hidden;">
     <div class="modal-content">
@@ -168,6 +187,8 @@
         </div>
     </div>
 </div>
+
+
 
 
 <script>
