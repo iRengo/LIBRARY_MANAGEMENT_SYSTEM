@@ -14,10 +14,6 @@
     <link href="https://cdn.jsdelivr.net/npm/boxicons/css/boxicons.min.css" rel="stylesheet">
 
     <style>
-        .recaptcha-container {
-            width: 250px;
-            height: 60px;
-        }
 
         .modal {
             display: none;
@@ -90,7 +86,7 @@
         </div>
         <div class="login-form-container">
             <h2>CREATE YOUR ACCOUNT</h2>
-            <form action="register_handler.php" method="POST" enctype="multipart/form-data">
+        
                 <!-- First Name and Last Name -->
                 <div class="form-group-row">
                     <div class="form-group" style="flex: 1; margin-right: 10px;">
@@ -139,11 +135,11 @@
                 </div>
 
                 <!-- Submit Button -->
-                <button type="submit" class="btn btn-primary">SUBMIT</button>
+              <a href="signin.php" style="text-decoration: none;color:white;">  <button type="submit" class="btn btn-primary">SUBMIT</button> </a>
 
 
 
-                <p class="small-font" style="margin-top:3%;">Already have an account? <a href="#" style="color:black;">Login now!</a></p>
+                <p class="small-font" style="margin-top:3%;">Already have an account? <a href="signin.php" style="color:black;">Login now!</a></p>
             </form>
         </div>
     </div>

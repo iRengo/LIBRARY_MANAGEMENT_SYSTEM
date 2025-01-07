@@ -31,7 +31,7 @@
         <div class="navbar-links">
             <ul class="nav">
                 <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">About</a></li>
+                <li class="nav-item"><a class="nav-link" href="#about-section">About</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">Policies</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">FAQ</a></li>
@@ -56,7 +56,7 @@
             <div class="line5">Read, search, reserve & borrow books today.</div>
         </div>
         <div class="button-container">
-            <button class="btn btn-primary">SIGN UP</button>
+        <a href="signup.php" style="text-decoration: none;color:white;"> <button class="btn btn-primary">SIGN UP</button></a>
             <button class="btn btn-secondary">GUEST</button>
         </div>
         <div class="overlay-text3">
@@ -85,7 +85,7 @@
     </div>
 
     <!-- Description -->
-    <div style="flex: 1; text-align: left; color: #4B4A4A; font-family: Arial, sans-serif; line-height: 1.6;">
+    <div id="about-section" style="flex: 1; text-align: left; color: #4B4A4A; font-family: Arial, sans-serif; line-height: 1.6;">
         <h2 style="font-weight: bold; margin-bottom: 15px;">What is Library Management System ?</h2>
         <p>The Library Management System is a tool that simplifies and streamlines the process of managing library operations. It enables librarians to organize, search, and catalog books, manage user accounts, and monitor borrowing activities. </p>
         <p>With advanced features like personalized collections, guest access, and monitoring activities, it ensures fast, reliable, and secure transactions for both users and librarians.</p>

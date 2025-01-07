@@ -28,7 +28,7 @@
             <ul>
                 <li>
                     <div class="admin-gradient">
-                        <a href="#">
+                    <a href="#">
                             <span class="icon">
                                 <ion-icon name="person-circle" class="admin-icon"></ion-icon>
                             </span>
@@ -38,7 +38,7 @@
                 </li>
 
                 <li>
-                    <a href="#">
+                    <a href="USER_DASHBOARD.PHP">
                         <span class="icon">
                             <ion-icon name="home-outline"></ion-icon>
                         </span>
@@ -75,7 +75,7 @@
                 </li>
 
                 <li>
-                    <a href="#">
+                    <a href="USER_HELP&SUPPORT.PHP">
                         <span class="icon">
                             <ion-icon name="layers-outline"></ion-icon>
                         </span>
@@ -92,7 +92,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="USER_TRENDING.php">
                         <span class="icon">
                             <ion-icon name="trending-up-outline"></ion-icon>
                         </span>
@@ -100,7 +100,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="USER_SETTINGS.php">
                         <span class="icon">
                             <ion-icon name="cog-outline"></ion-icon>
                         </span>

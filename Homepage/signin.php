@@ -43,7 +43,7 @@
             color: #aaa;
             float: right;
             font-size: 28px;
-            font-weight: bold;
+            font-weight: bold;      
         }
 
         .close:hover,
@@ -70,7 +70,7 @@
 
     <div class="navbar-links">
         <ul class="nav">
-            <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="HOMEPAGE.PHP">Home</a></li>
             <li class="nav-item"><a class="nav-link" href="#">About</a></li>
             <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
             <li class="nav-item"><a class="nav-link" href="#">Policies</a></li>
@@ -92,7 +92,7 @@
         </div>
         <div class="login-form-container">
             <h2>LOGIN TO YOUR ACCOUNT</h2>
-            <form action="login_handler.php" method="POST">
+        
                 <div class="form-group">
                     <input type="text" id="username" name="username" class="form-control" placeholder=" " required>
                     <label for="username">Username</label>
@@ -114,10 +114,10 @@
                 </div>
 
 
-                <button type="submit" class="btn btn-primary"> LOGIN </button>
+                <button type="submit" class="btn btn-primary"> <a href="../User-side/USER_DASHBOARD.PHP" style="text-decoration: none;color:white;"> LOGIN </a></button>
 
                 <div class="forgot-password">
-                    <p class="small-font"><a href="forgot_password.php">Forgot your password?</a></p>
+                    <p class="small-font"><a href="forgot.php">Forgot your password?</a></p>
                 </div>
 
 
@@ -125,7 +125,7 @@
                     <p class="small-font">Don't have an account? <a href="signup.php">Create now!</a></p>
                 </div>
             </form>
-        </div>
+        </div>  
     </div>
 </div>
 

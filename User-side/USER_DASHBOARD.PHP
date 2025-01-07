@@ -12,6 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Teachers:ital,wght@0,400..800;1,400..800&family=Viga&family=Zilla+Slab+Highlight:wght@400;700&display=swap" rel="stylesheet">
     <!-- ======= Styles ====== -->
     <link rel="stylesheet" href="USER_STYLE2.CSS">
+    <link rel="stylesheet" href="User_css/ADMIN_MODAL.css">
 
     <!-- ======= Scripts ====== -->
 
@@ -38,7 +39,7 @@
                 </li>
 
                 <li>
-                    <a href="#">
+                    <a href="USER_DASHBOARD.PHP">
                         <span class="icon">
                             <ion-icon name="home-outline"></ion-icon>
                         </span>
@@ -75,7 +76,7 @@
                 </li>
 
                 <li>
-                    <a href="#">
+                    <a href="USER_HELP&SUPPORT.PHP">
                         <span class="icon">
                             <ion-icon name="layers-outline"></ion-icon>
                         </span>
@@ -92,7 +93,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="USER_TRENDING.php">
                         <span class="icon">
                             <ion-icon name="trending-up-outline"></ion-icon>
                         </span>
@@ -100,7 +101,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="USER_SETTINGS.php">
                         <span class="icon">
                             <ion-icon name="cog-outline"></ion-icon>
                         </span>
@@ -140,25 +141,37 @@
             </div>
 
             <!-- Content HERE -->
-           
-
-    
-</div>
 
 
 
         </div>
-        <!-- ========================= Main END ==================== -->
 
 
 
-        <!-- =========== Scripts =========  -->
-        <script src="USER.js"></script>
+    </div>
+    <!-- ========================= Main END ==================== -->
+
+    <div id="logoutModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Confirm Logout</h2>
+            <p>Are you sure you want to logout?</p>
+            <div class="modal-actions">
+                <a href="../Homepage/signin.php" class="btn-action btn-yes">Yes</a>
+                <button class="btn-action btn-no" id="cancelLogout">No</button>
+            </div>
+        </div>
+    </div>
 
 
-        <!-- ====== ionicons ======= -->
-        <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-        <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <!-- =========== Scripts =========  -->
+    <script src="User_css/admin.js"></script>
+    <script src="User_css/ADMIN_MODAL.js"></script>
+
+
+    <!-- ====== ionicons ======= -->
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 
 </body>
 

@@ -4,13 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Signup </title>
+    <title> Verify OTP </title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhgj9UU2gEpeHXKuDjc8+aJBBZ/YYz7wkmP5zPpsjLh4RxJMfP5Jxs6t" crossorigin="anonymous">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ionicons@5.5.4/dist/ionicons/ionicons.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Teachers:ital,wght@0,400..800;1,400..800&family=Viga&family=Zilla+Slab+Highlight:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="signup.css"> 
+    <link rel="stylesheet" href="otp.css"> 
 
     <link href="https://cdn.jsdelivr.net/npm/boxicons/css/boxicons.min.css" rel="stylesheet">
 </head>
@@ -38,8 +38,8 @@
     </div>
 
    
-    <a href="signin.php" class="login-btn">
-        <button class="btn btn-dark"><b> SIGN IN </b></button></a>
+    <div class="login-btn">
+        <button class="btn btn-dark"><b> SIGN IN </b></button>
     </div>
 </div>
 
@@ -50,18 +50,24 @@
             <img src="loginpic.png" alt="Left Side Image" >
         </div>
         <div class="login-form-container">
-            <h2>CREATE YOUR ACCOUNT</h2>
-            <h4 class="small-font"> Let's get started by verifying your student number </h4> <br>
+            <h2>ENTER YOUR OTP</h2>
+            <h4 class="small-font"> Enter OTP that we sent on email ********@gmail.com </h4> <br>
 
                 <div class="form-group">
-                    <input type="text" id="username" name="username" class="form-control" placeholder=" " required>
-                    <label for="username">Enter your Student Number</label>
+                    <div class="otp-container">
+                        <div class="otp-box">6</div>
+                        <div class="otp-box">6</div>
+                        <div class="otp-box">6</div>
+                        <div class="otp-box">6</div>
+                        <div class="otp-box">6</div>
+                        <div class="otp-box">6</div>
+                    </div>
+                
                 </div>
-               <a href="register.php" style="text-decoration: none; color:white;"> <button type="submit" class="btn btn-primary"> SUBMIT </a>    </button>
+               <a href="reset.php" style="text-decoration: none; color:white;"><button type="submit" class="btn btn-primary"> Submit </button> </a>
 
-               <p class="small-font" style="margin-top:3%;"> You already have account ? <a href="signin.php
-               " style="color:black; "> Login now ! </a> </p> 
-
+               <p class="small-font" style="margin-top:3%;"> You already have account ? <a href="signin.php" style="color:black; "> Login now ! </a> </p> 
+            </form>
         </div>
     </div>
 </div>

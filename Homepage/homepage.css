@@ -344,3 +344,7 @@ ul li a:hover {
     display: block;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+

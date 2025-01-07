@@ -42,16 +42,16 @@
                 <li>
                     <div class="admin-gradient">
                     <a href="#">
-                        <span class="icon">
-                            <ion-icon name="person-circle" class="admin-icon"></ion-icon>
-                        </span>
-                        <span class="title1">USER</span>
-                    </a>
+                            <span class="icon">
+                                <ion-icon name="person-circle" class="admin-icon"></ion-icon>
+                            </span>
+                            <span class="title1">USER</span>
+                        </a>
                     </div>
                 </li>
 
                 <li>
-                    <a href="#">
+                    <a href="USER_DASHBOARD.PHP">
                         <span class="icon">
                             <ion-icon name="home-outline"></ion-icon>
                         </span>
@@ -62,7 +62,8 @@
                 <li>
                     <a href="#">
                         <span class="icon">
-                        <ion-icon name="file-tray-stacked-outline"></ion-icon>
+                            <ion-icon name="file-tray-stacked-outline"></ion-icon>
+
                         </span>
                         <span class="title">Collection</span>
                     </a>
@@ -71,7 +72,7 @@
                 <li>
                     <a href="#">
                         <span class="icon">
-                        <ion-icon name="book-outline"></ion-icon>
+                            <ion-icon name="book-outline"></ion-icon>
                         </span>
                         <span class="title">Catalog</span>
                     </a>
@@ -80,16 +81,16 @@
                 <li>
                     <a href="#">
                         <span class="icon">
-                        <i class='bx bx-history' style="font-size:35px;"></i>
+                            <i class='bx bx-history' style="font-size:35px;"></i>
                         </span>
                         <span class="title">History</span>
                     </a>
                 </li>
 
                 <li>
-                    <a href="#">
+                    <a href="USER_HELP&SUPPORT.PHP">
                         <span class="icon">
-                        <ion-icon name="layers-outline"></ion-icon>
+                            <ion-icon name="layers-outline"></ion-icon>
                         </span>
                         <span class="title">Help & Support</span>
                     </a>
@@ -98,25 +99,23 @@
                 <li>
                     <a href="#">
                         <span class="icon">
-                        <ion-icon name="notifications-outline"></ion-icon>
+                            <ion-icon name="notifications-outline"></ion-icon>
                         </span>
                         <span class="title">Notifications</span>
                     </a>
                 </li>
-
                 <li>
                     <a href="USER_TRENDING.php">
                         <span class="icon">
-                        <ion-icon name="trending-up-outline"></ion-icon>
+                            <ion-icon name="trending-up-outline"></ion-icon>
                         </span>
                         <span class="title">Trending</span>
                     </a>
                 </li>
-
                 <li>
                     <a href="USER_SETTINGS.php">
                         <span class="icon">
-                        <ion-icon name="cog-outline"></ion-icon>
+                            <ion-icon name="cog-outline"></ion-icon>
                         </span>
                         <span class="title">Settings</span>
                     </a>
@@ -157,7 +156,7 @@
             <div id="logoutModal" class="modal">
                 <div class="modal-content">
                     <span class="close">&times;</span>
-                    <h2>Confirm Logout</h2>
+                    <h2>Confirm Logou       t</h2>
                     <p>Are you sure you want to logout?</p>
                     <div class="modal-actions">
                         <a href="#" class="btn-action btn-yes">Yes</a>
