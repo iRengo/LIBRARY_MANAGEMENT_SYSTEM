@@ -17,7 +17,7 @@
 
     <!-- ======= User Styles Start ====== -->
 
-    <link rel="stylesheet" href="three_settings/account_user_css.css">
+    <link rel="stylesheet" href="three_settings/account_user_css1.css">
     <link rel="stylesheet" href="three_settings/account_user_fines_css.css">
     <link rel="stylesheet" href="three_settings/account_user_notification_css.css">
 
@@ -79,7 +79,7 @@
                 </li>
 
                 <li>
-                    <a href="#">
+                <a href="USER_HISTORY.PHP">
                         <span class="icon">
                             <i class='bx bx-history' style="font-size:35px;"></i>
                         </span>
@@ -97,7 +97,7 @@
                 </li>
 
                 <li>
-                    <a href="#">
+                    <a href="USER_NOTIFICATION.PHP">
                         <span class="icon">
                             <ion-icon name="notifications-outline"></ion-icon>
                         </span>

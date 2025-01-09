@@ -70,7 +70,7 @@
                 </li>
 
                 <li>
-                    <a href="#">
+                <a href="USER_HISTORY.PHP">
                         <span class="icon">
                             <i class='bx bx-history' style="font-size:35px;"></i>
                         </span>
@@ -88,7 +88,7 @@
                 </li>
 
                 <li>
-                    <a href="#">
+                    <a href="USER_NOTIFICATION.PHP">
                         <span class="icon">
                             <ion-icon name="notifications-outline"></ion-icon>
                         </span>
