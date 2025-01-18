@@ -1,0 +1,79 @@
+.search-bar { 
+  position: relative;
+  left: 650px;
+  align-items: center;
+  padding-right: 20px;  
+  width: 500%;
+  
+}
+
+.search-bar input {
+  width: 100%;
+  max-width: 300px;
+  border-radius: 15px;
+  border: 1px solid #ccc;
+  padding: 12px 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.search-bar input:focus {
+  outline: none;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.titles {
+  width: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin-top: 50px;
+  background-color: #0f0f0f; /* Light background for better readability */
+  border-radius: 10px; /* Rounded corners */
+  padding: 10px 40px; /* Space inside the container */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  margin-left: 50px;
+}
+
+.available {
+  font-size: 24px; /* Large and readable */
+  font-weight: 500; /* Bold for emphasis */
+  color: #ffffff; /* Dark gray for readability */
+  margin: 0; /* Remove default margins */
+  width: 5000px;
+  padding-left: 50px;
+}
+
+ .pics {
+  display: flex;
+  justify-content: start;
+  padding-left: 50px;
+ }
+
+.texts{
+  display: flex;
+  justify-content: flex-start;
+  padding-left: 80px;
+  padding-top: 50px;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.pics img {
+  height: 230px;
+  width: 180px;
+  border-radius: 10px;
+  margin: 5px;
+  padding: 10px;
+  box-shadow: 1px 1px 0px rgba(215, 215, 218, 0.89); /* Adds a shadow effect */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover animation */
+}
+
+.pics img:hover {
+  transform: scale(1.05); /* Slightly enlarges the image on hover */
+  box-shadow: 0 12px 20px rgba(100, 59, 59, 0.4); /* Enhances shadow on hover */
+}
+
+
+ 
