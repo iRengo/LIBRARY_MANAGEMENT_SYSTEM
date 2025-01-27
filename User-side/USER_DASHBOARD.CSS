@@ -1,0 +1,383 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Teachers:ital,wght@0,400..800;1,400..800&family=Viga&family=Zilla+Slab+Highlight:wght@400;700&display=swap');
+
+* {
+    font-family: Poppins, sans-serif;
+}
+
+
+body h1 {
+    font-weight: 550;
+    font-size: 30px;
+}
+
+.header {
+    padding: 2%;
+}
+
+.header h4 {
+    font-weight: 400;
+}
+
+.content-grid {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px; /* space between items */
+    margin-top: 5%;
+    margin-left:2%;
+    margin-right: 2%;
+}
+
+.content-item {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: center;
+    flex: 1;
+    padding: 10px;
+    background-color: #f4f4f4;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-sizing: border-box;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    
+}
+
+.content-item ion-icon {
+
+    margin-left:30%;
+    font-size: 100px; /* icon size */
+    width: 60px; /* Set a specific width */
+    height:100px;
+}
+
+.content-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-left:8%;
+}
+
+.content-item p {
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0;
+}
+
+.content-item h1 {
+    font-size: 3rem;
+    margin: 0;
+    font-weight: regular;
+    color:#2f2f2f;
+}
+.table-container {
+    margin: 20px auto; /* Center the table container */
+    padding: 20px;
+    background-color: #ffffff;
+
+    border-radius: 8px;
+    width: calc(50% + 20px); /* Adjust width to match content-grid */
+    float: left;
+    margin-left: 2%;
+}
+/* Table Header */
+.table-header {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #343536;
+    text-align: center;
+}
+
+/* Table Styling */
+.styled-table {
+    width: 100%; /* Table takes the full width of the container */
+    border-collapse: collapse;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+}
+
+.styled-table thead tr {
+    background-color: #343536;
+    color: #ffffff;
+    text-align: left;
+}
+
+.styled-table th, .styled-table td {
+    padding: 8px 10px; /* Smaller padding */
+    border: 1px solid #ddd;
+}
+
+.styled-table tbody tr {
+    background-color: #f4f4f4;
+}
+
+.styled-table tbody tr:nth-of-type(even) {
+    background-color: #e9e9e9;
+}
+
+.styled-table tbody tr:hover {
+    background-color: #dcdcdc;
+}
+
+/* Button Styling */
+.btn {
+    border: none;
+    border-radius: 5px;
+    padding: 6px 10px; /* Smaller buttons */
+    font-size: 12px; /* Adjust font size */
+    font-weight: 500;
+    color: white;
+    cursor: pointer;
+}
+
+.view-btn {
+    background-color: #1C2E5C;
+}
+
+.view-btn:hover {
+    background-color: #233b70;
+}
+
+.add-btn {
+    background-color: #1E8404;
+}
+
+.add-btn:hover {
+    background-color: #28a745;
+}
+.styled-table td.action-column {
+    text-align: center;  /* Center the buttons horizontally */
+    vertical-align: middle;  /* Center the buttons vertically */
+}
+.styled-table td.action-column .btn {
+    margin: 0 5px;  /* Adds horizontal space between buttons */
+}
+
+.book-container {
+    margin: 20px;
+    padding: 20px;
+    background-color: rgb(255, 255, 255);
+    border-radius: 8px;
+    width: 43%;
+    float: right;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+    height:500px; /* Set the desired height */
+    overflow-y: auto; /* Enable vertical scrolling */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+/* Individual Book */
+.book {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 10px;
+    width: 80%;
+    border: 1px solid rgb(188, 188, 188);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.book-header {
+    font-weight: 600; /* Make it bold */
+    margin-bottom: 20px; /* Add some space below */
+    color: #343536; /* Dark gray color */
+    text-align: center; /* Center the text */
+    margin-top: 40px; /* Add space above */ /* Add space above */
+    font-size: 20px;
+}
+.book-cover {
+    width: 210px; /* Reduced size */
+    height: 220px; /* Reduced size */
+    object-fit: cover;
+    border-radius: 3px;
+}
+
+.book-info {
+    text-align: left;
+    margin-top: 20px;
+    padding: 0;
+    margin-left: -30%;
+
+
+}
+
+.book-title {
+    font-size: 16px; /* Smaller font size */
+    font-weight: bold;
+    margin: 0;
+}
+
+.book-author {
+    font-size: 12px; /* Smaller font size */
+    margin-top: 5px;
+}
+
+/* Individual Genre Button Styling */
+.genre-btn {
+    display: inline-block;
+    padding: 6px 12px; /* Adjusted padding for a better look */
+    border-radius: 5px;
+    margin-top: 10px;
+    cursor: pointer;
+    font-size: 12px;
+    margin-right: 8px; /* Add space between genres */
+}
+
+/* Action Genre Style */
+.genre-btn.action {
+    background-color: #4CAF50; /* Green color */
+    color: white;
+}
+
+/* Fiction Genre Style */
+.genre-btn.fiction {
+    background-color: #FF5722; /* Orange color */
+    color: white;
+}
+
+/* Drama Genre Style */
+.genre-btn.drama {
+    background-color: #2196F3; /* Blue color */
+    color: white;
+}
+
+/* Historical Genre Style */
+.genre-btn.historical {
+    background-color: #FFC107; /* Yellow color */
+    color: white;
+}
+
+/* Dystopia Genre Style */
+.genre-btn.dystopia {
+    background-color: #9C27B0; /* Purple color */
+    color: white;
+}
+
+/* Romance Genre Style */
+.genre-btn.romance {
+    background-color: #E91E63; /* Pink color */
+    color: white;
+
+}
+.genre-btn.adventure {
+    background-color: #1E8404;
+    color:white;
+}
+.recommended-books-container {
+    width: 92%; 
+    height:400px; /* Increased height */
+    overflow-x: auto; 
+    margin: 20px auto; 
+    padding: 20px;
+    margin-top: 1%;
+    background-color: #fff;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+
+
+.recommended-books {
+    display: flex;
+    flex-wrap: nowrap; 
+    gap: 20px; /* Increased gap */
+}
+.recommended-header {
+    background-color:#343536;
+    height: 10%px;
+    margin-left: 4%;
+    margin-top: 40%;
+    margin-right:2%;
+    width: 20%;
+    padding: 15px;
+
+}
+.recommended-header h2 {
+    color:white;
+}
+
+.recommended-book {
+    min-width: 200px; /* Increased minimum width */
+    height: 330px; /* Increased height */
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    overflow: hidden; 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex; 
+    flex-direction: column; 
+}
+
+
+.recommended-book-cover {
+    width: 100%;
+    height: 200px; /* Increased height */
+    object-fit: cover;
+    margin-bottom: 4%;
+    margin-top: 5%;
+
+}
+
+.recommended-book-info {
+    padding: 10px; /* Increased padding */
+    text-align: left; 
+    flex-grow: 1; 
+}
+
+.recommended-book-title {
+    font-size: 16px; /* Increased font size */
+    font-weight: bold;
+    margin-bottom: 5px; /* Increased margin */
+}
+
+
+.recommended-book-author {
+    font-size: 14px; /* Increased font size */
+    margin-bottom: 5px; /* Increased margin */
+}
+
+.recommended-book-genre {
+    font-size: 14px; /* Increased font size */
+    color: #555; 
+}
+.recommended-book-genre {
+    background-color: #f0f0f0; /* Default background color */
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin-top: 5px;
+    display: inline-block; /* Makes genres appear side-by-side */
+    margin-right: 5px; /* Adds spacing between genres */
+}
+
+.recommended-book-genre.action {
+    background-color: #4CAF50; /* Green */
+    color:white;
+}
+
+.recommended-book-genre.fiction {
+    background-color: #FF9800; /* Orange */
+    color:white;
+}
+
+.recommended-book-genre.drama {
+    background-color: #2196F3; /* Blue */
+    color:white;
+}
+
+.recommended-book-genre.historical {
+    background-color: #FFC107; /* Amber */
+    color:white;
+}
+
+.recommended-book-genre.dystopia {
+    background-color: #9C27B0; /* Purple */
+    color:white;
+}
+
+.recommended-book-genre.adventure {
+    background-color: #4CAF50; /* Green - you can change this */
+    color:white;
+}
