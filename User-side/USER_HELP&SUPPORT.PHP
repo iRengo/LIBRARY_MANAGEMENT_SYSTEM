@@ -12,6 +12,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Teachers:ital,wght@0,400..800;1,400..800&family=Viga&family=Zilla+Slab+Highlight:wght@400;700&display=swap" rel="stylesheet">
     <!-- ======= Styles ====== -->
     <link rel="stylesheet" href="USER_STYLE2.CSS">
+    <link rel="stylesheet" href="USER_HELP&SUPPORT.CSS">
+    <style>
+        .submit-ticket-section .row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .submit-ticket-section .col {
+            flex: 1;
+        }
+    </style>
 
     <!-- ======= Scripts ====== -->
 
@@ -28,7 +39,7 @@
             <ul>
                 <li>
                     <div class="admin-gradient">
-                    <a href="#">
+                        <a href="#">
                             <span class="icon">
                                 <ion-icon name="person-circle" class="admin-icon"></ion-icon>
                             </span>
@@ -66,7 +77,7 @@
                 </li>
 
                 <li>
-                <a href="USER_HISTORY.PHP">
+                    <a href="USER_HISTORY.PHP">
                         <span class="icon">
                             <i class='bx bx-history' style="font-size:35px;"></i>
                         </span>
@@ -142,81 +153,152 @@
             <!-- Content HERE -->
 
             <div style="display: flex; justify-content: space-between; margin-top: 5%; border: 1px solid #ccc; padding: 20px; border-radius: 10px;">
-    <div style="margin: auto;">
-        <img src="helpsup1.png" alt="Left Image" style="max-width: 200px;max-height:200px;">
-    </div>
-    <div class="center" style="text-align: center;">
-        <div style="margin-bottom: 10px;margin-top:8%;">
-            <h3 style="margin: 0; font-size: 1.5rem; color: #333;">HELP CENTER</h3>
-            <p style="margin: 5px 0; font-size: 0.9rem; color: gray;">How can we assist you today?</p>
+                <div style="margin: auto;">
+                    <img src="helpsup1.png" alt="Left Image" style="max-width: 200px;max-height:200px;">
+                </div>
+                <div class="center" style="text-align: center;">
+                    <div style="margin-bottom: 10px;margin-top:8%;">
+                        <h3 style="margin: 0; font-size: 1.5rem; color: #333;">HELP CENTER</h3>
+                        <p style="margin: 5px 0; font-size: 0.9rem; color: gray;">How can we assist you today?</p>
+                    </div>
+                    <input type="text" placeholder="Search..." style="border-radius: 20px; max-height: 100%; width: 500px; height: 40px; padding: 10px; font-size: 16px; border: 1px solid #ccc;">
+                </div>
+                <div style="margin: auto;">
+                    <img src="helpsup2.png" alt="Right Image" style="max-width:300px;max-height:250px;">
+                </div>
+            </div>
+
+            <!-- FAQ Section -->
+            <div class="help-support-container">
+                <div class="faq-section">
+                    <h2>Frequently Asked Questions</h2>
+                    <div class="faq-items">
+                        <div class="faq-item">
+                            <h3 class="faq-question">How do I borrow books?</h3>
+                            <div class="faq-answer">
+                                <p>To borrow books, navigate to the "Collection" section, choose the book you wish to borrow, and click on "Borrow". You will need to be logged in to borrow books.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <h3 class="faq-question">How do I return a book?</h3>
+                            <div class="faq-answer">
+                                <p>To return a book, visit your "History" section and click on the "Return" option next to the borrowed book.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <h3 class="faq-question">What if I lose a book?</h3>
+                            <div class="faq-answer">
+                                <p>If a book is lost, please contact support immediately. We will guide you through the process of reporting the loss and any potential fines.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <h3 class="faq-question">What if I damaged a book ?</h3>
+                            <div class="faq-answer">
+                                <p>If a book is damaged, please contact support immediately. We will guide you through the process of reporting the loss and any potential fines.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <h3 class="faq-question">Do you accept e wallet ?</h3>
+                            <div class="faq-answer">
+                                <p>If a book is damaged, please contact support immediately. We will guide you through the process of reporting the loss and any potential fines.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="submit-ticket-section">
+                    <Br>
+                    <h2>Submit a Ticket</h2>
+                    <p>Contact us and send a message. We’re here to help you out!</p>
+                    <br><BR><BR>
+                    <form>
+                        <!-- First Name and Last Name on the same line -->
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label for="first-name" class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="first-name" required>
+                            </div>
+                            <div class="col">
+                                <label for="last-name" class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="last-name" required>
+                            </div>
+                        </div>
+                        <!-- Contact Number -->
+                        <div class="mb-3">
+                            <label for="contact-number" class="form-label">Contact Number</label>
+                            <input type="text" class="form-control" id="contact-number" required>
+                        </div>
+                        <!-- Email -->
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Your Email</label>
+                            <input type="email" class="form-control" id="email" required>
+                        </div>
+                        <!-- Message -->
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Message</label>
+                            <textarea class="form-control" id="message" rows="4" required></textarea>
+                        </div>
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+
+            </div>
+
+             <!-- continue here-->
+             <div class="grid-container">
+            <div class="grid-item">
+                <ion-icon name="card-outline"></ion-icon>
+                <p>Transactions</p>
+            </div>
+            <div class="grid-item">
+                <ion-icon name="person-outline"></ion-icon>
+                <p>Account</p>
+            </div>
+            <div class="grid-item">
+                <ion-icon name="book-outline"></ion-icon>
+                <p>Collection</p>
+            </div>
+            <div class="grid-item">
+                <ion-icon name="time-outline"></ion-icon>
+                <p>History</p>
+            </div>
+
+            <div class="grid-item">
+                <ion-icon name="warning-outline"></ion-icon>
+                <p>Violations</p>
+            </div>
+
+            <div class="grid-item">
+                <ion-icon name="settings-outline"></ion-icon>
+                <p>Settings</p>
+            </div>
         </div>
-        <input type="text" placeholder="Search..." style="border-radius: 20px; max-height: 100%; width: 500px; height: 40px; padding: 10px; font-size: 16px; border: 1px solid #ccc;">
-    </div>
-    <div style="margin: auto;">
-        <img src="helpsup2.png" alt="Right Image" style="max-width:300px;max-height:250px;">
-    </div>
-</div>
-
-<div style="display: flex; justify-content: space-between; align-items: flex-start; padding: 20px; margin-top:2%;">
-    <!-- FAQ Section (Left Content) -->
-    <div class="faq" style="font-size: 200%; margin-left: 8%;margin-top:2%;">
-        <h4 style="font-weight: 800;">FAQ</h4>
-        <h2>FREQUENTLY</h2>
-        <h2>ASKED</h2>
-        <h2>QUESTIONS.</h2>
-    </div>
-
-    <!-- Dropdown Section (Right Content) -->
-    <div style="width: 100%; max-width:850px;margin-right:5%; margin-top:2%;">
-        <!-- 2x2 Grid for Dropdowns with Adjusted Space and Width -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%;">
-            <!-- Dropdown 1 -->
-            <div 
-                id="dropdownToggle1" 
-                style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 15px; background-color: #F9F9F9; border-radius: 8px; border: 1px solid #ccc; width: 100%;">
-                <span style="font-size: 1rem; color: #333;">Problem with my account?</span>
-                <i id="chevron1" class="bx bx-chevron-down" style="font-size: 1.5rem; color: #333; transition: transform 0.3s;"></i>
-            </div>
-            <!-- Dropdown 2 -->
-            <div 
-                id="dropdownToggle2" 
-                style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 15px; background-color: #F9F9F9; border-radius: 8px; border: 1px solid #ccc; width: 100%;">
-                <span style="font-size: 1rem; color: #333;">Billing Issues</span>
-                <i id="chevron2" class="bx bx-chevron-down" style="font-size: 1.5rem; color: #333; transition: transform 0.3s;"></i>
-            </div>
-            <!-- Dropdown 3 -->
-            <div 
-                id="dropdownToggle3" 
-                style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 15px; background-color: #F9F9F9; border-radius: 8px; border: 1px solid #ccc; width: 100%;">
-                <span style="font-size: 1rem; color: #333;">Account Settings</span>
-                <i id="chevron3" class="bx bx-chevron-down" style="font-size: 1.5rem; color: #333; transition: transform 0.3s;"></i>
-            </div>
-            <!-- Dropdown 4 -->
-            <div 
-                id="dropdownToggle4" 
-                style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 15px; background-color: #F9F9F9; border-radius: 8px; border: 1px solid #ccc; width: 100%;">
-                <span style="font-size: 1rem; color: #333;">Other Issues</span>
-                <i id="chevron4" class="bx bx-chevron-down" style="font-size: 1.5rem; color: #333; transition: transform 0.3s;"></i>
-            </div>
-        </div>
-        
-        
-</div>
 
 
 
-        </div>
-
-
+       
+         
 
     </div>
+
+
     <!-- ========================= Main END ==================== -->
 
 
 
     <!-- =========== Scripts =========  -->
     <script src="USER.js"></script>
-    
+    <script>
+        const faqItems = document.querySelectorAll('.faq-item');
+
+        faqItems.forEach(item => {
+            const faqQuestion = item.querySelector('.faq-question');
+            faqQuestion.addEventListener('click', () => {
+                item.classList.toggle('active');
+            });
+        });
+    </script>
+
 
 
 
