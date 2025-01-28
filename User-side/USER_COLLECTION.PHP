@@ -190,7 +190,7 @@ h1 {
                 </li>
 
                 <li>
-                    <a href="#">
+                    <a href="USER_CATALOG.php">
                         <span class="icon">
                             <ion-icon name="book-outline"></ion-icon>
                         </span>
