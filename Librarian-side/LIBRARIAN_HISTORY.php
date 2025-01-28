@@ -40,7 +40,7 @@
                 </li>
 
                 <li>
-                    <a href="">
+                    <a href="LIBRARIAN_DASHBOARD.PHP">
                         <span class="icon">
                             <ion-icon name="home-outline"></ion-icon>
                         </span>
@@ -49,7 +49,7 @@
                 </li>
 
                 <li>
-                    <a href="">
+                    <a href="#">
                         <span class="icon">
                             <ion-icon name="book-outline"></ion-icon>
 
@@ -59,7 +59,7 @@
                 </li>
 
                 <li>
-                    <a href="">
+                    <a href="LIBRARIAN_HISTORY.php">
                         <span class="icon">
                             <i class='bx bx-history' style="font-size:35px;"></i>
                         </span>
@@ -68,7 +68,7 @@
                 </li>
 
                 <li>
-                    <a href="">
+                    <a href="LIBRARIAN_RESERVATION.PHP">
                         <span class="icon">
                             <ion-icon name="person-add-outline" style="font-size: 30px;"></ion-icon>
                         </span>
@@ -77,7 +77,7 @@
                 </li>
 
                 <li>
-                    <a href="">
+                    <a href="LIBRARIAN_NOTIFICATION.PHP">
                         <span class="icon">
                             <ion-icon name="notifications-outline"></ion-icon>
                         </span>
@@ -86,7 +86,7 @@
                 </li>
 
                 <li>
-                    <a href="">
+                    <a href="USER_NOTIFICATION.PHP">
                         <span class="icon">
                             <ion-icon name="file-tray-stacked-outline"></ion-icon>
                         </span>
@@ -94,7 +94,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="">
+                    <a href="LIBRARIAN_REPORTS.php">
                         <span class="icon">
                             <ion-icon name="trending-up-outline"></ion-icon>
                         </span>
@@ -102,7 +102,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="">
+                    <a href="LIBRARIAN_SETTINGS.PHP">
                         <span class="icon">
                             <ion-icon name="cog-outline"></ion-icon>
                         </span>

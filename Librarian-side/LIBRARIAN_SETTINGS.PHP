@@ -42,13 +42,13 @@
                             <span class="icon">
                                 <ion-icon name="person-circle" class="admin-icon"></ion-icon>
                             </span>
-                            <span class="title1">USER</span>
+                            <span class="title1">LIBRARIAN</span>
                         </a>
                     </div>
                 </li>
 
                 <li>
-                    <a href="USER_DASHBOARD.PHP">
+                    <a href="LIBRARIAN_DASHBOARD.PHP">
                         <span class="icon">
                             <ion-icon name="home-outline"></ion-icon>
                         </span>
@@ -59,24 +59,15 @@
                 <li>
                     <a href="#">
                         <span class="icon">
-                            <ion-icon name="file-tray-stacked-outline"></ion-icon>
-
-                        </span>
-                        <span class="title">Collection</span>
-                    </a>
-                </li>
-
-                <li>
-                <a href="USER_CATALOG.PHP">
-                        <span class="icon">
                             <ion-icon name="book-outline"></ion-icon>
+
                         </span>
                         <span class="title">Catalog</span>
                     </a>
                 </li>
 
                 <li>
-                <a href="USER_HISTORY.PHP">
+                <a href="LIBRARIAN_HISTORY.php">
                         <span class="icon">
                             <i class='bx bx-history' style="font-size:35px;"></i>
                         </span>
@@ -85,32 +76,41 @@
                 </li>
 
                 <li>
-                    <a href="USER_HELP&SUPPORT.PHP">
+                    <a href="LIBRARIAN_RESERVATION.PHP">
                         <span class="icon">
-                            <ion-icon name="layers-outline"></ion-icon>
+                            <ion-icon name="person-add-outline" style="font-size: 30px;"></ion-icon>
                         </span>
-                        <span class="title">Help & Support</span>
+                        <span class="title">Reservations</span>
                     </a>
                 </li>
 
                 <li>
-                    <a href="USER_NOTIFICATION.PHP">
+                    <a href="LIBRARIAN_NOTIFICATION.PHP">
                         <span class="icon">
                             <ion-icon name="notifications-outline"></ion-icon>
                         </span>
                         <span class="title">Notifications</span>
                     </a>
                 </li>
+
                 <li>
-                    <a href="USER_TRENDING.php">
+                    <a href="USER_NOTIFICATION.PHP">
                         <span class="icon">
-                            <ion-icon name="trending-up-outline"></ion-icon>
+                            <ion-icon name="file-tray-stacked-outline"></ion-icon>
                         </span>
-                        <span class="title">Trending</span>
+                        <span class="title">User Management</span>
                     </a>
                 </li>
                 <li>
-                    <a href="USER_SETTINGS.php">
+                    <a href="LIBRARIAN_REPORTS.php">
+                        <span class="icon">
+                            <ion-icon name="trending-up-outline"></ion-icon>
+                        </span>
+                        <span class="title">Reports</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="LIBRARIAN_SETTINGS.PHP">
                         <span class="icon">
                             <ion-icon name="cog-outline"></ion-icon>
                         </span>
