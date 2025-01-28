@@ -6,30 +6,21 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhgj9UU2gEpeHXKuDjc8+aJBBZ/YYz7wkmP5zPpsjLh4RxJMfP5Jxs6t" crossorigin="anonymous">
-    <title> Librarian Dashboard</title>
+    <title> Librarian Catalog </title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Teachers:ital,wght@0,400..800;1,400..800&family=Viga&family=Zilla+Slab+Highlight:wght@400;700&display=swap" rel="stylesheet">
     <!-- ======= Styles ====== -->
     <link rel="stylesheet" href="../User-side/USER_STYLE2.CSS">
-    <link rel="stylesheet" href="LIBRARIAN_DASHBOARD.CSS">
-    <style>
-        .submit-ticket-section .row {
-            display: flex;
-            gap: 15px;
-        }
-
-        .submit-ticket-section .col {
-            flex: 1;
-        }
-    </style>
+    <link rel="stylesheet" href="LIBRARIAN_CATALOG.CSS">
 
     <!-- ======= Scripts ====== -->
 
 
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+    
 
 </head>
 
@@ -152,183 +143,97 @@
             </div>
 
             <!-- Content HERE -->
-            <div class="content">
-                <div class="stats-container">
-                    <div class="stat-card">
-                        <ion-icon name="time-outline"></ion-icon>
-                        <div>
-                            <h3>Overdue</h3>
-                            <p>12</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <ion-icon name="newspaper-outline"></ion-icon>
-                        <div>
-                            <h3>Reserved</h3>
-                            <p>23</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <ion-icon name="file-tray-full-outline"></ion-icon>
-                        <div>
-                            <h3>Returned</h3>
-                            <p>2</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <ion-icon name="bookmark-outline"></ion-icon>
-                        <div>
-                            <h3>Available books</h3>
-                            <p>7</p>
-                        </div>
-                    </div>
+
+            <div class="titles-container">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <div class="titles">
+                <div class="available">Available Books</div>
+                 <div class="col-md-4">
+                 <div class="search-bar">
+                    <input type="text" class="form-control" placeholder="Search books...">
                 </div>
+        </div>
             </div>
-
-
+        </div>
+        
+    </div>
+</div>
             <div class="row">
-                <!-- Book Availability Chart -->
-                <div class="col">
-                    <h3 style="color:gray;"> Book Availability </h3>
-                    <canvas id="bookAvailabilityChart"></canvas>
+                <div class="col-sm-2">
+                    <div class="categ">
+                        <div class="texts">Fantasy</div>
+                    <div class="pics" id="books">
+                    <a href="ADMIN_modal.php">
+                        <img src="https://www.creativindiecovers.com/wp-content/uploads/2012/02/9780718155209.jpg" alt="Book Cover">
+                    </a> 
+                    <img src="https://thebookcoverdesigner.com/wp-content/uploads/2020/01/TH00102.jpg"> 
+                    <img src="https://images-platform.99static.com//PiHWJxAcOnC7gw197YEXKtyxDXQ=/fit-in/500x500/99designs-contests-attachments/39/39493/attachment_39493946"> 
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSguJ4dTc3pn1POkE7ft20f_pDRPpJt71InoA&s"> 
+                    <img src="https://m.media-amazon.com/images/I/71ZD+cRahhL._AC_UF894,1000_QL80_.jpg"> 
+                    <img src="https://miblart.com/wp-content/uploads/2020/01/april-young-adult-768x1152-1.jpeg"> 
+                    <img src="https://i.pinimg.com/736x/7a/eb/13/7aeb13f6c1c004ff06163629948280dd.jpg">
+                    </div>
+                    <div class="categ">
+                    <div class="textss">Romance</div>
+                    <div class="pics" id="books">
+                    <img src="https://www.dochipo.com/wp-content/uploads/2022/08/Book-Cover-_-Romance-scaled.jpg"> 
+                    <img src="https://ph.bbwbooks.com/cdn/shop/products/9780374351281_1_347413de-9f1c-468a-89b3-f0b2c0e408e0_600x.jpg?v=1625489251"> 
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRU--MXPOfwwWTvR9vCB2UkzeiBeX9ZkGayag&s"> 
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQKYmrUbkRM3aWolsdDNGGUz9mgkcWlYTZyMY6yRBCbNknziBqxaeyCTBsmgYa1p86AHxg&usqp=CAU">     
+                    <img src="https://lbabooks.com/assets/books/_small/411NFkiBKwL-1.jpg"> 
+                    <img src="https://lbabooks.com/assets/books/_small/Before-We-Say-Goodbye-cover.jpg"> 
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRU--MXPOfwwWTvR9vCB2UkzeiBeX9ZkGayag&s"> 
+                    </div>
+                    </div>
+                    <div class="categ">
+                    <div class="textss">Horror</div>
+                    <div class="pics" id="books">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR9nv5HqDJiJEAK-yg5bTKwv2CEDn5MXc8vIQ&s"> 
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT21aYKXv_LCrefM9wPnvHVBT4ntKzFi9c96nU8fqjHnDuX3NBFObZXXTnTpcqyCCkY8Bo&usqp=CAU"> 
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQc47tHO9PN683cD_sQtilP7P1PkflWjU05hjEdsfgIkNtYxvNt9yrA0Du-DCCi-kCjDkA&usqp=CAU"> 
+                    <img src="https://img1.wsimg.com/isteam/ip/4060628a-cb37-47f0-92a3-a877c77b19ab/ols/befunky_2024-10-3_17-8-57.png/:/cr=t:0%25,l:0%25,w:100%25,h:100%25/rs=w:600,cg:true">     
+                    <img src="https://placeit-img-1-p.cdn.aws.placeit.net/uploads/stage/stage_image/22101/optimized_large_thumb_Horror_Book_Cover.jpg"> 
+                    <img src="https://placeit-img-1-p.cdn.aws.placeit.net/uploads/stage/stage_image/39885/optimized_large_thumb_stage.jpg"> 
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVkcoc5HDUT8ywqJ0sna2mA8KG9EilKE_v3Q&s"> 
+                    
+                    </div>
+                    </div>
+                    </div>
                 </div>
-                <!-- Book Popularity Chart -->
-                <div class="col">
-                    <h3 style="color:gray;"> Book Popularity </h3>
-                    <canvas id="bookPopularityChart"></canvas>
-                </div>
             </div>
 
 
-            <div class="col-6 table-container">
-                <h3 style="color: gray;">Active Borrowers</h3>
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th scope="col">Rank</th>
-                            <th scope="col">Name</th>
-                            <th scope="col">Books Borrowed</th>
-                            <th scope="col">Last Borrowed </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>John Doe</td>
-                            <td>25</td>
-                            <td>A year ago </td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Jane Smith</td>
-                            <td>18</td>
-                            <td>A year ago </td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>Mark Wilson</td>
-                            <td>15</td>
-                            <td>A year ago </td>
-                        </tr>
-                        <tr>
-                            <td>4</td>
-                            <td>Emily Davis</td>
-                            <td>12</td>
-                            <td>A year ago </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Create Announcement Button -->
-            <div class="col-6 announcement-container">
-                <button class="announcement-button">+ Announcement</button>
-            </div>
+        </div>
         </div>
 
 
+
     </div>
-
-
     <!-- ========================= Main END ==================== -->
 
-
+    <div id="logoutModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Confirm Logout</h2>
+            <p>Are you sure you want to logout?</p>
+            <div class="modal-actions">
+                <a href="../Homepage/signin.php" class="btn-action btn-yes">Yes</a>
+                <button class="btn-action btn-no" id="cancelLogout">No</button>
+            </div>
+        </div>
+    </div>
 
     <!-- =========== Scripts =========  -->
-    <script src="/User-side/USER.JS"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            // Book Availability Donut Chart
-            const bookAvailabilityData = {
-                labels: ['Action', 'Fiction', 'SciFi', 'Non-fiction', 'Study'],
-                datasets: [{
-                    data: [25, 40, 15, 10, 10], // Placeholder values
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.8)',
-                        'rgba(54, 162, 235, 0.8)',
-                        'rgba(255, 206, 86, 0.8)',
-                        'rgba(75, 192, 192, 0.8)',
-                        'rgba(153, 102, 255, 0.8)'
-                    ],
-                    hoverOffset: 4
-                }]
-            };
-
-            const ctx1 = document.getElementById('bookAvailabilityChart').getContext('2d');
-            new Chart(ctx1, {
-                type: 'doughnut',
-                data: bookAvailabilityData,
-                options: {
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
-                    }
-                }
-            });
-
-            // Book Popularity Bar Chart
-            const bookPopularityData = {
-                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                datasets: [{
-                    label: 'Books Borrowed',
-                    data: [120, 200, 150, 80, 70, 110, 130], // Placeholder values
-                    backgroundColor: 'rgba(54, 162, 235, 0.8)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                }]
-            };
-
-            const ctx2 = document.getElementById('bookPopularityChart').getContext('2d');
-            new Chart(ctx2, {
-                type: 'bar',
-                data: bookPopularityData,
-                options: {
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-        });
-    </script>
-
-        <!-- =========== Scripts =========  -->
     <script src="LIBRA.js"></script>
     <script src="LIBRARIAN.js"></script>
-
-
 
 
     <!-- ====== ionicons ======= -->
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 
 </body>
 

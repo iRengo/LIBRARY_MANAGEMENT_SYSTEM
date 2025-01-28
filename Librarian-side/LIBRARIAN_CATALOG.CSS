@@ -1,0 +1,103 @@
+.search-bar {
+    display: relative !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin: 20px 0 !important;
+  }
+  
+  .search-bar input {
+    width: 300% !important;
+    max-width: 400px !important; /* Set a max width for better responsiveness */
+    padding: 15px 50px !important;
+    font-size: 16px !important;
+    border: 2px solid #ddd !important;
+    border-radius: 25px !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+    transition: all 0.3s ease !important;
+    outline: none !important;
+    background: #fff url('https://cdn-icons-png.flaticon.com/512/622/622669.png') no-repeat 15px center !important; /* Add a search icon */
+    background-size: 18px !important;
+    padding-left: 40px !important; /* Add space for the icon */
+    position: relative;
+    left: 900px;
+  }
+  
+  .search-bar input::placeholder {
+    color: #999 !important;
+    font-size: 14px !important;
+  }
+  
+  .search-bar input:focus {
+    border-color: #ff7a7a !important;
+    box-shadow: 0 6px 12px rgba(255, 77, 77, 0.2) !important;
+  }
+  
+  .search-bar input:hover {
+    border-color: #ff4d4d !important;
+  }
+  
+  
+  .titles {
+    width: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin-top: 50px;
+    background-color: #0f0f0f; /* Light background for better readability */
+    border-radius: 10px; /* Rounded corners */
+    padding: 10px 40px; /* Space inside the container */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    margin-left: 50px;
+  }
+  
+  .available {
+    font-size: 24px; /* Large and readable */
+    font-weight: 500; /* Bold for emphasis */
+    color: #ffffff; /* Dark gray for readability */
+    margin: 0; /* Remove default margins */
+    width: 5000px;
+    padding-left: 50px;
+  }
+  
+   .pics {
+    display: flex;
+    justify-content: start;
+    padding-left: 50px;
+   }
+  
+  .texts{
+    display: flex;
+    justify-content: flex-start;
+    padding-left: 80px;
+    padding-top: 50px;
+    font-size: 20px;
+    font-weight: 500;
+  }
+  
+  .textss{
+    display: flex;
+    justify-content: flex-start;
+    padding-left: 80px;
+    padding-top: 30px;
+    font-size: 20px;
+    font-weight: 500;
+  }
+  
+  .pics img {
+    height: 260px;
+    width: 200px;
+    border-radius: 10px;
+    margin: 5px;
+    padding: 10px;
+    box-shadow: 1px 1px 0px rgba(215, 215, 218, 0.89); /* Adds a shadow effect */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover animation */
+  }
+  
+  .pics img:hover {
+    transform: scale(1.05); /* Slightly enlarges the image on hover */
+    box-shadow: 0 12px 20px rgba(100, 59, 59, 0.4); /* Enhances shadow on hover */
+  }
+  
+  
+   

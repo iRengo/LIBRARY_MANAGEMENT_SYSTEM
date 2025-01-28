@@ -10,9 +10,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <!-- ======= Styles ====== -->
-    <link rel="stylesheet" href="USER_STYLE2.CSS">
-    <link rel="stylesheet" href="User_css/ADMIN_MODAL.css">
-    <link rel="stylesheet" href="modal.css">
+    <link rel="stylesheet" href="ADMIN_STYLES2.CSS">
+    <link rel="stylesheet" href="ADMIN_MODAL.css">
+    <link rel="stylesheet" href="ADMIN_modals.css">
 
     <!-- ======= Scripts ====== -->
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
@@ -30,7 +30,7 @@
                             <span class="icon">
                                 <ion-icon name="person-circle" class="admin-icon"></ion-icon>
                             </span>
-                            <span class="title1">USER</span>
+                            <span class="title1">ADMIN</span>
                         </a>
                     </div>
                 </li>
@@ -131,13 +131,13 @@
             <div class="row mt-5">
                 <!-- Left Panel: Title, Description, Genre -->
                 <div class="col-md-6">
-                    <h2>My Last Kiss</h2>
-                    <p><strong>Description:</strong> Every moment tells a story, and every story has a heartbeat. This space captures the essence of shared dreams, cherished memories, and the beauty of a journey woven together with love, laughter, and endless possibilities.</p>
+                    <h2>The Last Four Things</h2>
+                    <p><strong>Description:</strong> TIn Along for the Ride by Sarah Dessen, Auden spends the summer in a beach town with her dad’s new family, feeling out of place. She meets Eli, a quiet, adventurous guy, and together they explore the town at night. Through their friendship, Auden learns to open up and enjoy life.</p>
                          <!-- New Text Added Below Description -->
-                    <p>2018 • 18+ • Romance • 8 chp</p>
+                    <p>2005 • 18+ • Romance • 13 chp</p>
 
                     <div class="btn-group" role="group">
-                        <a href="#borrow" class="btn btn-borrow">Borrow</a>
+                        <a href="ADMIN_BOOK_BORROW.php" class="btn btn-borrow">Borrow</a>
                         <a href="#sneakpeek" class="btn btn-sneakpeek">Sneak Peek</a>
                     </div>
 
@@ -145,7 +145,7 @@
 
                 <!-- Right Panel: Image -->
                 <div class="col-md-6">
-                    <img src="https://ph.bbwbooks.com/cdn/shop/products/9780374351281_1_347413de-9f1c-468a-89b3-f0b2c0e408e0_600x.jpg?v=1625489251" class="img-fluid" alt="Book Cover">
+                    <img src="https://www.creativindiecovers.com/wp-content/uploads/2012/02/9780718155209.jpg" class="img-fluid" alt="Book Cover">
                 </div>
             </div>
             <!-- ========================= Suggested Books ==================== -->
@@ -153,8 +153,12 @@
     <h3>Suggested Books</h3>
     <div class="row">
         <div class="col-md-2">
-            <img src=https://www.creativindiecovers.com/wp-content/uploads/2012/02/9780718155209.jpg" class="img-fluid" alt="Suggested Book 1">
-        </div>
+        <a href="modal1.php">
+            <img src="https://ph.bbwbooks.com/cdn/shop/products/9780374351281_1_347413de-9f1c-468a-89b3-f0b2c0e408e0_600x.jpg?v=1625489251" 
+                class="img-fluid" 
+                alt="Suggested Book 1">
+        </a>
+    </div>
         <div class="col-md-2">
             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRU--MXPOfwwWTvR9vCB2UkzeiBeX9ZkGayag&s" class="img-fluid" alt="Suggested Book 2">
         </div>
@@ -186,9 +190,10 @@
             </div>
         </div>
     </div>
-    <!-- =========== Scripts =========  -->
-    <script src="User_css/admin.js"></script>
-    <script src="User_css/ADMIN_MODAL.js"></script>
+
+     <!-- =========== Scripts =========  -->
+     <script src="admin.js"></script>
+    <script src="ADMIN_MODAL.js"></script>
 
     <!-- ====== ionicons ======= -->
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>

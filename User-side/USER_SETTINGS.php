@@ -70,7 +70,7 @@
                 </li>
 
                 <li>
-                    <a href="#">
+                <a href="USER_CATALOG.PHP">
                         <span class="icon">
                             <ion-icon name="book-outline"></ion-icon>
                         </span>
@@ -156,7 +156,7 @@
             <div id="logoutModal" class="modal">
                 <div class="modal-content">
                     <span class="close">&times;</span>
-                    <h2>Confirm Logou       t</h2>
+                    <h2>Confirm Logout</h2>
                     <p>Are you sure you want to logout?</p>
                     <div class="modal-actions">
                         <a href="#" class="btn-action btn-yes">Yes</a>
@@ -206,7 +206,7 @@
                 </div>
                 <div class="upload-section">
                     <div class="upload-placeholder">
-                        <img src="https://via.placeholder.com/100" alt="Profile Icon">
+                        <img src="https://static.vecteezy.com/system/resources/thumbnails/019/879/198/small_2x/user-icon-on-transparent-background-free-png.png" alt="Profile Icon" style="width: 150px; height: auto; border-radius: 15px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease-in-out;">
                     </div>
                     <button class="upload-button">UPLOAD</button>
                 </div>
