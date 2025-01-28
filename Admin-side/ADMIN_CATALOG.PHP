@@ -11,9 +11,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Teachers:ital,wght@0,400..800;1,400..800&family=Viga&family=Zilla+Slab+Highlight:wght@400;700&display=swap" rel="stylesheet">
     <!-- ======= Styles ====== -->
-    <link rel="stylesheet" href="USER_STYLE2.CSS">
-    <link rel="stylesheet" href="User_css/ADMIN_MODAL.css">
-    <link rel="stylesheet" href="USER_CATALOG.CSS">
+    <link rel="stylesheet" href="ADMIN_STYLES2.CSS">
+    <link rel="stylesheet" href="ADMIN_MODAL.css">
+    <link rel="stylesheet" href="ADMIN_CATALOG.CSS">
 
     <!-- ======= Scripts ====== -->
 
@@ -36,7 +36,7 @@
                             <span class="icon">
                                 <ion-icon name="person-circle" class="admin-icon"></ion-icon>
                             </span>
-                            <span class="title1">USER</span>
+                            <span class="title1">ADMIN</span>
                         </a>
                     </div>
                 </li>
@@ -165,7 +165,7 @@
                     <div class="categ">
                         <div class="texts">Fantasy</div>
                     <div class="pics" id="books">
-                    <a href="modal.php">
+                    <a href="ADMIN_modal.php">
                         <img src="https://www.creativindiecovers.com/wp-content/uploads/2012/02/9780718155209.jpg" alt="Book Cover">
                     </a> 
                     <img src="https://thebookcoverdesigner.com/wp-content/uploads/2020/01/TH00102.jpg"> 
@@ -206,6 +206,7 @@
 
 
         </div>
+        </div>
 
 
 
@@ -225,8 +226,8 @@
     </div>
 
     <!-- =========== Scripts =========  -->
-    <script src="User_css/admin.js"></script>
-    <script src="User_css/ADMIN_MODAL.js"></script>
+    <script src="admin.js"></script>
+    <script src="ADMIN_MODAL.js"></script>
 
 
     <!-- ====== ionicons ======= -->

@@ -6,13 +6,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhgj9UU2gEpeHXKuDjc8+aJBBZ/YYz7wkmP5zPpsjLh4RxJMfP5Jxs6t" crossorigin="anonymous">
-    <title> Admin Dashboard</title>
+    <title> Librarian Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Teachers:ital,wght@0,400..800;1,400..800&family=Viga&family=Zilla+Slab+Highlight:wght@400;700&display=swap" rel="stylesheet">
     <!-- ======= Styles ====== -->
     <link rel="stylesheet" href="../User-side/USER_STYLE2.CSS">
-    <link rel="stylesheet" href="USER_HELP&SUPPORT.CSS">
+    <link rel="stylesheet" href="LIBRARIAN_DASHBOARD.CSS">
     <style>
         .submit-ticket-section .row {
             display: flex;
@@ -151,33 +152,180 @@
             </div>
 
             <!-- Content HERE -->
+            <div class="content">
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <ion-icon name="time-outline"></ion-icon>
+                        <div>
+                            <h3>Overdue</h3>
+                            <p>12</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <ion-icon name="newspaper-outline"></ion-icon>
+                        <div>
+                            <h3>Reserved</h3>
+                            <p>23</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <ion-icon name="file-tray-full-outline"></ion-icon>
+                        <div>
+                            <h3>Returned</h3>
+                            <p>2</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <ion-icon name="bookmark-outline"></ion-icon>
+                        <div>
+                            <h3>Available books</h3>
+                            <p>7</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
+
+            <div class="row">
+                <!-- Book Availability Chart -->
+                <div class="col">
+                    <h3 style="color:gray;"> Book Availability </h3>
+                    <canvas id="bookAvailabilityChart"></canvas>
+                </div>
+                <!-- Book Popularity Chart -->
+                <div class="col">
+                    <h3 style="color:gray;"> Book Popularity </h3>
+                    <canvas id="bookPopularityChart"></canvas>
+                </div>
+            </div>
+
+
+            <div class="col-6 table-container">
+                <h3 style="color: gray;">Active Borrowers</h3>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">Rank</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Books Borrowed</th>
+                            <th scope="col">Last Borrowed </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>John Doe</td>
+                            <td>25</td>
+                            <td>A year ago </td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Jane Smith</td>
+                            <td>18</td>
+                            <td>A year ago </td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Mark Wilson</td>
+                            <td>15</td>
+                            <td>A year ago </td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Emily Davis</td>
+                            <td>12</td>
+                            <td>A year ago </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Create Announcement Button -->
+            <div class="col-6 announcement-container">
+                <button class="announcement-button">+ Announcement</button>
+            </div>
         </div>
 
 
-        <!-- ========================= Main END ==================== -->
+    </div>
+
+
+    <!-- ========================= Main END ==================== -->
 
 
 
-        <!-- =========== Scripts =========  -->
-        <script src="/User-side/USER.JS"></script>
-        <script>
-            const faqItems = document.querySelectorAll('.faq-item');
+    <!-- =========== Scripts =========  -->
+    <script src="/User-side/USER.JS"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Book Availability Donut Chart
+            const bookAvailabilityData = {
+                labels: ['Action', 'Fiction', 'SciFi', 'Non-fiction', 'Study'],
+                datasets: [{
+                    data: [25, 40, 15, 10, 10], // Placeholder values
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.8)',
+                        'rgba(54, 162, 235, 0.8)',
+                        'rgba(255, 206, 86, 0.8)',
+                        'rgba(75, 192, 192, 0.8)',
+                        'rgba(153, 102, 255, 0.8)'
+                    ],
+                    hoverOffset: 4
+                }]
+            };
 
-            faqItems.forEach(item => {
-                const faqQuestion = item.querySelector('.faq-question');
-                faqQuestion.addEventListener('click', () => {
-                    item.classList.toggle('active');
-                });
+            const ctx1 = document.getElementById('bookAvailabilityChart').getContext('2d');
+            new Chart(ctx1, {
+                type: 'doughnut',
+                data: bookAvailabilityData,
+                options: {
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
             });
-        </script>
+
+            // Book Popularity Bar Chart
+            const bookPopularityData = {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Books Borrowed',
+                    data: [120, 200, 150, 80, 70, 110, 130], // Placeholder values
+                    backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            };
+
+            const ctx2 = document.getElementById('bookPopularityChart').getContext('2d');
+            new Chart(ctx2, {
+                type: 'bar',
+                data: bookPopularityData,
+                options: {
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+    </script>
 
 
 
 
-        <!-- ====== ionicons ======= -->
-        <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-        <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+    <!-- ====== ionicons ======= -->
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 
 </body>
 

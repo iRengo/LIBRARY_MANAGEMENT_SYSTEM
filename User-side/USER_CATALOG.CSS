@@ -1,26 +1,41 @@
-.search-bar { 
-  position: relative;
-  left: 650px;
-  align-items: center;
-  padding-right: 20px;  
-  width: 500%;
-  
+.search-bar {
+  display: relative !important;
+  justify-content: center !important;
+  align-items: center !important;
+  margin: 20px 0 !important;
 }
 
 .search-bar input {
-  width: 100%;
-  max-width: 300px;
-  border-radius: 15px;
-  border: 1px solid #ccc;
-  padding: 12px 15px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease-in-out;
+  width: 300% !important;
+  max-width: 400px !important; /* Set a max width for better responsiveness */
+  padding: 15px 50px !important;
+  font-size: 16px !important;
+  border: 2px solid #ddd !important;
+  border-radius: 25px !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+  transition: all 0.3s ease !important;
+  outline: none !important;
+  background: #fff url('https://cdn-icons-png.flaticon.com/512/622/622669.png') no-repeat 15px center !important; /* Add a search icon */
+  background-size: 18px !important;
+  padding-left: 40px !important; /* Add space for the icon */
+  position: relative;
+  left: 900px;
+}
+
+.search-bar input::placeholder {
+  color: #999 !important;
+  font-size: 14px !important;
 }
 
 .search-bar input:focus {
-  outline: none;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-color: #ff7a7a !important;
+  box-shadow: 0 6px 12px rgba(255, 77, 77, 0.2) !important;
 }
+
+.search-bar input:hover {
+  border-color: #ff4d4d !important;
+}
+
 
 .titles {
   width: 400px;
@@ -60,9 +75,18 @@
   font-weight: 500;
 }
 
+.textss{
+  display: flex;
+  justify-content: flex-start;
+  padding-left: 80px;
+  padding-top: 30px;
+  font-size: 20px;
+  font-weight: 500;
+}
+
 .pics img {
-  height: 230px;
-  width: 180px;
+  height: 260px;
+  width: 200px;
   border-radius: 10px;
   margin: 5px;
   padding: 10px;
