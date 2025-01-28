@@ -11,8 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Teachers:ital,wght@0,400..800;1,400..800&family=Viga&family=Zilla+Slab+Highlight:wght@400;700&display=swap" rel="stylesheet">
     <!-- ======= Styles ====== -->
-    <link rel="stylesheet" href="ADMIN_STYLES2.CSS">
-    <link rel="stylesheet" href="ADMIN_MODAL.css">
+    <link rel="stylesheet" href="ADMIN_DASHBOARD.CSS">
 
     <!-- ======= Scripts ====== -->
 
@@ -20,6 +19,10 @@
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     
+    <style>
+
+
+    </style>
 </head>
 
 <body>
@@ -134,6 +137,116 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Content HERE -->
+          
+    
+
+
+       <!-- Monthly Bar Graph -->
+            <div class="bar-graph-container">
+                <h3>Book Usage (Monthly)</h3>
+                <div class="bar-graph">
+                    <div class="bar" style="height: 75%;"></div> <!-- 75% height as example -->
+                    <div class="bar" style="height: 50%;"></div> <!-- 50% height as example -->
+                    <div class="bar" style="height: 85%;"></div> <!-- 85% height as example -->
+                    <div class="bar" style="height: 40%;"></div> <!-- 40% height as example -->
+                    <div class="bar" style="height: 60%;"></div> <!-- 60% height as example -->
+                    <div class="bar" style="height: 30%;"></div> <!-- 30% height as example -->
+                    <div class="bar" style="height: 90%;"></div> <!-- 90% height as example -->
+                </div>
+            </div>
+
+            <!-- Charts Container -->
+            <div class="charts-container">
+                <!-- Doughnut Chart -->
+                <div class="doughnut-chart">
+                    <h3 style="margin-bottom: 40px; margin-top: -60px;">Library Metrics</h3>
+                    <div class="doughnut">
+                        <div class="inner-circle"></div>
+                    </div>
+                    <ul class="legend">
+                        <li><span class="legend-color growth"></span> Growth</li>
+                        <li><span class="legend-color satisfaction"></span> Satisfaction</li>
+                        <li><span class="legend-color usage"></span> Usage</li>
+                        <li><span class="legend-color financial"></span> Financial Stability</li>
+                    </ul>
+                </div>
+
+                <!-- Pie Chart -->
+                <div class="pie-chart">
+                    <h3 style="margin-bottom: 40px; margin-top: -60px;">Patreon Feedback</h3>
+                    <div class="pie"></div>
+                    <ul class="legend">
+                        <li><span class="legend-color satisfactory"></span> Satisfactory (60%)</li>
+                        <li><span class="legend-color unsatisfactory"></span> Unsatisfactory (40%)</li>
+                    </ul>
+                </div>
+            </div>
+
+             
+        <!-- Gray-colored div under the charts with image and text -->
+                   
+            <div class="used-box">
+                <h3 class="used-text">NOT USED BOOKS</h3>
+                <img src="the return.jpg" alt="Return Image" class="image1">
+                <img src="the return.jpg" alt="Return Image" class="image2">
+                <img src="the return.jpg" alt="Return Image" class="image3">
+                <img src="the return.jpg" alt="Return Image" class="image4">
+                <img src="the return.jpg" alt="Return Image" class="image5">
+            </div>
+
+            <!-- New brown-colored div below the gray box -->
+                <div class="avail-box">
+                    <h3 class="avail-text">BOOK AVAILABILITY</h3><span></span>
+                    <div class="avail-image-container">
+                        <img src="the return.jpg" alt="Return Image" class="avail-image">
+                        <div class="status available"></div> <!-- Available Status -->
+                    </div>
+                    <div class="avail-image-container">
+                        <img src="the return.jpg" alt="Return Image" class="avail-image">
+                        <div class="status available"></div> <!-- Available Status -->
+                    </div>
+                    <div class="avail-image-container">
+                        <img src="the return.jpg" alt="Return Image" class="avail-image">
+                        <div class="status available"></div> <!-- Available Status -->
+                    </div>
+                    <div class="avail-image-container">
+                        <img src="the return.jpg" alt="Return Image" class="avail-image">
+                        <div class="status unavailable"></div> <!-- Unavailable Status -->
+                    </div>
+                    <div class="avail-image-container">
+                        <img src="the return.jpg" alt="Return Image" class="avail-image">
+                        <div class="status unavailable"></div> <!-- Unavailable Status -->
+                    </div>
+                    <div class="avail-image-container">
+                        <img src="the return.jpg" alt="Return Image" class="avail-image">
+                        <div class="status unavailable"></div> <!-- Unavailable Status -->
+                    </div>
+                    <div class="avail-image-container">
+                        <img src="the return.jpg" alt="Return Image" class="avail-image">
+                        <div class="status available"></div> <!-- Available Status -->
+                    </div>
+                </div>
+
+
+                            <!-- New div for Top 10 Users List -->
+                <!-- New div for Top 10 Users List -->
+                <div class="user-list-box">
+                    <h3 class="user-list-text">TOP USERS</h3>
+                    <ul class="user-list">
+                        <li><span class="user-icon"><img src="no profile.png" alt="User 1"></span> Jose Luis</li>
+                        <li><span class="user-icon"><img src="no profile.png" alt="User 2"></span> Antonio Reyes</li>
+                        <li><span class="user-icon"><img src="no profile.png" alt="User 3"></span> Ana Maria</li>
+                        <li><span class="user-icon"><img src="no profile.png" alt="User 4"></span> Carlos Santos</li>
+                        <li><span class="user-icon"><img src="no profile.png" alt="User 5"></span> Gabriela Torres</li>
+                        <li><span class="user-icon"><img src="no profile.png" alt="User 6"></span> Manuel Aquino</li>
+                        <li><span class="user-icon"><img src="no profile.png" alt="User 7"></span> Rosa Santiago</li>
+                        <li><span class="user-icon"><img src="no profile.png" alt="User 9"></span> Rafael Gutierrez</li>
+                    </ul>
+                </div>
+
+
 
             <!-- Content HERE -->
         </div>
