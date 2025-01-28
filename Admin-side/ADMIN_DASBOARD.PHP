@@ -18,7 +18,7 @@
 
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    
+
     <style>
 
 
@@ -32,12 +32,12 @@
             <ul>
                 <li>
                     <div class="admin-gradient">
-                    <a href="#">
-                        <span class="icon">
-                            <ion-icon name="person-circle" class="admin-icon"></ion-icon>
-                        </span>
-                        <span class="title1">ANGELO MHYR</span>
-                    </a>
+                        <a href="#">
+                            <span class="icon">
+                                <ion-icon name="person-circle" class="admin-icon"></ion-icon>
+                            </span>
+                            <span class="title1">ANGELO MHYR</span>
+                        </a>
                     </div>
                 </li>
 
@@ -52,19 +52,23 @@
 
                 <li>
                     <a href="#">
-                        <span class="icon">
-                            <ion-icon name="book-outline"></ion-icon>
-                        </span>
-                        <span class="title">Catalog</span>
+                        <a href="ADMIN_CATALOG.PHP">
+                            <span class="icon">
+                                <ion-icon name="book-outline"></ion-icon>
+                            </span>
+                            <span class="title">Catalog</span>
+                        </a>
                     </a>
                 </li>
 
                 <li>
                     <a href="#">
-                        <span class="icon">
-                            <ion-icon name="person-outline"></ion-icon>
-                        </span>
-                        <span class="title">Users</span>
+                        <a href="ADMIN_USERS.PHP">
+                            <span class="icon">
+                                <ion-icon name="person-outline"></ion-icon>
+                            </span>
+                            <span class="title">Users</span>
+                        </a>
                     </a>
                 </li>
 
@@ -79,10 +83,12 @@
 
                 <li>
                     <a href="#">
+                        <a href="ADMIN_NOTIFICATIONS.php">
                         <span class="icon">
                             <ion-icon name="notifications-outline"></ion-icon>
                         </span>
                         <span class="title">Notifications</span>
+                        </a>
                     </a>
                 </li>
 
@@ -139,11 +145,11 @@
             </div>
 
             <!-- Content HERE -->
-          
-    
 
 
-       <!-- Monthly Bar Graph -->
+
+
+            <!-- Monthly Bar Graph -->
             <div class="bar-graph-container">
                 <h3>Book Usage (Monthly)</h3>
                 <div class="bar-graph">
@@ -184,9 +190,9 @@
                 </div>
             </div>
 
-             
-        <!-- Gray-colored div under the charts with image and text -->
-                   
+
+            <!-- Gray-colored div under the charts with image and text -->
+
             <div class="used-box">
                 <h3 class="used-text">NOT USED BOOKS</h3>
                 <img src="the return.jpg" alt="Return Image" class="image1">
@@ -197,71 +203,71 @@
             </div>
 
             <!-- New brown-colored div below the gray box -->
-                <div class="avail-box">
-                    <h3 class="avail-text">BOOK AVAILABILITY</h3><span></span>
-                    <div class="avail-image-container">
-                        <img src="the return.jpg" alt="Return Image" class="avail-image">
-                        <div class="status available"></div> <!-- Available Status -->
-                    </div>
-                    <div class="avail-image-container">
-                        <img src="the return.jpg" alt="Return Image" class="avail-image">
-                        <div class="status available"></div> <!-- Available Status -->
-                    </div>
-                    <div class="avail-image-container">
-                        <img src="the return.jpg" alt="Return Image" class="avail-image">
-                        <div class="status available"></div> <!-- Available Status -->
-                    </div>
-                    <div class="avail-image-container">
-                        <img src="the return.jpg" alt="Return Image" class="avail-image">
-                        <div class="status unavailable"></div> <!-- Unavailable Status -->
-                    </div>
-                    <div class="avail-image-container">
-                        <img src="the return.jpg" alt="Return Image" class="avail-image">
-                        <div class="status unavailable"></div> <!-- Unavailable Status -->
-                    </div>
-                    <div class="avail-image-container">
-                        <img src="the return.jpg" alt="Return Image" class="avail-image">
-                        <div class="status unavailable"></div> <!-- Unavailable Status -->
-                    </div>
-                    <div class="avail-image-container">
-                        <img src="the return.jpg" alt="Return Image" class="avail-image">
-                        <div class="status available"></div> <!-- Available Status -->
-                    </div>
+            <div class="avail-box">
+                <h3 class="avail-text">BOOK AVAILABILITY</h3><span></span>
+                <div class="avail-image-container">
+                    <img src="the return.jpg" alt="Return Image" class="avail-image">
+                    <div class="status available"></div> <!-- Available Status -->
                 </div>
+                <div class="avail-image-container">
+                    <img src="the return.jpg" alt="Return Image" class="avail-image">
+                    <div class="status available"></div> <!-- Available Status -->
+                </div>
+                <div class="avail-image-container">
+                    <img src="the return.jpg" alt="Return Image" class="avail-image">
+                    <div class="status available"></div> <!-- Available Status -->
+                </div>
+                <div class="avail-image-container">
+                    <img src="the return.jpg" alt="Return Image" class="avail-image">
+                    <div class="status unavailable"></div> <!-- Unavailable Status -->
+                </div>
+                <div class="avail-image-container">
+                    <img src="the return.jpg" alt="Return Image" class="avail-image">
+                    <div class="status unavailable"></div> <!-- Unavailable Status -->
+                </div>
+                <div class="avail-image-container">
+                    <img src="the return.jpg" alt="Return Image" class="avail-image">
+                    <div class="status unavailable"></div> <!-- Unavailable Status -->
+                </div>
+                <div class="avail-image-container">
+                    <img src="the return.jpg" alt="Return Image" class="avail-image">
+                    <div class="status available"></div> <!-- Available Status -->
+                </div>
+            </div>
 
 
-                            <!-- New div for Top 10 Users List -->
-                <!-- New div for Top 10 Users List -->
-                <div class="user-list-box">
-                    <h3 class="user-list-text">TOP USERS</h3>
-                    <ul class="user-list">
-                        <li><span class="user-icon"><img src="no profile.png" alt="User 1"></span> Jose Luis</li>
-                        <li><span class="user-icon"><img src="no profile.png" alt="User 2"></span> Antonio Reyes</li>
-                        <li><span class="user-icon"><img src="no profile.png" alt="User 3"></span> Ana Maria</li>
-                        <li><span class="user-icon"><img src="no profile.png" alt="User 4"></span> Carlos Santos</li>
-                        <li><span class="user-icon"><img src="no profile.png" alt="User 5"></span> Gabriela Torres</li>
-                        <li><span class="user-icon"><img src="no profile.png" alt="User 6"></span> Manuel Aquino</li>
-                        <li><span class="user-icon"><img src="no profile.png" alt="User 7"></span> Rosa Santiago</li>
-                        <li><span class="user-icon"><img src="no profile.png" alt="User 9"></span> Rafael Gutierrez</li>
-                    </ul>
-                </div>
+            <!-- New div for Top 10 Users List -->
+            <!-- New div for Top 10 Users List -->
+            <div class="user-list-box">
+                <h3 class="user-list-text">TOP USERS</h3>
+                <ul class="user-list">
+                    <li><span class="user-icon"><img src="no profile.png" alt="User 1"></span> Jose Luis</li>
+                    <li><span class="user-icon"><img src="no profile.png" alt="User 2"></span> Antonio Reyes</li>
+                    <li><span class="user-icon"><img src="no profile.png" alt="User 3"></span> Ana Maria</li>
+                    <li><span class="user-icon"><img src="no profile.png" alt="User 4"></span> Carlos Santos</li>
+                    <li><span class="user-icon"><img src="no profile.png" alt="User 5"></span> Gabriela Torres</li>
+                    <li><span class="user-icon"><img src="no profile.png" alt="User 6"></span> Manuel Aquino</li>
+                    <li><span class="user-icon"><img src="no profile.png" alt="User 7"></span> Rosa Santiago</li>
+                    <li><span class="user-icon"><img src="no profile.png" alt="User 9"></span> Rafael Gutierrez</li>
+                </ul>
+            </div>
 
 
 
             <!-- Content HERE -->
         </div>
         <!-- ========================= Main END ==================== -->
-           
 
 
-<!-- =========== Scripts =========  -->
-<script src="admin.js"></script>
-<script src="ADMIN_MODAL.js"></script>
+
+        <!-- =========== Scripts =========  -->
+        <script src="admin.js"></script>
+        <script src="ADMIN_MODAL.js"></script>
 
 
-<!-- ====== ionicons ======= -->
-<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+        <!-- ====== ionicons ======= -->
+        <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+        <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 
 </body>
 

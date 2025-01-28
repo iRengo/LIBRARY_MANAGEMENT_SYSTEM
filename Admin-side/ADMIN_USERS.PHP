@@ -11,9 +11,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Teachers:ital,wght@0,400..800;1,400..800&family=Viga&family=Zilla+Slab+Highlight:wght@400;700&display=swap" rel="stylesheet">
     <!-- ======= Styles ====== -->
-    <link rel="stylesheet" href="ADMIN_STYLES2.CSS">
+    <link rel="stylesheet" href="ADMIN_USERS.CSS">
     <link rel="stylesheet" href="ADMIN_MODAL.css">
-    <link rel="stylesheet" href="ADMIN_USERS.css">
+    <link rel="stylesheet" href="../User-side/USER_STYLE2.CSS">
 
     <!-- ======= Scripts ====== -->
 

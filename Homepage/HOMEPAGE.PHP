@@ -61,7 +61,7 @@
         </div>
         <div class="button-container">
             <a href="signup.php" style="text-decoration: none;color:white;"> <button class="btn btn-primary">SIGN UP</button></a>
-            <button class="btn btn-secondary">GUEST</button>
+            <a href="../Guest-side/GUEST_DASHBOARD.php"> <button class="btn btn-secondary">GUEST</button></a>
         </div>
         <div class="overlay-text3">
             <div class="hours-dropdown">
