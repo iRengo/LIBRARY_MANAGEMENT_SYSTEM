@@ -96,7 +96,7 @@
                 </li>
 
                 <li>
-                    <a href="USER_NOTIFICATION.PHP">
+                <a href="USER_MANAGEMENT.PHP">
                         <span class="icon">
                             <ion-icon name="file-tray-stacked-outline"></ion-icon>
                         </span>

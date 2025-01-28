@@ -13,7 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Teachers:ital,wght@0,400..800;1,400..800&family=Viga&family=Zilla+Slab+Highlight:wght@400;700&display=swap" rel="stylesheet">
     <!-- ======= Styles ====== -->
     <link rel="stylesheet" href="../User-side/USER_STYLE2.CSS">
-    <link rel="stylesheet" href="LIBRARIAN_RESERVATION.CSS">
+    <link rel="stylesheet" href="USER_MANAGEMENT.CSS">
 
 
     <!-- ======= Scripts ====== -->
@@ -87,7 +87,7 @@
                 </li>
 
                 <li>
-                <a href="USER_MANAGEMENT.PHP">
+                    <a href="USER_MANAGEMENT.PHP">
                         <span class="icon">
                             <ion-icon name="file-tray-stacked-outline"></ion-icon>
                         </span>
@@ -144,135 +144,148 @@
 
             <!-- Content HERE -->
             <div class="container mt-5">
-                <h2 class="text-center mb-4" style="margin-top: 3%; margin-left:2%;">LIST OF BOOK BORROWERS</h2>
+                <h2 class="text-center mb-4" style="margin-top: 3%; margin-left:2%;">USER MANAGEMENT</h2>
 
-                <div class="tab-container">
-                    <ul class="tabs">
-                        <li class="tab-item active" id="borrowRequestTab">BORROW REQUEST</li>
-                        <li class="tab-item" id="approvedTab">APPROVED</li>
-                        <li class="tab-item" id="declinedTab">DECLINED</li>
-                    </ul>
-                </div>
+
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th>Borrow ID</th>
-                            <th>Title</th>
-                            <th>User</th>
-                            <th>Date Form</th>
-                            <th>Action</th>
+                            <th>USER ID</th>
+                            <th>USERNAME</th>
+                            <th>EMAIL</th>
+                            <th>ACCOUNT STATUS</th>
+                            <th>ACTION</th>
                         </tr>
                     </thead>
                     <tbody>
                         <!-- Placeholder Records -->
                         <tr>
-                            <td>1</td>
-                            <td>Book Title 1</td>
-                            <td>User 1</td>
-                            <td>2025-01-15</td>
+                            <td>1213</td>
+                            <td>Username</td>
+                            <td>username@gmail.com</td>
+                            <td>Active</td>
                             <td>
                                 <ion-icon name="eye-outline"></ion-icon>
+                                <a href="#" class="text-success" title="Edit"><i class="bx bx-edit"></i></a>
                                 <a href="#" class="text-danger" title="Delete"><i class="bx bx-trash"></i></a>
-                                <a href="#" class="text-success" title="Confirm"><i class="bx bx-check"></i></a>
+                                
+
                             </td>
                         </tr>
                         <tr>
-                            <td>2</td>
-                            <td>Book Title 2</td>
-                            <td>User 2</td>
-                            <td>2025-01-16</td>
+                            <td>1214</td>
+                            <td>Username</td>
+                            <td>username@gmail.com</td>
+                            <td>Active</td>
                             <td>
                                 <ion-icon name="eye-outline"></ion-icon>
+                                <a href="#" class="text-success" title="Edit"><i class="bx bx-edit"></i></a>
                                 <a href="#" class="text-danger" title="Delete"><i class="bx bx-trash"></i></a>
-                                <a href="#" class="text-success" title="Confirm"><i class="bx bx-check"></i></a>
+                               
                             </td>
                         </tr>
                         <tr>
-                            <td>3</td>
-                            <td>Book Title 3</td>
-                            <td>User 3</td>
-                            <td>2025-01-17</td>
+                            <td>1215</td>
+                            <td>Username</td>
+                            <td>username@gmail.com</td>
+                            <td>Active</td>
                             <td>
                                 <ion-icon name="eye-outline"></ion-icon>
+                                <a href="#" class="text-success" title="Edit"><i class="bx bx-edit"></i></a>
                                 <a href="#" class="text-danger" title="Delete"><i class="bx bx-trash"></i></a>
-                                <a href="#" class="text-success" title="Confirm"><i class="bx bx-check"></i></a>
+                               
+
                             </td>
                         </tr>
                         <tr>
-                            <td>4</td>
-                            <td>Book Title 4</td>
-                            <td>User 4</td>
-                            <td>2025-01-18</td>
+                            <td>1216</td>
+                            <td>Username</td>
+                            <td>username@gmail.com</td>
+                            <td>Active</td>
                             <td>
                                 <ion-icon name="eye-outline"></ion-icon>
+                                <a href="#" class="text-success" title="Edit"><i class="bx bx-edit"></i></a>
                                 <a href="#" class="text-danger" title="Delete"><i class="bx bx-trash"></i></a>
-                                <a href="#" class="text-success" title="Confirm"><i class="bx bx-check"></i></a>
+                               
+
                             </td>
                         </tr>
                         <tr>
-                            <td>5</td>
-                            <td>Book Title 5</td>
-                            <td>User 5</td>
-                            <td>2025-01-19</td>
+                        <td>1216</td>
+                            <td>Username</td>
+                            <td>username@gmail.com</td>
+                            <td>Active</td>
                             <td>
                                 <ion-icon name="eye-outline"></ion-icon>
+                                <a href="#" class="text-success" title="Edit"><i class="bx bx-edit"></i></a>
                                 <a href="#" class="text-danger" title="Delete"><i class="bx bx-trash"></i></a>
-                                <a href="#" class="text-success" title="Confirm"><i class="bx bx-check"></i></a>
+                                
+
                             </td>
                         </tr>
                         <tr>
-                            <td>6</td>
-                            <td>Book Title 6</td>
-                            <td>User 6</td>
-                            <td>2025-01-20</td>
+                        <td>1216</td>
+                            <td>Username</td>
+                            <td>username@gmail.com</td>
+                            <td>Active</td>
                             <td>
                                 <ion-icon name="eye-outline"></ion-icon>
+                                <a href="#" class="text-success" title="Edit"><i class="bx bx-edit"></i></a>
                                 <a href="#" class="text-danger" title="Delete"><i class="bx bx-trash"></i></a>
-                                <a href="#" class="text-success" title="Confirm"><i class="bx bx-check"></i></a>
+                               
+
                             </td>
                         </tr>
                         <tr>
-                            <td>7</td>
-                            <td>Book Title 7</td>
-                            <td>User 7</td>
-                            <td>2025-01-21</td>
+                        <td>1216</td>
+                            <td>Username</td>
+                            <td>username@gmail.com</td>
+                            <td>Active</td>
                             <td>
                                 <ion-icon name="eye-outline"></ion-icon>
+                                <a href="#" class="text-success" title="Edit"><i class="bx bx-edit"></i></a>
                                 <a href="#" class="text-danger" title="Delete"><i class="bx bx-trash"></i></a>
-                                <a href="#" class="text-success" title="Confirm"><i class="bx bx-check"></i></a>
+
+
                             </td>
                         </tr>
                         <tr>
-                            <td>8</td>
-                            <td>Book Title 8</td>
-                            <td>User 8</td>
-                            <td>2025-01-22</td>
+                        <td>1216</td>
+                            <td>Username</td>
+                            <td>username@gmail.com</td>
+                            <td>Inactive</td>
                             <td>
                                 <ion-icon name="eye-outline"></ion-icon>
+                                <a href="#" class="text-success" title="Edit"><i class="bx bx-edit"></i></a>
                                 <a href="#" class="text-danger" title="Delete"><i class="bx bx-trash"></i></a>
-                                <a href="#" class="text-success" title="Confirm"><i class="bx bx-check"></i></a>
+                                
+
                             </td>
                         </tr>
                         <tr>
-                            <td>9</td>
-                            <td>Book Title 9</td>
-                            <td>User 9</td>
-                            <td>2025-01-23</td>
+                        <td>1216</td>
+                            <td>Username</td>
+                            <td>username@gmail.com</td>
+                            <td>Inactive</td>
                             <td>
                                 <ion-icon name="eye-outline"></ion-icon>
+                                <a href="#" class="text-success" title="Edit"><i class="bx bx-edit"></i></a>
                                 <a href="#" class="text-danger" title="Delete"><i class="bx bx-trash"></i></a>
-                                <a href="#" class="text-success" title="Confirm"><i class="bx bx-check"></i></a>
+                              
+
                             </td>
                         </tr>
                         <tr>
-                            <td>10</td>
-                            <td>Book Title 10</td>
-                            <td>User 10</td>
-                            <td>2025-01-24</td>
+                        <td>1216</td>
+                            <td>Username</td>
+                            <td>username@gmail.com</td>
+                            <td>Active</td>
                             <td>
                                 <ion-icon name="eye-outline"></ion-icon>
+                                <a href="#" class="text-success" title="Edit"><i class="bx bx-edit"></i></a>
                                 <a href="#" class="text-danger" title="Delete"><i class="bx bx-trash"></i></a>
-                                <a href="#" class="text-success" title="Confirm"><i class="bx bx-check"></i></a>
+                               
+
                             </td>
                         </tr>
                     </tbody>

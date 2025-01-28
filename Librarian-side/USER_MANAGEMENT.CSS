@@ -1,0 +1,124 @@
+/* =========== Google Fonts ============ */
+@import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap");
+
+/* =============== Globals ============== */
+* {
+    font-family: "poppins", sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ===== Table Styles ===== */
+.table {
+    width: 90%;
+    margin-top: 3%;
+    border-collapse: collapse;
+    font-size: 20px; /* Base font size for table text */
+    margin-left: 3%;
+    margin-right: 3%;
+}
+
+.table th, .table td {
+    padding: 12px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+.table th {
+    background-color: #222B42;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.table td {
+    background-color: #ffffff;
+    color: #212529;
+
+}
+
+.table td a {
+    text-decoration: none;
+    padding: 5px;
+}
+
+.table td a:hover {
+    opacity: 0.7;
+}
+
+/* ===== Pagination Styles ===== */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.pagination .page-item {
+    margin: 0 5px;
+}
+
+.pagination .page-link {
+    display: block;
+    padding: 8px 16px;
+    color: #ffffff;
+    background-color: #485462;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+.pagination .page-link:hover {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #007bff;
+    color: white;
+    border: 1px solid #007bff;
+}
+
+.pagination .page-item.disabled .page-link {
+    color: #ddd;
+    pointer-events: none;
+}
+.pagination li {
+    list-style-type: none;
+}
+
+/* ===== Tab Styles ===== */
+.tab-container {
+    margin-bottom: 20px;
+}
+
+.tabs {
+    display: flex;
+    justify-content: center;
+    list-style-type: none;
+    padding: 0;
+    float: left;
+    margin-left: 3%;
+    margin-top: 3%;
+}
+
+.tab-item {
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: bold;
+    border: 1px solid #ddd;
+    border-radius: 5px 5px 0 0;
+    margin-right: 10px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    background-color: #f1f1f1;
+}
+
+.tab-item:hover {
+    background-color: #aaaaaa;
+    color: white;
+}
+
+.tab-item.active {
+    background-color: #485462;
+    color: white;
+    border-bottom: none;
+}

@@ -94,7 +94,7 @@
                 </li>
 
                 <li>
-                    <a href="USER_NOTIFICATION.PHP">
+                <a href="USER_MANAGEMENT.PHP">
                         <span class="icon">
                             <ion-icon name="file-tray-stacked-outline"></ion-icon>
                         </span>
@@ -143,7 +143,7 @@
                     <p style="font-family: zilla slab highlight; letter-spacing: 2px; margin: 0;">SPHERE</p>
                 </div>
                 <div class="logo" title="LOGOUT YOUR ACCOUNT" style="margin-right: 1%;">
-                    <a href="#" id="logoutIcon">
+                    <a href="Homepage\signin.php" id="logoutIcon">
                         <i class='bx bx-log-in-circle' style="font-size:35px;color:#da1b1b"></i>
                     </a>
                 </div>
