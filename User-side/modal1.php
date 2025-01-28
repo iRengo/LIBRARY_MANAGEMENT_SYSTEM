@@ -152,7 +152,7 @@
 <div class="suggested-books mt-5">
     <h3>Suggested Books</h3>
     <div class="row">
-        < class="col-md-2">
+        <div class="col-md-2">
             <img src=https://www.creativindiecovers.com/wp-content/uploads/2012/02/9780718155209.jpg" class="img-fluid" alt="Suggested Book 1">
         </div>
         <div class="col-md-2">
