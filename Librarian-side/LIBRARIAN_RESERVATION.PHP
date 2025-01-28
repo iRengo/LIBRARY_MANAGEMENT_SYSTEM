@@ -171,6 +171,7 @@
                             <td>User 1</td>
                             <td>2025-01-15</td>
                             <td>
+                                <ion-icon name="eye-outline"></ion-icon>
                                 <a href="#" class="text-danger" title="Delete"><i class="bx bx-trash"></i></a>
                                 <a href="#" class="text-success" title="Confirm"><i class="bx bx-check"></i></a>
                             </td>
@@ -181,6 +182,7 @@
                             <td>User 2</td>
                             <td>2025-01-16</td>
                             <td>
+                                <ion-icon name="eye-outline"></ion-icon>
                                 <a href="#" class="text-danger" title="Delete"><i class="bx bx-trash"></i></a>
                                 <a href="#" class="text-success" title="Confirm"><i class="bx bx-check"></i></a>
                             </td>
@@ -191,6 +193,7 @@
                             <td>User 3</td>
                             <td>2025-01-17</td>
                             <td>
+                                <ion-icon name="eye-outline"></ion-icon>
                                 <a href="#" class="text-danger" title="Delete"><i class="bx bx-trash"></i></a>
                                 <a href="#" class="text-success" title="Confirm"><i class="bx bx-check"></i></a>
                             </td>
@@ -201,6 +204,7 @@
                             <td>User 4</td>
                             <td>2025-01-18</td>
                             <td>
+                                <ion-icon name="eye-outline"></ion-icon>
                                 <a href="#" class="text-danger" title="Delete"><i class="bx bx-trash"></i></a>
                                 <a href="#" class="text-success" title="Confirm"><i class="bx bx-check"></i></a>
                             </td>
@@ -211,6 +215,7 @@
                             <td>User 5</td>
                             <td>2025-01-19</td>
                             <td>
+                                <ion-icon name="eye-outline"></ion-icon>
                                 <a href="#" class="text-danger" title="Delete"><i class="bx bx-trash"></i></a>
                                 <a href="#" class="text-success" title="Confirm"><i class="bx bx-check"></i></a>
                             </td>
@@ -221,6 +226,7 @@
                             <td>User 6</td>
                             <td>2025-01-20</td>
                             <td>
+                                <ion-icon name="eye-outline"></ion-icon>
                                 <a href="#" class="text-danger" title="Delete"><i class="bx bx-trash"></i></a>
                                 <a href="#" class="text-success" title="Confirm"><i class="bx bx-check"></i></a>
                             </td>
@@ -231,6 +237,7 @@
                             <td>User 7</td>
                             <td>2025-01-21</td>
                             <td>
+                                <ion-icon name="eye-outline"></ion-icon>
                                 <a href="#" class="text-danger" title="Delete"><i class="bx bx-trash"></i></a>
                                 <a href="#" class="text-success" title="Confirm"><i class="bx bx-check"></i></a>
                             </td>
@@ -241,6 +248,7 @@
                             <td>User 8</td>
                             <td>2025-01-22</td>
                             <td>
+                                <ion-icon name="eye-outline"></ion-icon>
                                 <a href="#" class="text-danger" title="Delete"><i class="bx bx-trash"></i></a>
                                 <a href="#" class="text-success" title="Confirm"><i class="bx bx-check"></i></a>
                             </td>
@@ -251,6 +259,7 @@
                             <td>User 9</td>
                             <td>2025-01-23</td>
                             <td>
+                                <ion-icon name="eye-outline"></ion-icon>
                                 <a href="#" class="text-danger" title="Delete"><i class="bx bx-trash"></i></a>
                                 <a href="#" class="text-success" title="Confirm"><i class="bx bx-check"></i></a>
                             </td>
@@ -261,6 +270,7 @@
                             <td>User 10</td>
                             <td>2025-01-24</td>
                             <td>
+                                <ion-icon name="eye-outline"></ion-icon>
                                 <a href="#" class="text-danger" title="Delete"><i class="bx bx-trash"></i></a>
                                 <a href="#" class="text-success" title="Confirm"><i class="bx bx-check"></i></a>
                             </td>
