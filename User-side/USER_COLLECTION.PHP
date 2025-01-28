@@ -6,7 +6,7 @@
             <meta http-equiv="X-UA-Compatible" content="IE=edge">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhgj9UU2gEpeHXKuDjc8+aJBBZ/YYz7wkmP5zPpsjLh4RxJMfP5Jxs6t" crossorigin="anonymous">
-            <title> Admin Dashboard</title>
+            <title> USER COLLECTION</title>
             <link rel="preconnect" href="https://fonts.googleapis.com">
             <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
             <link href="https://fonts.googleapis.com/css2?family=Teachers:ital,wght@0,400..800;1,400..800&family=Viga&family=Zilla+Slab+Highlight:wght@400;700&display=swap" rel="stylesheet">
@@ -170,7 +170,7 @@ h1 {
                                 </a>
                             </div>
                         </li>
-
+                <li>
                         <a href="USER_DASHBOARD.PHP">
                         <span class="icon">
                             <ion-icon name="home-outline"></ion-icon>
@@ -308,7 +308,7 @@ h1 {
             </div>
                 <br>
                 <div class="container">
-        <h1 style="margin-left: 50px;">RECENTLY ADDED</h1>
+        <h1 style="margin-left: 50px;">RECENTLY ADDEDg  </h1>
         <div class="book-grid">
         <div class="book-card">
         <img src="https://placeit-img-1-p.cdn.aws.placeit.net/uploads/stage/stage_image/22101/optimized_large_thumb_Horror_Book_Cover.jpg" alt="Harry Potter II">
