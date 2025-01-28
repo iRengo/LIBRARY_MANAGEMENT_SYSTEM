@@ -6,14 +6,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhgj9UU2gEpeHXKuDjc8+aJBBZ/YYz7wkmP5zPpsjLh4RxJMfP5Jxs6t" crossorigin="anonymous">
-    <title> Admin Dashboard</title>
+    <title> Librarian Catalog </title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Teachers:ital,wght@0,400..800;1,400..800&family=Viga&family=Zilla+Slab+Highlight:wght@400;700&display=swap" rel="stylesheet">
     <!-- ======= Styles ====== -->
     <link rel="stylesheet" href="../User-side/USER_STYLE2.CSS">
-    <link rel="stylesheet" href="ADMIN_MODAL.css">
-    <link rel="stylesheet" href="ADMIN_CATALOG.CSS">
+    <link rel="stylesheet" href="LIBRARIAN_CATALOG.CSS">
 
     <!-- ======= Scripts ====== -->
 
@@ -36,7 +35,7 @@
                             <span class="icon">
                                 <ion-icon name="person-circle" class="admin-icon"></ion-icon>
                             </span>
-                            <span class="title1">ADMIN</span>
+                            <span class="title1">LIBRARIAN</span>
                         </a>
                     </div>
                 </li>
@@ -226,8 +225,8 @@
     </div>
 
     <!-- =========== Scripts =========  -->
-    <script src="admin.js"></script>
-    <script src="ADMIN_MODAL.js"></script>
+    <script src="LIBRA.js"></script>
+    <script src="LIBRARIAN.js"></script>
 
 
     <!-- ====== ionicons ======= -->

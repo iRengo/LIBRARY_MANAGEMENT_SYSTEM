@@ -350,7 +350,8 @@
         <!-- ========================= Main END ==================== -->
    
 <!-- =========== Scripts =========  -->
-<script src="/User-side/USER.JS"></script>
+<script src="LIBRA.js"></script>
+    <script src="LIBRARIAN.js"></script>
 
 
 
