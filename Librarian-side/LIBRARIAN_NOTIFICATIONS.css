@@ -1,0 +1,422 @@
+    @import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap");
+
+    /* =============== Globals ============== */
+    * {
+        font-family: "Ubuntu", sans-serif;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    :root {
+        --blue: #1C2E5C;
+        --white: #fff;
+        --gray: #f5f5f5;
+        --black1: #222;
+        --black2: #999;
+    }
+
+    body {
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
+
+    .container {
+        position: relative;
+        width: 100%;
+        min-height: 100vh; /* Ensure it fills the viewport height */
+        margin-bottom: 0; /* Ensure no gap at the bottom */
+    }
+
+    /* =============== Navigation ================ */
+    .navigation {
+        position: fixed;
+        width: 300px;
+        height: 100%;
+        background: var(--blue);
+        transition: 0.5s;
+        overflow: hidden;
+        
+    }
+
+    .navigation.active {
+        width: 80px;
+    }
+
+    .navigation ul {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+    }
+
+    .navigation ul li {
+        position: relative;
+        width: 100%;
+        list-style: none;
+        border-top-left-radius: 30px;
+        border-bottom-left-radius: 30px;
+    }
+
+    .navigation ul li:hover,
+    .navigation ul li.hovered {
+        background-color: var(--white);
+    }
+
+    .navigation ul li:nth-child(1) {
+        margin-bottom: 40px;
+        pointer-events: none;
+    }
+
+    .navigation ul li a {
+        position: relative;
+        display: block;
+        width: 100%;
+        display: flex;
+        text-decoration: none;
+        color: var(--white);
+    }
+
+    .navigation ul li:hover a,
+    .navigation ul li.hovered a {
+        color: var(--blue);
+    }
+
+    .navigation ul li a .icon {
+        position: relative;
+        display: block;
+        min-width: 60px;
+        height: 60px;
+        line-height: 75px;
+        text-align: center;
+        margin-left: 10px;
+    }
+
+    .navigation ul li a .icon ion-icon {
+        font-size: 1.75rem;
+    }
+
+    .navigation ul li a .title {
+        position: relative;
+        display: block;
+        padding: 0 10px;
+        height: 60px;
+        line-height: 60px;
+        text-align: start;
+        white-space: nowrap;
+    }
+    .navigation ul li a .title1 {
+        position: relative;
+        display: block;
+        padding: 0 10px;
+        height: 60px;
+        line-height: 60px;
+        text-align: start;
+        white-space: nowrap;
+        font-size: 20px;
+        margin-top: 7%;
+        margin-left:10%;
+    }
+
+    /* --------- curve outside ---------- */
+    .navigation ul li:hover a::before,
+    .navigation ul li.hovered a::before {
+        content: "";
+        position: absolute;
+        right: 0;
+        top: -50px;
+        width: 50px;
+        height: 50px;
+        background-color: transparent;
+        border-radius: 50%;
+        box-shadow: 35px 35px 0 10px var(--white);
+        pointer-events: none;
+    }
+
+    .navigation ul li:hover a::after,
+    .navigation ul li.hovered a::after {
+        content: "";
+        position: absolute;
+        right: 0;
+        bottom: -50px;
+        width: 50px;
+        height: 50px;
+        background-color: transparent;
+        border-radius: 50%;
+        box-shadow: 35px -35px 0 10px var(--white);
+        pointer-events: none;
+    }
+
+    /* ===================== Main ===================== */
+    .main {
+        position: absolute;
+        width: calc(100% - 300px);
+        left: 300px;
+        min-height: 100vh;
+        background: var(--white);
+        transition: 0.5s;
+    }
+
+    .main.active {
+        width: calc(100% - 80px);
+        left: 80px;
+    }
+
+    .topbar {
+        width: 100%;
+        height: 60px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 10px;
+        box-shadow: 0 4px 6px rgba(150, 150, 150, 0.2);
+
+    }
+
+    .toggle {
+        position: relative;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 2.5rem;
+        cursor: pointer;
+        margin-right: 2%;
+    }
+
+    .viga-regular {
+        font-family: "Viga", serif;
+        font-weight: 400;
+        font-style: normal;
+    }
+    .zilla-slab-highlight-regular {
+        font-family: "Zilla Slab Highlight", serif;
+        font-weight: 400;
+        font-style: normal;
+    }
+    
+    .zilla-slab-highlight-bold {
+        font-family: "Zilla Slab Highlight", serif;
+        font-weight: 700;
+        font-style: normal;
+    }
+    .admin-icon {
+        width: 63px; 
+        height: 63px;  
+        margin-top: 30%;
+    }
+    /* Time and Date Display Styling */
+    .time-container {
+        position: fixed;   
+        bottom: 0;       
+        left: 0;           
+        width: 100%;       
+        padding: 10px;
+        background: linear-gradient(to bottom, #1C2E5C, #343536); 
+        color: #fff;      
+        border-radius: 8px; 
+        box-sizing: border-box; 
+        text-align: left;
+    }
+
+
+    .admin-gradient {
+        background: linear-gradient(to top, #1C2E5C, #343536); /* Gradient direction */
+        background-size: 500px 190px 120px; /* Make the gradient cover the entire div */
+        background-position: 0 0; /* Ensure it starts from the top */
+        height: 100px;
+        padding: 0;
+        margin: 0;
+
+    }
+
+
+
+
+    /* Content Container Styling */
+    .content-container {
+        background-color: #f5f5f5; /* Light gray */
+        padding: 20px;
+        height: 800px;
+        margin: 20px; /* Spacing from the edges */
+        border-radius: 8px; /* Rounded corners */
+        box-shadow: 0 10px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    }
+
+    /* Button Container Styling */
+    .button-container {
+        display: flex;
+        gap: 15px; /* Space between buttons */
+        margin-top: 20px;
+    }
+
+    /* Action Button Styling */
+    .action-button {
+        background-color: #e7e7e7; /* Default button color */
+        color: black; /* Default text color */
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        font-family: "Ubuntu", sans-serif;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+        transition: background-color 0.3s ease, color 0.3s ease;
+        box-shadow: 0px 5px 7px rgba(0, 0, 0, 0.377); /* Slight shadow */
+    }
+
+    /* Active Button Styling */
+    .action-button.active {
+        background-color: #343536; /* Selected button color */
+        color: white; /* White text color when active */
+    }
+
+    /* Hover effect for buttons */
+    .action-button:hover {
+        background-color: #343536; /* Hover color */
+        color: white; /* White text color on hover */
+    }
+
+    /* Hover effect for buttons (when active) */
+    .action-button:active {
+        background-color: #343536; /* Button color when clicked */
+        color: white; /* White text color when clicked */
+    }
+
+/* Content Box Styling */
+.content-box {
+    display: none; /* Hide content by default */
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #d6d6d6; /* Content box background color */
+    box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.336); /* Subtle shadow */
+    font-size: 16px;
+    font-family: "Arial", sans-serif;
+    color: #000000; /* Text color */
+}
+
+/* Div-based Header Styling */
+.borrowed-content-header {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    padding: 10px;
+    background-color: #343536;
+    color: white;
+    font-weight: bold;
+    text-align: center; /* Center the text horizontally */
+}
+
+.borrowed-content-header div {
+    padding: 5px;
+}
+
+/* Div-based Content Rows Styling */
+.borrowed-content-row {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    padding: 5px;
+    border-bottom: 1px solid #ddd;
+    background-color: #f9f9f9;
+    text-align: center; /* Center the text horizontally */
+}
+
+.borrowed-content-row:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.borrowed-content-row div {
+    padding: 5px;
+}
+
+/* Remarks Button Styling */
+.remarks {
+    display: flex;
+    align-items: center; /* Align the buttons vertically in the center */
+    justify-content: flex-start; /* Ensure the buttons are aligned to the left */
+}
+
+/* Style for the remark buttons */
+.remark-button {
+    padding: 5px 10px;
+    margin: 5px;
+    cursor: pointer;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+.remark-button:hover {
+    opacity: 0.8;
+}
+
+/* Styling for the GOOD button */
+.remark-button.good {
+    background-color: #f1c40f; /* Yellow */
+}
+
+.remark-button.damaged {
+    background-color: #e74c3c; /* Red */
+}
+
+.remark-button.lost {
+    background-color: #e67e22; /* Orange */
+}
+
+/* Style for the UPDATE button */
+.update-button {
+    padding: 5px 10px;
+    margin-left: 10px; /* Add space between the remark buttons and the UPDATE button */
+    cursor: pointer;
+    background-color: #2ecc71;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+/* Hover effect for the UPDATE button */
+.update-button:hover {
+    background-color: #27ae60;
+}
+
+/* Active effect for the UPDATE button (when clicked) */
+.update-button:active {
+    background-color: #28b463; /* Slightly darker shade for clicked effect */
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2); /* Adds an inset shadow for active state */
+}
+
+/* Hide unselected remark buttons */
+.remark-button.hidden {
+    display: none;
+}
+
+/* Display content when its corresponding button is clicked */
+#borrowed-content:target {
+    display: block; /* Show the borrowed content */
+}
+
+/* Styling for the selected remark text */
+.selected-remark {
+    margin-left: 20px;
+    font-weight: bold;
+    color: #2980b9; /* Color for the selected remark text */
+}
+
+
+
+
+
+
+
+
+
+    /* Display content when its corresponding button is clicked */
+    #borrowed-content:target,
+    #declined-borrow-content:target,
+    #returned-books-content:target {
+        display: block; /* Show the target content */
+    }
+
+

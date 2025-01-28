@@ -231,9 +231,6 @@ body {
 
 }
 
-
-
-
 /* Content Container Styling */
 .content-container {
     background-color: #f5f5f5; /* Light gray */
@@ -347,5 +344,4 @@ body {
 #actions-content:target {
     display: block; /* Show the target content */
 }
-
 

@@ -145,9 +145,9 @@
             <div class="content-container">
                 <h2>MY ACTIVITIES</h2>
                 <div class="button-container">
-                    <a href="#approved-content" class="action-button">Approved</a>
-                    <a href="#rejected-content" class="action-button">Rejected</a>
-                    <a href="#actions-content" class="action-button">Actions</a>
+                    <a href="#approved-content" class="action-button">APPROVED</a>
+                    <a href="#rejected-content" class="action-button">REJECTED</a>
+                    <a href="#actions-content" class="action-button">ACTIONS</a>
                 </div>
 
                 <!-- Content for Each Button -->
