@@ -1,3 +1,43 @@
+<?php
+session_start();
+include 'db_connect.php';
+
+// Retrieve error message if it exists
+$error_message = isset($_SESSION['error_message']) ? $_SESSION['error_message'] : "";
+unset($_SESSION['error_message']); // Clear error message after displaying
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $student_no = $_POST['student_no'];
+    $password = $_POST['password'];
+
+    $stmt = $conn->prepare("SELECT student_no, password FROM users WHERE student_no = ?");
+    $stmt->bind_param("s", $student_no);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows === 1) {
+        $row = $result->fetch_assoc();
+        $hashed_password = $row['password'];
+
+        // Verify the entered password against the hashed password
+        if (password_verify($password, $hashed_password)) {
+            $_SESSION['student_no'] = $student_no;
+            header("Location: dashboard.php"); // Redirect to the dashboard after login
+            exit();
+        } else {
+            $_SESSION['error_message'] = "Invalid student number or password.";
+        }
+    } else {
+        $_SESSION['error_message'] = "Invalid student number or password.";
+    }
+
+    $stmt->close();
+    $conn->close();
+    header("Location: signin.php"); // Redirect back to login page if failed
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -43,7 +83,7 @@
             color: #aaa;
             float: right;
             font-size: 28px;
-            font-weight: bold;      
+            font-weight: bold;
         }
 
         .close:hover,
@@ -90,43 +130,39 @@
         <div class="left-image">
             <img src="loginpic.png" alt="Left Side Image">
         </div>
-        <div class="login-form-container">
-            <h2>LOGIN TO YOUR ACCOUNT</h2>
-        
+        <form method="POST" action="login_handler.php"  style="margin-right: -5%;">
+            <div class="login-form-container">
+                <h2>LOGIN TO YOUR ACCOUNT</h2>
+                
+
                 <div class="form-group">
-                    <input type="text" id="username" name="username" class="form-control" placeholder=" " required>
-                    <label for="username">Username</label>
+                    <input type="text" id="student_no" name="student_no" class="form-control" placeholder="Student Number" required>
+
                 </div>
                 <div class="form-group">
-                    <input type="password" id="password" name="password" class="form-control" placeholder=" " required>
-                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
                 </div>
-                <div class="form-group">
-                    <div class="recaptcha-container">
-                        <div class="g-recaptcha" data-sitekey="6LcbyK0qAAAAAD3K5wZbObRk5Z2_bbEVgir6thO7"></div>
+                <?php if (!empty($error_message)) : ?>
+                    <div class="alert alert-danger">
+                        <p style="color:red;"><?php echo $error_message; ?> </p>
                     </div>
+                <?php endif; ?>
+                <div class="form-group">
+                    <div class="g-recaptcha" data-sitekey="6LcbyK0qAAAAAD3K5wZbObRk5Z2_bbEVgir6thO7"></div>
                 </div>
 
-
-                <div class="terms">
-                    <input type="checkbox" required>
-                    <p class="small-font"> &nbsp;&nbsp; I agree to the <a href="#" id="termsLink">Terms and Conditions </a></p>
-                </div>
-
-
-                <button type="submit" class="btn btn-primary"> <a href="../User-side/USER_DASHBOARD.PHP" style="text-decoration: none;color:white;"> LOGIN </a></button>
+                <button type="submit" class="btn btn-primary">LOGIN</button>
 
                 <div class="forgot-password">
-                    <p class="small-font"><a href="forgot.php">Forgot your password?</a></p>
+                    <p><a href="forgot.php">Forgot your password?</a></p>
                 </div>
-
-
                 <div class="no-account">
-                    <p class="small-font">Don't have an account? <a href="signup.php">Create now!</a></p>
+                    <p>Don't have an account? <a href="signup.php">Create now!</a></p>
                 </div>
-            </form>
-        </div>  
+            </div>
+        </form>
     </div>
+</div>
 </div>
 
 
@@ -171,52 +207,51 @@
 
 
 <script>
-// Get modal element
-var modal = document.getElementById("termsModal");
+    // Get modal element
+    var modal = document.getElementById("termsModal");
 
-// Get the link that opens the modal
-var termsLink = document.getElementById("termsLink");
+    // Get the link that opens the modal
+    var termsLink = document.getElementById("termsLink");
 
-// Get the <span> element that closes the modal
-var closeBtn = document.getElementsByClassName("close")[0];
+    // Get the <span> element that closes the modal
+    var closeBtn = document.getElementsByClassName("close")[0];
 
-// Get Accept and Decline buttons
-var acceptBtn = document.getElementById("acceptBtn");
-var declineBtn = document.getElementById("declineBtn");
+    // Get Accept and Decline buttons
+    var acceptBtn = document.getElementById("acceptBtn");
+    var declineBtn = document.getElementById("declineBtn");
 
-// Get the checkbox for terms
-var termsCheckbox = document.querySelector(".terms input[type='checkbox']");
+    // Get the checkbox for terms
+    var termsCheckbox = document.querySelector(".terms input[type='checkbox']");
 
-// When the user clicks the link, open the modal
-termsLink.onclick = function(event) {
-    event.preventDefault(); // Prevent default link behavior
-    modal.style.display = "block";
-};
+    // When the user clicks the link, open the modal
+    termsLink.onclick = function(event) {
+        event.preventDefault(); // Prevent default link behavior
+        modal.style.display = "block";
+    };
 
-// When the user clicks the close button, close the modal
-closeBtn.onclick = function() {
-    modal.style.display = "none";
-};
-
-// When the user clicks Accept
-acceptBtn.onclick = function() {
-    modal.style.display = "none"; // Close the modal
-    termsCheckbox.checked = true; // Check the checkbox
-};
-
-// When the user clicks Decline
-declineBtn.onclick = function() {
-    modal.style.display = "none"; // Close the modal
-    termsCheckbox.checked = false; // Ensure the checkbox is unchecked
-};
-
-// When the user clicks anywhere outside the modal, close it
-window.onclick = function(event) {
-    if (event.target == modal) {
+    // When the user clicks the close button, close the modal
+    closeBtn.onclick = function() {
         modal.style.display = "none";
-    }
-};
+    };
 
+    // When the user clicks Accept
+    acceptBtn.onclick = function() {
+        modal.style.display = "none"; // Close the modal
+        termsCheckbox.checked = true; // Check the checkbox
+    };
+
+    // When the user clicks Decline
+    declineBtn.onclick = function() {
+        modal.style.display = "none"; // Close the modal
+        termsCheckbox.checked = false; // Ensure the checkbox is unchecked
+    };
+
+    // When the user clicks anywhere outside the modal, close it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    };
 </script>
 
 

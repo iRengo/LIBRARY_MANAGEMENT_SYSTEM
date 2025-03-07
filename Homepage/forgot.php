@@ -1,3 +1,29 @@
+<?php
+session_start();
+include 'db_connect.php';
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $email = trim($_POST["email"]);
+
+    // Check if the email exists
+    $stmt = $conn->prepare("SELECT * FROM stud_acc WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows == 0) {
+        $_SESSION['error'] = "Email not found!";
+        header("Location: forgot.php");
+        exit();
+    }
+
+    // Store email in session and redirect to otp.php
+    $_SESSION["email"] = $email;
+    header("Location: otp.php"); // Redirect first
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,7 +36,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ionicons@5.5.4/dist/ionicons/ionicons.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Teachers:ital,wght@0,400..800;1,400..800&family=Viga&family=Zilla+Slab+Highlight:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="forgot.css"> 
+    <link rel="stylesheet" href="forgot.css">
 
     <link href="https://cdn.jsdelivr.net/npm/boxicons/css/boxicons.min.css" rel="stylesheet">
 </head>
@@ -26,7 +52,7 @@
         </div>
     </div>
 
-   
+
     <div class="navbar-links">
         <ul class="nav">
             <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
@@ -37,7 +63,7 @@
         </ul>
     </div>
 
-   
+
     <div class="login-btn">
         <button class="btn btn-dark"><b> SIGN IN </b></button>
     </div>
@@ -47,23 +73,33 @@
     <img src="signbacka.png" alt="Background Image">
     <div class="overlay-container">
         <div class="left-image">
-            <img src="loginpic.png" alt="Left Side Image" >
+            <img src="loginpic.png" alt="Left Side Image">
         </div>
         <div class="login-form-container">
             <h2>FORGOT YOUR PASSWORD</h2>
             <h4 class="small-font"> Enter your Email : </h4> <br>
 
+            <form action="send_otp.php" method="POST">
                 <div class="form-group">
-                    <input type="text" id="username" name="username" class="form-control" placeholder=" " required>
-                    <label for="username">Enter your Email</label>
+                    <input type="email" name="email" class="form-control" placeholder="Enter your Email" required>
                 </div>
-              <a href="otp.php" style="text-decoration: none;color:white;"> <button type="submit" class="btn btn-primary"> Send OTP </button></a>
+                <?php
+                if (isset($_SESSION['error'])) {
+                    echo '<div class="alert alert-danger" style="color:red;">' . $_SESSION['error'] . '</div>';
+                    unset($_SESSION['error']); // Clear the error after displaying
+                }
+                ?>
+                <Br>
 
-               <p class="small-font" style="margin-top:3%;"> You already have account ? <a href="#" style="color:black; "> Login now ! </a> </p> 
+                <button type="submit" class="btn btn-primary">Send OTP</button>
             </form>
+
+
+            <p class="small-font" style="margin-top:3%;">Already have an account? <a href="signin.php" style="color:black;">Login now!</a></p>
         </div>
     </div>
 </div>
+
 
 
 

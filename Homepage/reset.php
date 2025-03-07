@@ -1,3 +1,35 @@
+<?php
+session_start();
+include 'db_connect.php';
+
+$error = ""; // Initialize an error message variable
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $new_password = $_POST['new_password'];
+    $confirm_password = $_POST['confirm_password'];
+    $email = $_SESSION['email'];
+
+    // Check if passwords match
+    if ($new_password !== $confirm_password) {
+        $error = "Passwords do not match! Please try again.";
+    } else {
+        // Hash the password and update the database
+        $hashed_password = password_hash($new_password, PASSWORD_BCRYPT);
+        $stmt = $conn->prepare("UPDATE stud_acc SET password = ? WHERE email = ?");
+        $stmt->bind_param("ss", $hashed_password, $email);
+
+        if ($stmt->execute()) {
+            header("Location: signin.php?reset=success");
+            exit();
+        } else {
+            $error = "Error resetting password! Please try again.";
+        }
+    }
+}
+?>
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,7 +42,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ionicons@5.5.4/dist/ionicons/ionicons.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Teachers:ital,wght@0,400..800;1,400..800&family=Viga&family=Zilla+Slab+Highlight:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="forgot.css"> 
+    <link rel="stylesheet" href="forgot.css">
 
     <link href="https://cdn.jsdelivr.net/npm/boxicons/css/boxicons.min.css" rel="stylesheet">
 </head>
@@ -26,7 +58,7 @@
         </div>
     </div>
 
-   
+
     <div class="navbar-links">
         <ul class="nav">
             <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
@@ -37,7 +69,7 @@
         </ul>
     </div>
 
-   
+
     <div class="login-btn">
         <button class="btn btn-dark"><b> SIGN IN </b></button>
     </div>
@@ -47,23 +79,28 @@
     <img src="signbacka.png" alt="Background Image">
     <div class="overlay-container">
         <div class="left-image">
-            <img src="loginpic.png" alt="Left Side Image" >
+            <img src="loginpic.png" alt="Left Side Image">
         </div>
         <div class="login-form-container">
             <h2>RESET YOUR PASSWORD</h2>
-            <h4 class="small-font"> Change your password :   </h4> <br>
+            <h4 class="small-font"> Change your password : </h4> <br>
 
-                <div class="form-group">
-                    <input type="text" id="username" name="username" class="form-control" placeholder=" " required>
-                    <label for="username">New Password</label>
-                </div>
-                <div class="form-group">
-                    <input type="text" id="username" name="username" class="form-control" placeholder=" " required>
-                    <label for="username">Confirm Password</label>
-                </div>
-              <a href="signin.php" style="text-decoration: none;color:white;"> <button type="submit" class="btn btn-primary"> Confirm </button></a>
+            <form action="reset.php" method="POST">
+                <input type="password" name="new_password" class="form-control" placeholder="New Password" required>
+                <Br> <Br>
+                <input type="password" name="confirm_password" class="form-control" placeholder="Confirm Password" required>
+                <Br>
+                <!-- Display error message if exists -->
+                <?php if (!empty($error)) : ?>
+                    <div class="alert alert-danger" style="color:red;"><?php echo $error; ?></div>
+                <?php endif; ?>
+                 <br> 
 
-               <p class="small-font" style="margin-top:3%;"> You already have account ? <a href="#" style="color:black; "> Login now ! </a> </p> 
+                <button type="submit" class="btn btn-primary">Confirm</button>
+            </form>
+
+
+            <p class="small-font" style="margin-top:3%;"> You already have account ? <a href="signin.php" style="color:black; "> Login now ! </a> </p>
             </form>
         </div>
     </div>

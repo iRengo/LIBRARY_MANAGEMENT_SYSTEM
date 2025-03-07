@@ -1,3 +1,49 @@
+<?php
+session_start();
+include 'db_connect.php';
+
+if (!isset($_SESSION["email"])) {
+    $_SESSION["error"] = "Unauthorized access!";
+    header("Location: forgot.php");
+    exit();
+}
+
+$email = $_SESSION["email"];
+$error = "";
+
+// If OTP is submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $entered_otp = trim($_POST["otp"]);
+
+    // Fetch OTP from the database
+    $stmt = $conn->prepare("SELECT otp, otp_expiry FROM stud_acc WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+
+    if ($row) {
+        $stored_otp = $row["otp"];
+        $otp_expiry = $row["otp_expiry"];
+
+        // Validate OTP and check expiration
+        if ($entered_otp == $stored_otp && time() < $otp_expiry) {
+            $_SESSION["verified"] = true; // Allow password reset
+            header("Location: reset.php");
+            exit();
+        } else {
+            $_SESSION['error'] = "Invalid or expired OTP!";
+            header("Location: otp.php");
+            exit();
+        }
+    } else {
+        $_SESSION['error'] = "Something went wrong. Please try again.";
+        header("Location: otp.php");
+        exit();
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,7 +56,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ionicons@5.5.4/dist/ionicons/ionicons.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Teachers:ital,wght@0,400..800;1,400..800&family=Viga&family=Zilla+Slab+Highlight:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="otp.css"> 
+    <link rel="stylesheet" href="otp.css">
 
     <link href="https://cdn.jsdelivr.net/npm/boxicons/css/boxicons.min.css" rel="stylesheet">
 </head>
@@ -26,7 +72,7 @@
         </div>
     </div>
 
-   
+
     <div class="navbar-links">
         <ul class="nav">
             <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
@@ -37,7 +83,7 @@
         </ul>
     </div>
 
-   
+
     <div class="login-btn">
         <button class="btn btn-dark"><b> SIGN IN </b></button>
     </div>
@@ -47,29 +93,30 @@
     <img src="signbacka.png" alt="Background Image">
     <div class="overlay-container">
         <div class="left-image">
-            <img src="loginpic.png" alt="Left Side Image" >
+            <img src="loginpic.png" alt="Left Side Image">
         </div>
         <div class="login-form-container">
             <h2>ENTER YOUR OTP</h2>
-            <h4 class="small-font"> Enter OTP that we sent on email ********@gmail.com </h4> <br>
+            <h4 class="small-font">Enter the OTP sent to your email</h4> <br>
 
-                <div class="form-group">
-                    <div class="otp-container">
-                        <div class="otp-box">6</div>
-                        <div class="otp-box">6</div>
-                        <div class="otp-box">6</div>
-                        <div class="otp-box">6</div>
-                        <div class="otp-box">6</div>
-                        <div class="otp-box">6</div>
-                    </div>
-                
-                </div>
-               <a href="reset.php" style="text-decoration: none; color:white;"><button type="submit" class="btn btn-primary"> Submit </button> </a>
+            <form action="otp.php" method="POST">
+            <input type="text" name="otp" class="form-control" placeholder="Enter OTP" required>
+            <Br>
+            <br>
+            <?php
+            if (isset($_SESSION['error'])) {
+                echo '<div class="alert alert-danger" style="color:red">' . $_SESSION['error'] . '</div>';
+                unset($_SESSION['error']); // Clear error after displaying
+            }
+            ?>
+            <br>
 
-               <p class="small-font" style="margin-top:3%;"> You already have account ? <a href="signin.php" style="color:black; "> Login now ! </a> </p> 
-            </form>
-        </div>
+            <button type="submit" class="btn btn-primary">Verify OTP</button>
+        </form>
+
+        <p class="small-font" style="margin-top: 3%;">Didn't receive an OTP? <a href="forgot.php" style="color: black;">Resend OTP</a></p>
     </div>
+</div>
 </div>
 
 

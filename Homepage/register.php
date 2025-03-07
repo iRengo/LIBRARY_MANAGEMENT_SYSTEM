@@ -1,3 +1,48 @@
+<?php
+session_start();
+include 'db_connect.php';
+
+if (!isset($_SESSION['student_no'])) {
+    header("Location: signup.php"); // Redirect if session is not set
+    exit();
+}
+
+$student_no = $_SESSION['student_no'];
+$firstname = $_SESSION['first_name'];
+$lastname = $_SESSION['last_name'];
+$email = $_SESSION['email'];
+
+// Handle form submission
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $password = mysqli_real_escape_string($conn, $_POST['password']);
+    $confirm_password = mysqli_real_escape_string($conn, $_POST['confirm_password']);
+    $contact = mysqli_real_escape_string($conn, $_POST['contact']);
+
+    // Check if passwords match
+    if ($password !== $confirm_password) {
+        $error_message = "Passwords do not match!";
+    } else {
+        // Hash the password
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+        // Insert into database
+        $sql = "INSERT INTO stud_acc (student_no, password, first_name, last_name, contact, email) 
+                VALUES (?, ?, ?, ?, ?, ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ssssss", $student_no, $hashed_password, $firstname, $lastname, $contact, $email);
+
+        if ($stmt->execute()) {
+            header("Location: signin.php");
+            exit();
+        } else {
+            $error_message = "Error: " . $stmt->error;
+        }
+    }
+}
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -14,7 +59,6 @@
     <link href="https://cdn.jsdelivr.net/npm/boxicons/css/boxicons.min.css" rel="stylesheet">
 
     <style>
-
         .modal {
             display: none;
             position: fixed;
@@ -28,7 +72,7 @@
         }
 
         .modal-content {
-            background-color:rgb(231, 231, 231);
+            background-color: rgb(231, 231, 231);
             margin: 15% auto;
             padding: 20px;
             border: 1px solid #888;
@@ -85,49 +129,57 @@
             <img src="loginpic.png" alt="Left Side Image">
         </div>
         <div class="login-form-container">
-            <h2>CREATE YOUR ACCOUNT</h2>
-        
+            <form method="POST" action="register.php">
+                <h2>CREATE YOUR ACCOUNT</h2>
+
+
+                <div class="form-group">
+                    <input type="text" id="student_no" name="student_no" style=" font-size:16px;" class="form-control" value="<?php echo htmlspecialchars($student_no); ?>" readonly>
+                    <label for="student_no">Student Number</label>
+                </div>
+
                 <!-- First Name and Last Name -->
                 <div class="form-group-row">
                     <div class="form-group" style="flex: 1; margin-right: 10px;">
-                        <input type="text" id="firstname" name="firstname" class="form-control" placeholder=" " required>
+                        <input type="text" id="firstname" name="firstname" style=" font-size:16px;" class="form-control" placeholder=" " required value="<?php echo isset($_SESSION['first_name']) ? htmlspecialchars($_SESSION['first_name']) : ''; ?>">
                         <label for="firstname">First Name</label>
                     </div>
                     <div class="form-group" style="flex: 1;">
-                        <input type="text" id="lastname" name="lastname" class="form-control" placeholder=" " required>
+                        <input type="text" id="lastname" name="lastname" style=" font-size:16px;" class="form-control" placeholder=" " required value="<?php echo isset($_SESSION['last_name']) ? htmlspecialchars($_SESSION['last_name']) : ''; ?>">
                         <label for="lastname">Last Name</label>
                     </div>
                 </div>
 
                 <!-- Email Address -->
                 <div class="form-group">
-                    <input type="email" id="email" name="email" class="form-control" placeholder=" " required>
+                    <input type="email" id="email" name="email" style=" font-size:16px;" class="form-control" placeholder=" " required value="<?php echo isset($_SESSION['email']) ? htmlspecialchars($_SESSION['email']) : ''; ?>">
                     <label for="email">Email Address</label>
                 </div>
 
                 <!-- Password and Confirm Password -->
                 <div class="form-group-row">
                     <div class="form-group" style="flex: 1; margin-right: 10px;">
-                        <input type="password" id="password" name="password" class="form-control" placeholder=" " required>
+                        <input type="password" id="password" name="password" style=" font-size:16px;" class="form-control" placeholder=" " required>
                         <label for="password">Password</label>
                     </div>
                     <div class="form-group" style="flex: 1;">
-                        <input type="password" id="confirm_password" name="confirm_password" class="form-control" placeholder=" " required>
-                        <label for="confirm_password">Confirm pass</label>
+                        <input type="password" id="confirm_password" name="confirm_password" style=" font-size:16px;" class="form-control" placeholder=" " required>
+                        <label for="confirm_password">Confirm Password</label>
                     </div>
                 </div>
 
                 <!-- Contact Number -->
                 <div class="form-group">
-                    <input type="text" id="contact" name="contact" class="form-control" placeholder=" " required>
+                    <input type="text" id="contact" name="contact" style=" font-size:16px;" class="form-control" placeholder=" " required>
                     <label for="contact">Contact Number</label>
                 </div>
 
-
-                <div class="form-group">
-                    <label for="upload_id" class="form-label">Upload ID</label>
-                    <input type="file" id="upload_id" name="upload_id" class="form-control" required>
-                </div>
+                <!-- Display error message -->
+                <?php if (isset($error_message)) { ?>
+                    <div class="alert alert-danger" style="margin-top: 10px; font-size: 14px; color:red;">
+                        <?php echo $error_message; ?>
+                    </div>
+                <?php } ?>
 
                 <div class="terms">
                     <input type="checkbox" required>
@@ -135,7 +187,7 @@
                 </div>
 
                 <!-- Submit Button -->
-              <a href="signin.php" style="text-decoration: none;color:white;">  <button type="submit" class="btn btn-primary">SUBMIT</button> </a>
+                <a href="signin.php" style="text-decoration: none;color:white;"> <button type="submit" class="btn btn-primary">SUBMIT</button> </a>
 
 
 
@@ -188,52 +240,51 @@
 
 
 <script>
-// Get modal element
-var modal = document.getElementById("termsModal");
+    // Get modal element
+    var modal = document.getElementById("termsModal");
 
-// Get the link that opens the modal
-var termsLink = document.getElementById("termsLink");
+    // Get the link that opens the modal
+    var termsLink = document.getElementById("termsLink");
 
-// Get the <span> element that closes the modal
-var closeBtn = document.getElementsByClassName("close")[0];
+    // Get the <span> element that closes the modal
+    var closeBtn = document.getElementsByClassName("close")[0];
 
-// Get Accept and Decline buttons
-var acceptBtn = document.getElementById("acceptBtn");
-var declineBtn = document.getElementById("declineBtn");
+    // Get Accept and Decline buttons
+    var acceptBtn = document.getElementById("acceptBtn");
+    var declineBtn = document.getElementById("declineBtn");
 
-// Get the checkbox for terms
-var termsCheckbox = document.querySelector(".terms input[type='checkbox']");
+    // Get the checkbox for terms
+    var termsCheckbox = document.querySelector(".terms input[type='checkbox']");
 
-// When the user clicks the link, open the modal
-termsLink.onclick = function(event) {
-    event.preventDefault(); // Prevent default link behavior
-    modal.style.display = "block";
-};
+    // When the user clicks the link, open the modal
+    termsLink.onclick = function(event) {
+        event.preventDefault(); // Prevent default link behavior
+        modal.style.display = "block";
+    };
 
-// When the user clicks the close button, close the modal
-closeBtn.onclick = function() {
-    modal.style.display = "none";
-};
-
-// When the user clicks Accept
-acceptBtn.onclick = function() {
-    modal.style.display = "none"; // Close the modal
-    termsCheckbox.checked = true; // Check the checkbox
-};
-
-// When the user clicks Decline
-declineBtn.onclick = function() {
-    modal.style.display = "none"; // Close the modal
-    termsCheckbox.checked = false; // Ensure the checkbox is unchecked
-};
-
-// When the user clicks anywhere outside the modal, close it
-window.onclick = function(event) {
-    if (event.target == modal) {
+    // When the user clicks the close button, close the modal
+    closeBtn.onclick = function() {
         modal.style.display = "none";
-    }
-};
+    };
 
+    // When the user clicks Accept
+    acceptBtn.onclick = function() {
+        modal.style.display = "none"; // Close the modal
+        termsCheckbox.checked = true; // Check the checkbox
+    };
+
+    // When the user clicks Decline
+    declineBtn.onclick = function() {
+        modal.style.display = "none"; // Close the modal
+        termsCheckbox.checked = false; // Ensure the checkbox is unchecked
+    };
+
+    // When the user clicks anywhere outside the modal, close it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    };
 </script>
 
 
