@@ -42,7 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mail->SMTPSecure = 'tls';
             $mail->Port = 587;
 
-            $mail->setFrom('systemlibrarymanagement8@gmail.com', 'LibraSphere Support');
+            $mail->setFrom('no-reply@librasphere.com', 'LibraSphere Support');
             $mail->addAddress($email);
             $mail->Subject = 'Your OTP for Password Reset';
             $mail->Body = "Your OTP code is: $otp. This code is valid for 5 minutes.";

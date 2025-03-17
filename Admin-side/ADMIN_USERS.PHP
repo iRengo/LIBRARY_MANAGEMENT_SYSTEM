@@ -1,3 +1,83 @@
+<?php
+include '../homepage/db_connect.php';
+
+// Initialize counts
+$totalAdmins = $totalLibrarians = $totalStudents = 0;
+
+// Get total Admins
+$adminQuery = "SELECT COUNT(*) AS totalAdmins FROM admin_acc";
+$adminResult = $conn->query($adminQuery);
+if ($adminResult && $adminRow = $adminResult->fetch_assoc()) {
+    $totalAdmins = $adminRow['totalAdmins'];
+}
+
+// Get total Librarians
+$librarianQuery = "SELECT COUNT(*) AS totalLibrarians FROM librarian_acc";
+$librarianResult = $conn->query($librarianQuery);
+if ($librarianResult && $librarianRow = $librarianResult->fetch_assoc()) {
+    $totalLibrarians = $librarianRow['totalLibrarians'];
+}
+
+// Get total Students
+$studentQuery = "SELECT COUNT(*) AS totalStudents FROM stud_acc";
+$studentResult = $conn->query($studentQuery);
+if ($studentResult && $studentRow = $studentResult->fetch_assoc()) {
+    $totalStudents = $studentRow['totalStudents'];
+}
+
+// Total Users
+$totalUsers = $totalAdmins + $totalLibrarians + $totalStudents;
+
+// Fetch Student Accounts
+$sql_students = "SELECT student_no AS user_id, first_name, last_name, email, last_logged_in, 'Student' AS role FROM stud_acc";
+$result_students = $conn->query($sql_students);
+
+// Fetch Librarian Accounts
+$sql_librarian = "SELECT librarian_no AS user_id, first_name, last_name, email, last_logged_in, 'Librarian' AS role FROM librarian_acc";
+$result_librarian = $conn->query($sql_librarian);
+
+// Fetch Admin Accounts
+$sql_admin = "SELECT admin_no AS user_id, first_name, last_name, email, last_logged_in, 'Admin' AS role FROM admin_acc";
+$result_admin = $conn->query($sql_admin);
+
+// Merge results into a unified array
+$all_users = [];
+
+if ($result_students->num_rows > 0) {
+    while ($row = $result_students->fetch_assoc()) {
+        $all_users[] = $row;
+    }
+}
+
+if ($result_librarian->num_rows > 0) {
+    while ($row = $result_librarian->fetch_assoc()) {
+        $all_users[] = $row;
+    }
+}
+
+if ($result_admin->num_rows > 0) {
+    while ($row = $result_admin->fetch_assoc()) {
+        $all_users[] = $row;
+    }
+}
+
+$conn->close();
+
+// Pagination settings
+$users_per_page = 4;
+$total_users = count($all_users);
+$total_pages = ceil($total_users / $users_per_page);
+
+// Get current page number
+$current_page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$current_page = max(1, min($current_page, $total_pages));
+
+// Slice users for the current page
+$start_index = ($current_page - 1) * $users_per_page;
+$users_on_page = array_slice($all_users, $start_index, $users_per_page);
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -14,12 +94,56 @@
     <link rel="stylesheet" href="ADMIN_USERS.CSS">
     <link rel="stylesheet" href="ADMIN_MODAL.css">
     <link rel="stylesheet" href="../User-side/USER_STYLE2.CSS">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- ======= Scripts ====== -->
 
 
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        /* Previous/Next button styling */
+        .pagination .page-item.disabled .page-link {
+            background-color: #ccc;
+            cursor: not-allowed;
+            color: #666;
+        }
+
+        /* Pagination Styling */
+        .pagination-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .custom-pagination {
+            display: flex;
+            gap: 8px;
+        }
+
+        .pagination-btn {
+            padding: 8px 12px;
+            background-color: rgb(255, 255, 255);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+            border: 2px solid gray;
+            color: #16264b;
+        }
+
+        .pagination-btn:hover {
+            background-color: #16264b;
+            color: white;
+        }
+
+        .pagination-btn.active {
+            background-color: rgb(99, 95, 95);
+            color:white;
+
+        }
+    </style>
 
 </head>
 
@@ -141,6 +265,8 @@
                 <div class="table-container" style="flex: 2; margin-right: 20px;">
                     <h2 class="table-title">User Management</h2>
                     <h4 style="margin-top: -0.5%; font-weight:200; color:gray;"> Manage overall Users </h4>
+                    <Br>
+                    <div style="margin-top" style="margin-top: 3%;"> Total Accounts : <b> <?php echo $totalUsers ?> </b></div>
                     <br>
 
                     <!-- Search Bar -->
@@ -156,176 +282,99 @@
                                 <th>User ID</th>
                                 <th>First Name</th>
                                 <th>Last Name</th>
-                                <th>Created At</th>
                                 <th>Role</th>
                                 <th>Email</th>
-                                <th>Last Logged In</th> <!-- New column -->
+                                <th>Last Logged In</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>John</td>
-                                <td>Doe</td>
-                                <td>2025-01-28</td>
-                                <td>Librarian</td>
-                                <td>john.doe@example.com</td>
-                                <td>2025-01-25</td> <!-- Example last login date -->
-                                <td>
-                                    <button class="btn-action delete">Delete</button>
-                                    <button class="btn-action archive">Archive</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>1</td>
-                                <td>John</td>
-                                <td>Doe</td>
-                                <td>2025-01-28</td>
-                                <td>Librarian</td>
-                                <td>john.doe@example.com</td>
-                                <td>2025-01-22</td>
-                                <td>
-                                    <button class="btn-action delete">Delete</button>
-                                    <button class="btn-action archive">Archive</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>Jane</td>
-                                <td>Smith</td>
-                                <td>2025-01-15</td>
-                                <td>User</td>
-                                <td>jane.smith@example.com</td>
-                                <td>2025-01-10</td>
-                                <td>
-                                    <button class="btn-action delete">Delete</button>
-                                    <button class="btn-action archive">Archive</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>Michael</td>
-                                <td>Johnson</td>
-                                <td>2024-12-20</td>
-                                <td>Librarian</td>
-                                <td>michael.johnson@example.com</td>
-                                <td>2024-12-18</td>
-                                <td>
-                                    <button class="btn-action delete">Delete</button>
-                                    <button class="btn-action archive">Archive</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td>Emily</td>
-                                <td>Davis</td>
-                                <td>2024-11-10</td>
-                                <td>User</td>
-                                <td>emily.davis@example.com</td>
-                                <td>2024-11-05</td>
-                                <td>
-                                    <button class="btn-action delete">Delete</button>
-                                    <button class="btn-action archive">Archive</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>Chris</td>
-                                <td>Brown</td>
-                                <td>2024-10-05</td>
-                                <td>Librarian</td>
-                                <td>chris.brown@example.com</td>
-                                <td>2024-10-01</td>
-                                <td>
-                                    <button class="btn-action delete">Delete</button>
-                                    <button class="btn-action archive">Archive</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>6</td>
-                                <td>Sarah</td>
-                                <td>Wilson</td>
-                                <td>2024-09-28</td>
-                                <td>User</td>
-                                <td>sarah.wilson@example.com</td>
-                                <td>2024-09-25</td>
-                                <td>
-                                    <button class="btn-action delete">Delete</button>
-                                    <button class="btn-action archive">Archive</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>7</td>
-                                <td>David</td>
-                                <td>Martinez</td>
-                                <td>2024-08-30</td>
-                                <td>User</td>
-                                <td>david.martinez@example.com</td>
-                                <td>2024-08-28</td>
-                                <td>
-                                    <button class="btn-action delete">Delete</button>
-                                    <button class="btn-action archive">Archive</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>8</td>
-                                <td>Linda</td>
-                                <td>Garcia</td>
-                                <td>2024-07-25</td>
-                                <td>Librarian</td>
-                                <td>linda.garcia@example.com</td>
-                                <td>2024-07-20</td>
-                                <td>
-                                    <button class="btn-action delete">Delete</button>
-                                    <button class="btn-action archive">Archive</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>9</td>
-                                <td>James</td>
-                                <td>Anderson</td>
-                                <td>2024-06-15</td>
-                                <td>User</td>
-                                <td>james.anderson@example.com</td>
-                                <td>2024-06-10</td>
-                                <td>
-                                    <button class="btn-action delete">Delete</button>
-                                    <button class="btn-action archive">Archive</button>
-                                </td>
-                            </tr>
+                        <tbody id="userTableBody">
+                            <?php foreach ($users_on_page as $user): ?>
+
+                                <tr>
+                                    <td><?= htmlspecialchars($user['user_id'] ?? 'N/A'); ?></td>
+                                    <td><?= htmlspecialchars($user['first_name'] ?? 'N/A'); ?></td>
+                                    <td><?= htmlspecialchars($user['last_name'] ?? 'N/A'); ?></td>
+                                    <td><?= htmlspecialchars($user['role'] ?? 'N/A'); ?></td>
+                                    <td><?= htmlspecialchars($user['email'] ?? 'N/A'); ?></td>
+                                    <td><?= htmlspecialchars($user['last_logged_in'] ?? 'N/A'); ?></td>
+                                    <td>
+                                        <button class="btn-action delete" data-id="<?= $user['user_id']; ?>" data-role="<?= $user['role']; ?>">Delete</button>
+                                        <button class="btn-action archive">Archive</button>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
                         </tbody>
                     </table>
 
 
-                    <!-- Pagination -->
-                    <div class="pagination-container" style="display: flex; justify-content: center; margin-top: 20px;">
-                        <button id="prevBtn" class="pagination-btn" style="padding: 5px 10px; border: none; background-color: #1C2E5C; color: white; border-radius: 5px; cursor: pointer;">Prev</button>
-                        <span id="pageInfo" style="margin: 0 15px; font-size: 1rem; align-self: center;">Page 1</span>
-                        <button id="nextBtn" class="pagination-btn" style="padding: 5px 10px; border: none; background-color: #1C2E5C; color: white; border-radius: 5px; cursor: pointer;">Next</button>
-                    </div>
-                </div>
+                    <!-- Pagination Controls -->
+                    <div class="pagination-container">
+                        <p style="color:gray;">Page <?= $current_page ?> of <?= $total_pages ?></p>
+                        <div class="custom-pagination">
+                            <?php if ($current_page > 1): ?>
+                                <a class="pagination-btn" href="?page=<?= $current_page - 1 ?>">Previous</a>
+                            <?php endif; ?>
 
+                            <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                                <a class="pagination-btn <?= ($i == $current_page) ? 'active' : '' ?>" href="?page=<?= $i ?>"><?= $i ?></a>
+                            <?php endfor; ?>
+
+                            <?php if ($current_page < $total_pages): ?>
+                                <a class="pagination-btn" href="?page=<?= $current_page + 1 ?>">Next</a>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                </div>
                 <!-- Sidebar for Actions -->
                 <div class="sidebar" style="flex: 1; max-width: 250px;">
                     <div class="sidebar-tools" style="background-color: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
                         <h4 style="margin-bottom: 15px; color: #333;">Actions</h4>
-                        <button style="background-color: #1C2E5C; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-size: 0.95rem; width: 100%; margin-bottom: 15px;">Add New User</button>
+                        <button style="background-color: #1C2E5C; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-size: 0.95rem; width: 100%; margin-bottom: 15px;" id="addUserBtn" class="btn-action">Add New User</button>
                         <hr>
                         <h5 style="margin-bottom: 10px;">Filter by Role:</h5>
-                        <div style="margin-bottom: 10px;">
-                            <input type="checkbox" id="filterLibrarian" name="role" value="Librarian">
-                            <label for="filterLibrarian" style="font-size: 0.95rem;">Librarian</label>
-                        </div>
                         <div>
-                            <input type="checkbox" id="filterUser" name="role" value="User">
-                            <label for="filterUser" style="font-size: 0.95rem;">User</label>
+                            <input type="checkbox" id="filterLibrarian" name="role" value="Librarian">
+                            <label for="filterLibrarian">Librarian</label>
                         </div>
+
+                        <div>
+                            <input type="checkbox" id="filterUser" name="role" value="Student">
+                            <label for="filterUser">Student</label>
+                        </div>
+
+                        <div>
+                            <input type="checkbox" id="filterAdmin" name="role" value="Admin">
+                            <label for="filterAdmin">Admin</label>
+                        </div>
+
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <div id="addUserModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2>Add New User</h2>
+            <form id="addUserForm">
+                <label>Email:</label>
+                <input type="email" id="userEmail" name="userEmail" required>
+
+                <label>Role:</label><br>
+                <input type="radio" id="librarian" name="role" value="Librarian" required>
+                <label for="librarian">Add as Librarian</label><br>
+                <input type="radio" id="admin" name="role" value="Admin" required>
+                <label for="admin">Add as Admin</label><br>
+
+                <div class="modal-actions">
+                    <button type="submit">Send Invitation</button>
+                    <button type="button" id="closeModal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 
 
     </div>
@@ -336,6 +385,170 @@
     <!-- =========== Scripts =========  -->
     <script src="admin.js"></script>
     <script src="ADMIN_MODAL.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const deleteButtons = document.querySelectorAll('.delete');
+
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const userId = this.closest('tr').querySelector('td').textContent.trim();
+                    const userRole = this.closest('tr').querySelector('td:nth-child(4)').textContent.trim();
+
+                    // SweetAlert2 Confirmation
+                    Swal.fire({
+                        title: "Are you sure?",
+                        text: "You won't be able to revert this!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#d33",
+                        cancelButtonColor: "#3085d6",
+                        confirmButtonText: "Yes, delete it!"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Send AJAX request to delete user
+                            fetch('delete_user.php', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/x-www-form-urlencoded'
+                                    },
+                                    body: `user_id=${userId}&role=${userRole}`
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        Swal.fire("Deleted!", "User has been deleted.", "success")
+                                            .then(() => location.reload());
+                                    } else {
+                                        Swal.fire("Error!", data.error, "error");
+                                    }
+                                })
+                                .catch(() => {
+                                    Swal.fire("Oops!", "Something went wrong.", "error");
+                                });
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+    <script>
+        // Open SweetAlert2 Modal for Adding a New User
+        document.getElementById('addUserBtn').addEventListener('click', () => {
+            Swal.fire({
+                title: 'Add New User',
+                html: `
+           <div style="text-align: center;">
+
+    <input type="email" id="userEmail" class="swal2-input" placeholder="Enter user email" required><br><br>
+
+    <label><b>ADD THIS USER AS:</b></label><br>
+    <div style="display: flex; justify-content: center; gap: 20px; padding: 10px 0;">
+        <label>
+            <input type="radio" id="admin" name="role" value="Admin"> ADMIN
+        </label>
+
+        <label>
+            <input type="radio" id="librarian" name="role" value="Librarian"> LIBRARIAN
+        </label>
+    </div>
+
+</div>
+        `,
+                confirmButtonText: 'Send Invitation',
+                showCancelButton: true,
+                cancelButtonText: 'Cancel',
+                preConfirm: () => {
+                    const email = Swal.getPopup().querySelector('#userEmail').value;
+                    const role = Swal.getPopup().querySelector('input[name="role"]:checked')?.value;
+
+                    if (!email || !role) {
+                        Swal.showValidationMessage('Please fill in all fields.');
+                    }
+
+                    return {
+                        email,
+                        role
+                    };
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const {
+                        email,
+                        role
+                    } = result.value;
+
+                    // Send data to backend
+                    fetch('invite_user.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: `email=${encodeURIComponent(email)}&role=${encodeURIComponent(role)}` // ✅ Updated keys
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire('Sent!', 'User invitation has been sent.', 'success')
+                                    .then(() => location.reload());
+                            } else {
+                                Swal.fire('Error!', data.message || 'Unknown error occurred.', 'error');
+                            }
+                        })
+                        .catch(() => {
+                            Swal.fire('Oops!', 'Something went wrong.', 'error');
+                        });
+                }
+            });
+        });
+    </script>
+
+
+
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        const userTableBody = document.getElementById('userTableBody');
+        const filterLibrarian = document.getElementById('filterLibrarian');
+        const filterStudent = document.getElementById('filterUser');
+        const filterAdmin = document.getElementById('filterAdmin'); // Admin filter
+
+        function filterUsers() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const rows = userTableBody.getElementsByTagName('tr');
+
+            // Capture checkbox states
+            const showLibrarian = filterLibrarian.checked;
+            const showStudent = filterStudent.checked;
+            const showAdmin = filterAdmin.checked; // Admin filter
+
+            for (const row of rows) {
+                const cells = row.getElementsByTagName('td');
+
+                // Ensure we have the right index for the role
+                const role = (cells.length >= 4) ? cells[3].textContent.trim() : '';
+
+                // Get all cell contents for search matching
+                const text = Array.from(cells).map(cell => cell.textContent.toLowerCase()).join(' ');
+
+                // Check if the row matches search and the selected roles
+                const matchesSearch = text.includes(searchTerm);
+                const matchesRole = (!showLibrarian && !showStudent && !showAdmin) ||
+                    (showLibrarian && role === 'Librarian') ||
+                    (showStudent && role === 'Student') ||
+                    (showAdmin && role === 'Admin'); // Added Admin check
+
+                // Display the row if both search and role match
+                row.style.display = (matchesSearch && matchesRole) ? '' : 'none';
+            }
+        }
+
+        // Attach event listeners for live search and role filters
+        searchInput.addEventListener('input', filterUsers);
+        filterLibrarian.addEventListener('change', filterUsers);
+        filterStudent.addEventListener('change', filterUsers);
+        filterAdmin.addEventListener('change', filterUsers); // Admin checkbox
+    </script>
+
 
 
     <!-- ====== ionicons ======= -->

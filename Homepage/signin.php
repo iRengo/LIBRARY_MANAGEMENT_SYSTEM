@@ -1,42 +1,12 @@
 <?php
 session_start();
-include 'db_connect.php';
 
 // Retrieve error message if it exists
 $error_message = isset($_SESSION['error_message']) ? $_SESSION['error_message'] : "";
 unset($_SESSION['error_message']); // Clear error message after displaying
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $student_no = $_POST['student_no'];
-    $password = $_POST['password'];
-
-    $stmt = $conn->prepare("SELECT student_no, password FROM users WHERE student_no = ?");
-    $stmt->bind_param("s", $student_no);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result->num_rows === 1) {
-        $row = $result->fetch_assoc();
-        $hashed_password = $row['password'];
-
-        // Verify the entered password against the hashed password
-        if (password_verify($password, $hashed_password)) {
-            $_SESSION['student_no'] = $student_no;
-            header("Location: dashboard.php"); // Redirect to the dashboard after login
-            exit();
-        } else {
-            $_SESSION['error_message'] = "Invalid student number or password.";
-        }
-    } else {
-        $_SESSION['error_message'] = "Invalid student number or password.";
-    }
-
-    $stmt->close();
-    $conn->close();
-    header("Location: signin.php"); // Redirect back to login page if failed
-    exit();
-}
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -130,13 +100,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="left-image">
             <img src="loginpic.png" alt="Left Side Image">
         </div>
-        <form method="POST" action="login_handler.php"  style="margin-right: -5%;">
+        <form method="POST" action="login_handler.php" style="margin-right: -5%;">
             <div class="login-form-container">
                 <h2>LOGIN TO YOUR ACCOUNT</h2>
-                
+
 
                 <div class="form-group">
-                    <input type="text" id="student_no" name="student_no" class="form-control" placeholder="Student Number" required>
+                    <input type="text" id="user_no" name="user_no" class="form-control" placeholder="User Number" required>
 
                 </div>
                 <div class="form-group">
@@ -147,7 +117,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <p style="color:red;"><?php echo $error_message; ?> </p>
                     </div>
                 <?php endif; ?>
-                <div class="form-group">
+                <div class="form-group" style="margin-left: 7%;">
                     <div class="g-recaptcha" data-sitekey="6LcbyK0qAAAAAD3K5wZbObRk5Z2_bbEVgir6thO7"></div>
                 </div>
 

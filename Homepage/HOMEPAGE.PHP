@@ -1,3 +1,7 @@
+<?php
+include 'db_connect.php';
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -13,7 +17,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Teachers:ital,wght@0,400..800;1,400..800&family=Viga&family=Zilla+Slab+Highlight:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="homepage.css"> <!-- Link to your external CSS -->
     <link href="https://cdn.jsdelivr.net/npm/boxicons/css/boxicons.min.css" rel="stylesheet">
-    
+
 
 
 </head>
@@ -512,11 +516,8 @@
                 behavior: 'smooth'
             });
         }
-
-
-        
     </script>
-    
+
 
 
 

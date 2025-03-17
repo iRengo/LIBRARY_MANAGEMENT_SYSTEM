@@ -223,6 +223,8 @@ ul li a:hover {
     flex-direction: column;
     justify-content: center;
     height: 80%;
+
+ 
 }
 
 .login-form-container h2 {
@@ -234,6 +236,7 @@ ul li a:hover {
 .form-group {
     position: relative;
     margin-bottom: 20px;
+
 }
 
 .btn-primary {
@@ -287,6 +290,7 @@ ul li a:hover {
     border: none;
     border-radius: 3%;
     width: 100%;
+    
 }
 
 .btn-primary {

@@ -8,7 +8,7 @@ if ($conn->connect_error) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $student_no = trim($_POST["student_no"]);
+    $user_no = trim($_POST["user_no"]);
     $password = trim($_POST["password"]);
     $recaptcha_response = $_POST["g-recaptcha-response"];
 
@@ -26,39 +26,99 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 
-    // Check if student_no and password fields are filled
-    if (empty($student_no) || empty($password)) {
-        $_SESSION['error_message'] = "Student Number and Password are required!";
+    // Check if fields are filled
+    if (empty($user_no) || empty($password)) {
+        $_SESSION['error_message'] = "User Number and Password are required!";
         header("Location: signin.php");
         exit();
     }
 
-    // Securely fetch user data
-    $stmt = $conn->prepare("SELECT acc_no, student_no, password FROM stud_acc WHERE student_no = ?");
-    $stmt->bind_param("s", $student_no);
+    // 1️⃣ **Check if the user is an admin**
+    $stmt = $conn->prepare("SELECT admin_no, password FROM admin_acc WHERE admin_no = ?");
+    if (!$stmt) {
+        die("Query Error: " . $conn->error);
+    }
+    $stmt->bind_param("s", $user_no);
     $stmt->execute();
-    $result = $stmt->get_result();
+    $stmt->store_result();
 
-    if ($result->num_rows == 1) {
-        $user = $result->fetch_assoc();
+    if ($stmt->num_rows === 1) {
+        $stmt->bind_result($admin_no, $hashed_password);
+        $stmt->fetch();
+        $stmt->close();
 
-        // Use password_verify for hashed passwords
-        if (password_verify($password, $user['password'])) {
-            $_SESSION['acc_no'] = $user['acc_no'];
-            $_SESSION['student_no'] = $user['student_no'];
-            header("Location: ../user-side/user_dashboard.php"); // Redirect to the dashboard
+        // Use password_verify for hashed admin passwords
+        if (password_verify($password, $hashed_password)) {
+            $_SESSION['admin_no'] = $admin_no;
+            header("Location: ../admin-side/admin_dasboard.php");
             exit();
         } else {
             $_SESSION['error_message'] = "Invalid password!";
             header("Location: signin.php");
             exit();
         }
-    } else {
-        $_SESSION['error_message'] = "Student unregistered or wrong password";
-        header("Location: signin.php");
-        exit();
     }
-
     $stmt->close();
+
+    // 2️⃣ **Check if the user is a librarian**
+    $stmt = $conn->prepare("SELECT librarian_no, password FROM librarian_acc WHERE librarian_no = ?");
+    if (!$stmt) {
+        die("Query Error: " . $conn->error);
+    }
+    $stmt->bind_param("s", $user_no);
+    $stmt->execute();
+    $stmt->store_result();
+
+    if ($stmt->num_rows === 1) {
+        $stmt->bind_result($librarian_no, $hashed_password);
+        $stmt->fetch();
+        $stmt->close();
+
+        // Use password_verify for hashed librarian passwords
+        if (password_verify($password, $hashed_password)) {
+            $_SESSION['librarian_no'] = $librarian_no;
+            header("Location: ../librarian-side/librarian_dashboard.php");
+            exit();
+        } else {
+            $_SESSION['error_message'] = "Invalid password!";
+            header("Location: signin.php");
+            exit();
+        }
+    }
+    $stmt->close();
+
+    // 3️⃣ **Check if the user is a student**
+    $stmt = $conn->prepare("SELECT acc_no, student_no, password FROM stud_acc WHERE student_no = ?");
+    if (!$stmt) {
+        die("Query Error: " . $conn->error);
+    }
+    $stmt->bind_param("s", $user_no);
+    $stmt->execute();
+    $stmt->store_result();
+
+    if ($stmt->num_rows === 1) {
+        $stmt->bind_result($acc_no, $student_no, $hashed_password);
+        $stmt->fetch();
+        $stmt->close();
+
+        // Use password_verify for hashed student passwords
+        if (password_verify($password, $hashed_password)) {
+            $_SESSION['acc_no'] = $acc_no;
+            $_SESSION['student_no'] = $student_no;
+            header("Location: ../user-side/user_dashboard.php");
+            exit();
+        } else {
+            $_SESSION['error_message'] = "Invalid password!";
+            header("Location: signin.php");
+            exit();
+        }
+    }
+    $stmt->close();
+
+    // ❌ **If none of the checks succeed**
+    $_SESSION['error_message'] = "Invalid user number or password.";
+    $conn->close();
+    header("Location: signin.php");
+    exit();
 }
 ?>
