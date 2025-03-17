@@ -174,3 +174,9 @@
 .pagination-btn.active {
     background-color: #009900; 
 }
+/* Custom CSS for Archived Users Table */
+.archived-users-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+

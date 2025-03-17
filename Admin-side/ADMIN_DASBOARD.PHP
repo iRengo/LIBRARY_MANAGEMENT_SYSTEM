@@ -1,3 +1,41 @@
+<?php
+include '../homepage/db_connect.php';
+session_start();
+if (!isset($_SESSION['admin_no'])) {
+    // If not, show a SweetAlert notification and then redirect
+    echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+        window.onload = function() {
+            // Show SweetAlert notification
+            Swal.fire({
+                title: "You are not logged in!",
+                text: "Please log in to access the page.",
+                icon: "error",
+                confirmButtonText: "OK",
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                willClose: () => {
+                    // Redirect to homepage after the notification is closed
+                    window.location.href = "../homepage/homepage.php";
+                }
+            });
+        }
+        </script>';
+    exit(); // Stop further execution after showing the notification and redirect script
+}
+// Get the current time
+$current_time = date('Y-m-d H:i:s');
+
+// Assuming the admin is logged in and their ID is stored in session
+$admin_id = $_SESSION['admin_no'];
+
+// Update the 'last_logged_in' field in the database for the logged-in admin
+$query = "UPDATE admin_acc SET last_logged_in = ? WHERE admin_no = ?";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("si", $current_time, $admin_id); // 'si' means string and integer
+$stmt->execute();
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
