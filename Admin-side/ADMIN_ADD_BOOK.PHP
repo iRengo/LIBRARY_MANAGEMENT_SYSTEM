@@ -6,11 +6,12 @@ ini_set('display_errors', 1);
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $bookTitle = $_POST['bookTitle'];
+    $bookAuthor = $_POST['author']; // Capture the author input
     $bookDescription = $_POST['bookDescription'];
-    $publisherId = $_POST['publisher_id'];
+    $publisherId = $_POST['publisher'];
     $publicationDate = $_POST['publication_date'];
     $isbn = $_POST['isbn'];
-    $bookGenreId = $_POST['book_genre_id'];
+    $bookGenreId = $_POST['book_genre'];
     $bookStocks = $_POST['book_stocks'];
     $status = $_POST['status'];
 
@@ -29,12 +30,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit;
     }
 
-    // Insert into Database
-    $stmt = $conn->prepare("INSERT INTO tbl_books (book_cover, book_title, book_description, publisher_id, publication_date, isbn, book_genre_id, book_stocks, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("sssssssis", $targetFilePath, $bookTitle, $bookDescription, $publisherId, $publicationDate, $isbn, $bookGenreId, $bookStocks, $status);
+    // Insert into Database (Include book_author column)
+    $stmt = $conn->prepare("INSERT INTO tbl_books (book_cover, book_title, book_author, book_description, publisher, publication_date, isbn, book_genre, book_stocks, status) 
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("ssssssssis", $targetFilePath, $bookTitle, $bookAuthor, $bookDescription, $publisherId, $publicationDate, $isbn, $bookGenreId, $bookStocks, $status);
 
     if ($stmt->execute()) {
-        echo json_encode(["success" => true]);
+        echo json_encode(["success" => true, "message" => "Book added successfully."]);
     } else {
         echo json_encode(["success" => false, "message" => "Database Error: " . $stmt->error]);
     }
@@ -42,4 +44,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->close();
     $conn->close();
 }
-?>

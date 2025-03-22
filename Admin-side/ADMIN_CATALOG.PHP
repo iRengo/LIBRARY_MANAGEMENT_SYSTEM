@@ -51,7 +51,7 @@ include '../homepage/db_connect.php';
 
                 <!-- Search Bar -->
                 <div class="search-bar">
-                    <input type="text" class="form-control" placeholder="Search books...">
+                    <input type="text" class="form-control" placeholder="Search books..." id="searchInput">
                 </div>
             </div>
         </div>
@@ -62,22 +62,38 @@ include '../homepage/db_connect.php';
     <div class="book-list">
         <?php
         // Fetch books from the database
-        $query = "SELECT * FROM tbl_books WHERE status = 'available'";
+        $query = "SELECT book_id, book_cover, book_title, book_author FROM tbl_books WHERE status = 'available'";
         $result = mysqli_query($conn, $query);
 
         if (mysqli_num_rows($result) > 0) {
             while ($row = mysqli_fetch_assoc($result)) {
                 $book_id = $row['book_id'];
                 $book_cover = $row['book_cover'];
+                $book_title = $row['book_title'];
+                $author = $row['book_author'];
         ?>
-                <div class="book-container">
-                    <img src="<?php echo htmlspecialchars($book_cover); ?>" class="book-cover" alt="Book Cover">
-                    <div class="overlay">
-                        <button class="archive-btn" onclick="archiveBook(<?php echo $book_id; ?>)">ARCHIVE</button>
-                        <button class="delete-btn" onclick="confirmDelete(<?php echo $book_id; ?>)">DELETE</button>
-                        <button class="edit-btn" onclick="editBook(<?php echo $book_id; ?>)">EDIT</button>
+                <div class="book-main-container">
+                    <div class="book-container">
+                        <!-- Book Cover -->
+                        <img src="<?php echo htmlspecialchars($book_cover); ?>" class="book-cover" alt="Book Cover">
+
+                        <!-- Overlay Buttons -->
+                        <div class="overlay">
+                            <button class="archive-btn" onclick="archiveBook(<?php echo $book_id; ?>)">ARCHIVE</button>
+                            <button class="delete-btn" onclick="confirmDelete(<?php echo $book_id; ?>)">DELETE</button>
+                            <button class="edit-btn" onclick="editBook(<?php echo $book_id; ?>)">EDIT</button>
+                        </div>
                     </div>
+
+                    <!-- Book Title and Author (Now below the book-container) -->
+                    <div class="book-details">
+                        <h5><?php echo htmlspecialchars($book_title); ?></h5>
+                        <p><?php echo htmlspecialchars($author); ?></p>
+
+                    </div>
+
                 </div>
+
         <?php
             }
         } else {
@@ -85,8 +101,6 @@ include '../homepage/db_connect.php';
         }
         ?>
     </div>
-
-
 
     <script>
         function confirmDelete(bookId) {
@@ -140,14 +154,14 @@ include '../homepage/db_connect.php';
                     <input type="text" id="bookTitle" name="bookTitle" class="swal2-input" required>
                 </div>
                 <div style="flex: 1; min-width: 48%; display: flex; flex-direction: column;">
-                    <label for="author">Book Author:</label>
-                    <input type="text" id="author" name="author" class="swal2-input" required>
+                <label for="author">Book Author:</label>
+                <input type="text" id="author" name="author" class="swal2-input" required>
                 </div>
 
                 <!-- Publisher ID and Publication Date -->
                 <div style="flex: 1; min-width: 48%; display: flex; flex-direction: column;">
-                    <label for="publisher">Publisher ID:</label>
-                    <input type="number" id="publisher" name="publisher_id" class="swal2-input" required>
+                    <label for="publisher">Publisher</label>
+                    <input type="text" id="publisher" name="publisher" class="swal2-input" required>
                 </div>
                 <div style="flex: 1; min-width: 48%; display: flex; flex-direction: column;">
                     <label for="pubDate">Publication Date:</label>
@@ -160,8 +174,8 @@ include '../homepage/db_connect.php';
                     <input type="text" id="isbn" name="isbn" class="swal2-input" required>
                 </div>
                 <div style="flex: 1; min-width: 48%; display: flex; flex-direction: column;">
-                    <label for="genre">Genre ID:</label>
-                    <input type="number" id="genre" name="book_genre_id" class="swal2-input" required>
+                    <label for="genre">Genre</label>
+                    <input type="text" id="genre" name="book_genre" class="swal2-input" required>
                 </div>
 
                 <!-- Stocks and Status -->
@@ -302,6 +316,105 @@ include '../homepage/db_connect.php';
                 });
         }
     </script>
+    <script>
+document.getElementById('searchInput').addEventListener('input', function() {
+    let searchQuery = this.value; // Get the value from the search input field
+
+    if (searchQuery.length > 0) {
+        // Send AJAX request to search_books.php with the search query
+        fetch(`search_books.php?query=${encodeURIComponent(searchQuery)}`)
+            .then(response => response.json()) // Parse the response as JSON
+            .then(data => {
+                // Clear the current book list
+                const bookList = document.querySelector('.book-list');
+                bookList.innerHTML = '';
+
+                // Check if any books were found
+                if (data.length > 0) {
+                    // Loop through the books and display them
+                    data.forEach(book => {
+                        const bookContainer = document.createElement('div');
+                        bookContainer.classList.add('book-main-container');
+
+                        bookContainer.innerHTML = `
+                            <div class="book-container">
+                                <!-- Book Cover -->
+                                <img src="${book.book_cover}" class="book-cover" alt="Book Cover">
+
+                                <!-- Overlay Buttons -->
+                                <div class="overlay">
+                                    <button class="archive-btn" onclick="archiveBook(${book.book_id})">ARCHIVE</button>
+                                    <button class="delete-btn" onclick="confirmDelete(${book.book_id})">DELETE</button>
+                                    <button class="edit-btn" onclick="editBook(${book.book_id})">EDIT</button>
+                                </div>
+                            </div>
+
+                            <!-- Book Title and Author -->
+                            <div class="book-details">
+                                <h5>${book.book_title}</h5>
+                                <p>${book.book_author}</p>
+                            </div>
+                        `;
+                        bookList.appendChild(bookContainer); // Add the book to the list
+                    });
+                } else {
+                    bookList.innerHTML = '<p>No books found matching your search.</p>';
+                }
+            })
+            .catch(err => {
+                console.error('Error:', err);
+                alert('Something went wrong. Please try again.');
+            });
+    } else {
+        // If the search query is empty, reload the books list
+        loadBooks();
+    }
+});
+
+// Function to load all books initially (if needed when search is empty)
+function loadBooks() {
+    fetch('search_books.php?query=')
+        .then(response => response.json())
+        .then(data => {
+            const bookList = document.querySelector('.book-list');
+            bookList.innerHTML = ''; // Clear the book list
+
+            if (data.length > 0) {
+                data.forEach(book => {
+                    const bookContainer = document.createElement('div');
+                    bookContainer.classList.add('book-main-container');
+
+                    bookContainer.innerHTML = `
+                        <div class="book-container">
+                            <!-- Book Cover -->
+                            <img src="${book.book_cover}" class="book-cover" alt="Book Cover">
+
+                            <!-- Overlay Buttons -->
+                            <div class="overlay">
+                                <button class="archive-btn" onclick="archiveBook(${book.book_id})">ARCHIVE</button>
+                                <button class="delete-btn" onclick="confirmDelete(${book.book_id})">DELETE</button>
+                                <button class="edit-btn" onclick="editBook(${book.book_id})">EDIT</button>
+                            </div>
+                        </div>
+
+                        <!-- Book Title and Author -->
+                        <div class="book-details">
+                            <h5>${book.book_title}</h5>
+                            <p>${book.book_author}</p>
+                        </div>
+                    `;
+                    bookList.appendChild(bookContainer);
+                });
+            } else {
+                bookList.innerHTML = '<p>No available books found.</p>';
+            }
+        });
+}
+
+// Initial load of books
+loadBooks();
+
+        </script>
 
     <!-- ========================= Main END ==================== -->
 
