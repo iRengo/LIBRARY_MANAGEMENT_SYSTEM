@@ -40,6 +40,7 @@ body {
     background: var(--blue);
     transition: 0.5s;
     overflow: hidden;
+    margin-top:-5%;
 }
 
 .navigation.active {
@@ -167,7 +168,23 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 0 10px;
+    position: fixed;
+    top: 0;
+    z-index: 9999;
+    background-color: #ffffff;
     box-shadow: 0 4px 6px rgba(150, 150, 150, 0.2);
+}
+.logo-left {
+    display: flex;
+    align-items: baseline;
+}
+
+.logo-right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-left: auto; /* Push the logout button to the right side */
+    margin-right: 15%;
 }
 
 .toggle {

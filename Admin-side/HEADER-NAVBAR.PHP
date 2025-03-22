@@ -109,19 +109,21 @@
                 <div class="logo">
                     <img src="../logosample1.png" style="height: 60px; width:60px; padding:4px;">
                 </div>
-                <div style="float:left; margin-right:75%; display: flex; align-items: baseline;">
+                <div class="logo-left">
                     <p style="font-family: viga; margin: 0; padding-right:2px;">LIBRA</p>
                     <p style="font-family: zilla slab highlight; letter-spacing: 2px; margin: 0;">SPHERE</p>
                 </div>
-                <div class="logo" title="LOGOUT YOUR ACCOUNT" style="margin-right: 1%; display: flex; align-items: center;">
-                    <a href="#" id="logoutIcon" style="display: flex; align-items: center; text-decoration: none; color: inherit;">
+                <div class="logo-right" title="LOGOUT YOUR ACCOUNT">
+                    <a href="#" id="logoutIcon" style="display: flex; text-decoration: none; color: inherit;">
                         <p style="margin: 0; font-size: 18px; margin-right: 8px;">LOGOUT</p>
-                        <i class='bx bx-log-in-circle' style="font-size:35px; color:#da1b1b;"></i>
+                        <i class='bx bx-log-in-circle' style="font-size:30px; color:#da1b1b;"></i>
                     </a>
                 </div>
             </div>
 
-            
+
+
+
 
             <script>
                 document.getElementById('logoutIcon').addEventListener('click', function(event) {
@@ -153,6 +155,7 @@
             <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
             <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 
 
 </body>

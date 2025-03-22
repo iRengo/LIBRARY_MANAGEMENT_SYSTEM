@@ -1,4 +1,6 @@
-
+body {
+  margin-top: 5%;
+}
 .header-container {
   display: flex;
   justify-content: space-between; /* Align left and right sections */
@@ -12,6 +14,7 @@
   display: flex;
   align-items: center; /* Align vertically */
 }
+
 
 .available {
   font-size: 28px;
@@ -63,13 +66,17 @@
   border-color: #ff4d4d !important;
 }
 .book-main-container {
-  background: white; /* White background */
-  padding: 10px; /* Space around the book-container */
-  border-radius: 15px; /* Rounded corners */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  background: white;
+  padding: 10px;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   margin-left: 2%;
   margin-bottom: 30px;
+  width: 160px; /* Match width with book-container */
+  display: flex;
+  flex-direction: column; /* Stack child elements vertically */
+  align-items: center; /* Center elements horizontally */
 }
 
 /* Zoom-Out Effect on Hover */
@@ -144,32 +151,30 @@
 .book-list {
   display: flex;
   flex-wrap: wrap;
-  /* Enables wrapping when the screen is full */
   gap: 0px;
-  /* Adds space between book covers */
   justify-content: flex-start;
-  /* Aligns books from the start of the container */
   padding: 20px;
-  margin-bottom:20px;
-
+  margin-bottom: 20px;
+  width: 100%; /* Make sure book list takes full width */
 }
 
 /* Style for each book container */
 .book-container {
   position: relative;
-  width: 160px;
-  /* Fixed width for uniformity */
-  height: 230px;
-  /* Consistent height */
+  width: 160px; /* Fixed width for uniformity */
+  height: 230px; /* Consistent height */
   overflow: hidden;
   border-radius: 5px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   margin-left: 2%;
   margin-bottom: 30px;
-  border: 1px solid gray;
+
   margin-bottom: 1%;
-
-
+}
+.book-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* Book Image */
@@ -265,7 +270,7 @@
   background-color: #45a049; /* Darker green on hover */
 }
 .book-details {
-  text-align: center; /* Center text below */
+  text-align: left; /* Center text below */
   margin-top: 10px; /* Add spacing between image and text */
 
 }
@@ -273,21 +278,25 @@
 .book-details h5 {
   font-size: 18px; /* Adjust the font size of the title */
   margin: 5px 0; /* Add spacing */
+  text-align: left;
 }
 
 .book-details p {
   font-size: 14px; /* Adjust the font size of the author */
   color: #252525; /* Soft grey for author name */
+  text-align: left;
 }
 .book-details h5, .book-details p {
+  font-size: 14px;
+  color: #252525;
   white-space: nowrap;        /* Prevents text from wrapping */
-  overflow: hidden;           /* Hides overflow text */
+  overflow: hidden;           /* Hides the overflowed text */
   text-overflow: ellipsis;    /* Displays "..." for overflow text */
-  max-width: 190px;           /* Adjust the maximum width as needed */
-  text-align: left;
+  max-width: 160px;           /* Adjust the maximum width to match the container */
+  text-align: left;         /* Keep text centered */
   font-family: Arial, Helvetica, sans-serif;
-
-  color:#666363;
+  color: #666363;
+  padding: 0 5px;             /* Adds padding to avoid text touching container edges */
 }
 
 
