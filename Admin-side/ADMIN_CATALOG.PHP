@@ -1,3 +1,8 @@
+<?php
+include '../homepage/db_connect.php';
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -5,229 +10,300 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhgj9UU2gEpeHXKuDjc8+aJBBZ/YYz7wkmP5zPpsjLh4RxJMfP5Jxs6t" crossorigin="anonymous">
     <title> Admin Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Teachers:ital,wght@0,400..800;1,400..800&family=Viga&family=Zilla+Slab+Highlight:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhgj9UU2gEpeHXKuDjc8+aJBBZ/YYz7wkmP5zPpsjLh4RxJMfP5Jxs6t" crossorigin="anonymous">
+
     <!-- ======= Styles ====== -->
-    <link rel="stylesheet" href="../User-side/USER_STYLE2.CSS">
-    <link rel="stylesheet" href="ADMIN_MODAL.css">
     <link rel="stylesheet" href="ADMIN_CATALOG.CSS">
 
+    <link rel="stylesheet" href="admin_modal.php">
     <!-- ======= Scripts ====== -->
 
 
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
-    
+
 
 </head>
 
 <body>
-    <!-- =============== Navigation ================ -->
-    <div class="container">
-        <div class="navigation">
-            <ul>
-                <li>
-                    <div class="admin-gradient">
-                        <a href="#">
-                            <span class="icon">
-                                <ion-icon name="person-circle" class="admin-icon"></ion-icon>
-                            </span>
-                            <span class="title1">ADMIN</span>
-                        </a>
-                    </div>
-                </li>
+    <?php include 'header-navbar.php' ?>
 
-                <li>
-                    <a href="USER_DASHBOARD.PHP">
-                        <span class="icon">
-                            <ion-icon name="home-outline"></ion-icon>
-                        </span>
-                        <span class="title">Dashboard</span>
-                    </a>
-                </li>
+    <!-- Content HERE -->
 
-                <li>
-                    <a href="#">
-                        <span class="icon">
-                            <ion-icon name="file-tray-stacked-outline"></ion-icon>
-
-                        </span>
-                        <span class="title">Collection</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="#">
-                        <span class="icon">
-                            <ion-icon name="book-outline"></ion-icon>
-                        </span>
-                        <span class="title">Catalog</span>
-                    </a>
-                </li>
-
-                <li>
-                <a href="USER_HISTORY.PHP">
-                        <span class="icon">
-                            <i class='bx bx-history' style="font-size:35px;"></i>
-                        </span>
-                        <span class="title">History</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="USER_HELP&SUPPORT.PHP">
-                        <span class="icon">
-                            <ion-icon name="layers-outline"></ion-icon>
-                        </span>
-                        <span class="title">Help & Support</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="USER_NOTIFICATION.PHP">
-                        <span class="icon">
-                            <ion-icon name="notifications-outline"></ion-icon>
-                        </span>
-                        <span class="title">Notifications</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="USER_TRENDING.php">
-                        <span class="icon">
-                            <ion-icon name="trending-up-outline"></ion-icon>
-                        </span>
-                        <span class="title">Trending</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="USER_SETTINGS.php">
-                        <span class="icon">
-                            <ion-icon name="cog-outline"></ion-icon>
-                        </span>
-                        <span class="title">Settings</span>
-                    </a>
-                </li>
-                <div class="time-container" style="width: 150%;">
-                    <p style="font-size: 10px; color:white;">
-                        <?php echo date("l, F j, Y h:i:s"); // Full date and time format 
-                        ?>
-                    </p>
-                </div>
-            </ul>
-
-        </div>
-
-
-        <!-- ========================= Main ==================== -->
-        <div class="main">
-            <div class="topbar">
-                <div class="toggle">
-                    <ion-icon name="menu-outline"></ion-icon>
-                </div>
-                <div class="logo">
-                    <img src="../logosample1.png" style="height: 60px; width:60px; padding:4px;">
-                </div>
-                <div style="float:left; margin-right:75%; display: flex; align-items: baseline;">
-                    <p style="font-family: viga; margin: 0; padding-right:2px;">LIBRA</p>
-                    <p style="font-family: zilla slab highlight; letter-spacing: 2px; margin: 0;">SPHERE</p>
-                </div>
-                <div class="logo" title="LOGOUT YOUR ACCOUNT" style="margin-right: 1%; display: flex; align-items: center;">
-                    <a href="#" id="logoutIcon" style="display: flex; align-items: center; text-decoration: none; color: inherit;">
-                        <p style="margin: 0; font-size: 18px; margin-right: 8px;">LOGOUT</p>
-                        <i class='bx bx-log-in-circle' style="font-size:35px; color:#da1b1b;"></i>
-                    </a>
-                </div>
-            </div>
-
-            <!-- Content HERE -->
-
-            <div class="titles-container">
-    <div class="row align-items-center">
-        <div class="col-md-8">
+    <div class="titles-container">
+        <div class="header-container">
+            <!-- Available Books -->
             <div class="titles">
                 <div class="available">Available Books</div>
-                 <div class="col-md-4">
-                 <div class="search-bar">
+            </div>
+
+            <!-- Add Book Button & Search Bar -->
+            <div class="search-container">
+                <div>
+                    <button class="btn import-book-btn" onclick="confirmImport()">Import Book</button>
+
+                    <button class="btn add-book-btn" onclick="openAddBookForm()">Add Book</button>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="search-bar">
                     <input type="text" class="form-control" placeholder="Search books...">
                 </div>
-        </div>
             </div>
         </div>
-        
     </div>
-</div>
-            <div class="row">
-                <div class="col-sm-2">
-                    <div class="categ">
-                        <div class="texts">Fantasy</div>
-                    <div class="pics" id="books">
-                    <a href="ADMIN_modal.php">
-                        <img src="https://www.creativindiecovers.com/wp-content/uploads/2012/02/9780718155209.jpg" alt="Book Cover">
-                    </a> 
-                    <img src="https://thebookcoverdesigner.com/wp-content/uploads/2020/01/TH00102.jpg"> 
-                    <img src="https://images-platform.99static.com//PiHWJxAcOnC7gw197YEXKtyxDXQ=/fit-in/500x500/99designs-contests-attachments/39/39493/attachment_39493946"> 
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSguJ4dTc3pn1POkE7ft20f_pDRPpJt71InoA&s"> 
-                    <img src="https://m.media-amazon.com/images/I/71ZD+cRahhL._AC_UF894,1000_QL80_.jpg"> 
-                    <img src="https://miblart.com/wp-content/uploads/2020/01/april-young-adult-768x1152-1.jpeg"> 
-                    <img src="https://i.pinimg.com/736x/7a/eb/13/7aeb13f6c1c004ff06163629948280dd.jpg">
-                    </div>
-                    <div class="categ">
-                    <div class="textss">Romance</div>
-                    <div class="pics" id="books">
-                    <img src="https://www.dochipo.com/wp-content/uploads/2022/08/Book-Cover-_-Romance-scaled.jpg"> 
-                    <img src="https://ph.bbwbooks.com/cdn/shop/products/9780374351281_1_347413de-9f1c-468a-89b3-f0b2c0e408e0_600x.jpg?v=1625489251"> 
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRU--MXPOfwwWTvR9vCB2UkzeiBeX9ZkGayag&s"> 
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQKYmrUbkRM3aWolsdDNGGUz9mgkcWlYTZyMY6yRBCbNknziBqxaeyCTBsmgYa1p86AHxg&usqp=CAU">     
-                    <img src="https://lbabooks.com/assets/books/_small/411NFkiBKwL-1.jpg"> 
-                    <img src="https://lbabooks.com/assets/books/_small/Before-We-Say-Goodbye-cover.jpg"> 
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRU--MXPOfwwWTvR9vCB2UkzeiBeX9ZkGayag&s"> 
-                    </div>
-                    </div>
-                    <div class="categ">
-                    <div class="textss">Horror</div>
-                    <div class="pics" id="books">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR9nv5HqDJiJEAK-yg5bTKwv2CEDn5MXc8vIQ&s"> 
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT21aYKXv_LCrefM9wPnvHVBT4ntKzFi9c96nU8fqjHnDuX3NBFObZXXTnTpcqyCCkY8Bo&usqp=CAU"> 
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQc47tHO9PN683cD_sQtilP7P1PkflWjU05hjEdsfgIkNtYxvNt9yrA0Du-DCCi-kCjDkA&usqp=CAU"> 
-                    <img src="https://img1.wsimg.com/isteam/ip/4060628a-cb37-47f0-92a3-a877c77b19ab/ols/befunky_2024-10-3_17-8-57.png/:/cr=t:0%25,l:0%25,w:100%25,h:100%25/rs=w:600,cg:true">     
-                    <img src="https://placeit-img-1-p.cdn.aws.placeit.net/uploads/stage/stage_image/22101/optimized_large_thumb_Horror_Book_Cover.jpg"> 
-                    <img src="https://placeit-img-1-p.cdn.aws.placeit.net/uploads/stage/stage_image/39885/optimized_large_thumb_stage.jpg"> 
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVkcoc5HDUT8ywqJ0sna2mA8KG9EilKE_v3Q&s"> 
-                    
-                    </div>
-                    </div>
+
+
+    <!-- Book List -->
+    <div class="book-list">
+        <?php
+        // Fetch books from the database
+        $query = "SELECT * FROM tbl_books WHERE status = 'available'";
+        $result = mysqli_query($conn, $query);
+
+        if (mysqli_num_rows($result) > 0) {
+            while ($row = mysqli_fetch_assoc($result)) {
+                $book_id = $row['book_id'];
+                $book_cover = $row['book_cover'];
+        ?>
+                <div class="book-container">
+                    <img src="<?php echo htmlspecialchars($book_cover); ?>" class="book-cover" alt="Book Cover">
+                    <div class="overlay">
+                        <button class="archive-btn" onclick="archiveBook(<?php echo $book_id; ?>)">ARCHIVE</button>
+                        <button class="delete-btn" onclick="confirmDelete(<?php echo $book_id; ?>)">DELETE</button>
+                        <button class="edit-btn" onclick="editBook(<?php echo $book_id; ?>)">EDIT</button>
                     </div>
                 </div>
-            </div>
-
-
-        </div>
-        </div>
-
-
-
+        <?php
+            }
+        } else {
+            echo "<p>No available books found.</p>";
+        }
+        ?>
     </div>
+
+
+
+    <script>
+        function confirmDelete(bookId) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You will delete this book!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Redirect to delete handler
+                    window.location.href = 'admin_delete_book.php?book_id=' + bookId;
+                }
+            });
+        }
+
+        // Display SweetAlert if a success message exists in the URL
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('success')) {
+                Swal.fire({
+                    title: 'Deleted!',
+                    text: urlParams.get('success'),
+                    icon: 'success',
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+            }
+        });
+    </script>
+    <script>
+        // Open SweetAlert2 form for adding a book
+        function openAddBookForm() {
+            Swal.fire({
+                title: 'Add New Book',
+                width: '50vw', // Makes the form 80% of the viewport width
+                html: `
+        <style>
+        * {
+        text-align:left;
+
+        </style>
+            <form id="addBookForm" enctype="multipart/form-data" style="display: flex; flex-wrap: wrap; gap: 10px;">
+                <Br><Br>
+                <!-- Book Title and Author -->
+                <div style="flex: 1; min-width: 48%; display: flex; flex-direction: column;">
+                    <label for="bookTitle">Book Title:</label>
+                    <input type="text" id="bookTitle" name="bookTitle" class="swal2-input" required>
+                </div>
+                <div style="flex: 1; min-width: 48%; display: flex; flex-direction: column;">
+                    <label for="author">Book Author:</label>
+                    <input type="text" id="author" name="author" class="swal2-input" required>
+                </div>
+
+                <!-- Publisher ID and Publication Date -->
+                <div style="flex: 1; min-width: 48%; display: flex; flex-direction: column;">
+                    <label for="publisher">Publisher ID:</label>
+                    <input type="number" id="publisher" name="publisher_id" class="swal2-input" required>
+                </div>
+                <div style="flex: 1; min-width: 48%; display: flex; flex-direction: column;">
+                    <label for="pubDate">Publication Date:</label>
+                    <input type="date" id="pubDate" name="publication_date" class="swal2-input" required>
+                </div>
+
+                <!-- ISBN and Genre ID -->
+                <div style="flex: 1; min-width: 48%; display: flex; flex-direction: column;">
+                    <label for="isbn">ISBN:</label>
+                    <input type="text" id="isbn" name="isbn" class="swal2-input" required>
+                </div>
+                <div style="flex: 1; min-width: 48%; display: flex; flex-direction: column;">
+                    <label for="genre">Genre ID:</label>
+                    <input type="number" id="genre" name="book_genre_id" class="swal2-input" required>
+                </div>
+
+                <!-- Stocks and Status -->
+                <div style="flex: 1; min-width: 48%; display: flex; flex-direction: column;">
+                    <label for="stocks">Stocks:</label>
+                    <input type="number" id="stocks" name="book_stocks" class="swal2-input" required>
+                </div>
+                <div style="flex: 1; min-width: 48%; display: flex; flex-direction: column;">
+                    <label for="status">Status:</label>
+                    <select id="status" name="status" class="swal2-select" required>
+                        <option value="available">Available</option>
+                        <option value="archived">Archived</option>
+                    </select>
+                </div>
+
+                <!-- Book Cover (Full Width) -->
+                <div style="flex: 1 1 100%; display: flex; flex-direction: column;">
+                    <label for="bookCover">Book Cover:</label>
+                    <input type="file" id="bookCover" name="bookCover" accept="image/*" class="swal2-file" required>
+                </div>
+
+                <!-- Description (Full Width Textarea) -->
+                <div style="flex: 1 1 100%; display: flex; flex-direction: column;">
+                    <label for="bookDescription">Description:</label>
+                    <textarea id="bookDescription" name="bookDescription" class="swal2-textarea" required></textarea>
+                </div>
+
+            </form>
+        `,
+                confirmButtonText: 'Add Book',
+                showCancelButton: true,
+                preConfirm: () => {
+                    const formData = new FormData(document.getElementById('addBookForm'));
+                    return fetch('admin_add_book.php', {
+                            method: 'POST',
+                            body: formData
+                        }).then(response => response.json())
+                        .then(data => {
+                            if (!data.success) {
+                                throw new Error(data.message || 'Failed to add book');
+                            }
+                            return data;
+                        }).catch(error => {
+                            Swal.showValidationMessage(error.message);
+                        });
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire('Success!', 'Book added successfully.', 'success')
+                        .then(() => location.reload());
+                }
+            });
+        }
+        // Submit the book form via AJAX
+        function submitBookForm(bookData) {
+            const formData = new FormData();
+            formData.append('book_cover', bookData.bookCover); // Book Cover (file)
+            formData.append('book_title', bookData.bookTitle); // Book Title
+            formData.append('book_description', bookData.bookDescription); // Description
+            formData.append('publisher_id', bookData.publisherId); // Publisher (ID)
+            formData.append('publication_date', bookData.publicationDate); // Date
+            formData.append('isbn', bookData.isbn); // ISBN
+            formData.append('book_genre_id', bookData.bookGenreId); // Genre (ID)
+            formData.append('book_stocks', bookData.bookStocks); // Stocks
+            formData.append('status', bookData.status); // Status (e.g., available/unavailable)
+
+            fetch('admin_add_book.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire('Success!', 'Book added successfully.', 'success')
+                            .then(() => location.reload()); // Reload to see new book
+                    } else {
+                        Swal.fire('Error!', data.error || 'Failed to add book.', 'error');
+                    }
+                })
+                .catch(() => {
+                    Swal.fire('Error!', 'Something went wrong.', 'error');
+                });
+        }
+
+        // Confirm Delete Function
+        function confirmDelete(bookId) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You will delete this book!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = 'admin_delete_book.php?book_id=' + bookId;
+                }
+            });
+        }
+    </script>
+    <script>
+        // Function to confirm and trigger book import
+        function confirmImport() {
+            Swal.fire({
+                title: 'Import Books?',
+                text: 'This will fetch and add books to your catalog.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Import',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33'
+            }).then((result) => {
+                // ✅ If user clicks "Yes, Import", call the fetch function
+                if (result.isConfirmed) {
+                    fetchGutenbergBooks();
+                }
+            });
+        }
+
+        // Function to call fetch_gutenburg.php using AJAX
+        function fetchGutenbergBooks() {
+            fetch('fetch_gutenburg.php')
+                .then(response => response.json()) // Parse JSON response
+                .then(data => {
+                    // ✅ If success, show a success message
+                    if (data.success) {
+                        Swal.fire('Success!', data.message, 'success')
+                            .then(() => location.reload()); // Reload to show new books
+                    } else {
+                        // ❌ Handle errors
+                        Swal.fire('Error!', data.message || 'Failed to import books.', 'error');
+                    }
+                })
+                .catch(() => {
+                    Swal.fire('Error!', 'An error occurred while importing books.', 'error');
+                });
+        }
+    </script>
+
     <!-- ========================= Main END ==================== -->
-
-    <div id="logoutModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Confirm Logout</h2>
-            <p>Are you sure you want to logout?</p>
-            <div class="modal-actions">
-                <a href="../Homepage/signin.php" class="btn-action btn-yes">Yes</a>
-                <button class="btn-action btn-no" id="cancelLogout">No</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- =========== Scripts =========  -->
-    <script src="admin.js"></script>
-    <script src="ADMIN_MODAL.js"></script>
 
 
     <!-- ====== ionicons ======= -->

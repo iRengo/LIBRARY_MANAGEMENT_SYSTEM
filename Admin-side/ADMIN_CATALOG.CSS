@@ -1,103 +1,263 @@
+
+.header-container {
+  display: flex;
+  justify-content: space-between; /* Align left and right sections */
+  align-items: flex-start; /* Align items to the top */
+  margin: 20px 0;
+  flex-wrap: wrap; /* Wrap content on smaller screens */
+
+}
+/* Available Books (Left-aligned) */
+.titles {
+  display: flex;
+  align-items: center; /* Align vertically */
+}
+
+.available {
+  font-size: 28px;
+  font-weight: 600;
+  color: #0f0f0f;
+}
 .search-bar {
-    display: relative !important;
-    justify-content: center !important;
-    align-items: center !important;
-    margin: 20px 0 !important;
+  display: relative !important;
+  justify-content: center !important;
+  align-items: center !important;
+  margin: 20px 0 !important;
+}
+
+.search-bar input {
+  width: 100%;
+  max-width: 350px; /* Ensure responsiveness */
+  padding: 12px 40px; /* Space for the icon */
+  font-size: 16px;
+  border: 2px solid #ddd;
+  border-radius: 25px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  outline: none;
+  transition: all 0.3s ease;
+  background: #fff url('https://cdn-icons-png.flaticon.com/512/622/622669.png') no-repeat 15px center;
+  background-size: 18px;
+  padding-left: 40px; /* Space for the icon */
+}
+
+.search-container {
+  display: flex;
+  margin-right: 5%;
+  flex-direction: column; /* Stack items vertically */
+  align-items: flex-end; /* Align to the right side */
+  gap: 10px; /* Space between button and search bar */
+
+}
+
+.search-bar input::placeholder {
+  color: #999 !important;
+  font-size: 14px !important;
+}
+
+.search-bar input:focus {
+  border-color: #ff7a7a !important;
+  box-shadow: 0 6px 12px rgba(255, 77, 77, 0.2) !important;
+}
+
+.search-bar input:hover {
+  border-color: #ff4d4d !important;
+}
+
+.titles {
+  width: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin-top: 50px;
+  background-color: #0f0f0f; /* Light background for better readability */
+  border-radius: 10px; /* Rounded corners */
+  padding: 10px 40px; /* Space inside the container */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  margin-left: 50px;
+}
+
+.available {
+  font-size: 24px; /* Large and readable */
+  font-weight: 500; /* Bold for emphasis */
+  color: #ffffff; /* Dark gray for readability */
+  margin: 0; /* Remove default margins */
+  width: 5000px;
+  padding-left: 50px;
+}
+
+.pics {
+  display: flex;
+  justify-content: start;
+  padding-left: 50px;
+  position: relative;
+}
+
+.texts{
+  display: flex;
+  justify-content: flex-start;
+  padding-left: 80px;
+  padding-top: 50px;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.textss{
+  display: flex;
+  justify-content: flex-start;
+  padding-left: 80px;
+  padding-top: 30px;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.pics img {
+  height: 260px;
+  width: 200px;
+  border-radius: 10px;
+  margin: 5px;
+  padding: 10px;
+  box-shadow: 1px 1px 0px rgba(215, 215, 218, 0.89); /* Adds a shadow effect */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover animation */
+}
+
+.pics img:hover {
+  transform: scale(1.05); /* Slightly enlarges the image on hover */
+  box-shadow: 0 12px 20px rgba(100, 59, 59, 0.4); /* Enhances shadow on hover */
+}
+.book-list {
+  display: flex;
+  flex-wrap: wrap;
+  /* Enables wrapping when the screen is full */
+  gap: 0px;
+  /* Adds space between book covers */
+  justify-content: flex-start;
+  /* Aligns books from the start of the container */
+  padding: 20px;
+  margin-bottom:20px;
+
+}
+
+/* Style for each book container */
+.book-container {
+  position: relative;
+  width: 200px;
+  /* Fixed width for uniformity */
+  height: 260px;
+  /* Consistent height */
+  overflow: hidden;
+  border-radius: 10px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  margin-left: 2%;
+  margin-bottom: 30px;
+
+}
+
+/* Book Image */
+.book-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Ensures the image covers the container */
+}
+
+/* Darken Image on Hover */
+.book-container:hover .book-cover {
+  transform: scale(1.05);
+  filter: brightness(50%);
+}
+
+/* Overlay (Hidden by Default) */
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  /* Hidden initially */
+  transition: opacity 0.3s ease;
+}
+
+/* Show Overlay on Hover */
+.book-container:hover .overlay {
+  opacity: 1;
+}
+
+/* Button Styles */
+.overlay button {
+  margin: 5px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Individual Button Colors */
+.archive-btn {
+  background-color: green;
+  color: white;
+}
+
+.delete-btn {
+  background-color: red;
+  color: white;
+}
+
+.edit-btn {
+  background-color: gray;
+  color: white;
+}
+
+/* Hover Effect on Buttons */
+.overlay button:hover {
+  opacity: 0.8;
+}
+
+/* Add Book Button - Match System UI */
+.add-book-btn {
+  background-color: #427005; /* Green color */
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.add-book-btn:hover {
+  background-color: #45a049; /* Darker green on hover */
+}
+
+.import-book-btn {
+  background-color: #ffffff; /* Green color */
+  color: rgb(111, 110, 110);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: bold;
+  border: 1px solid gray;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.import-book-btn:hover {
+  background-color: #9a9494;
+  color:white;
+}
+
+/* Responsive Design: Adjust layout for smaller screens */
+@media (max-width: 768px) {
+  .book-container {
+      width: 150px;
+      /* Smaller size on small screens */
+      height: 200px;
   }
-  
-  .search-bar input {
-    width: 300% !important;
-    max-width: 400px !important; /* Set a max width for better responsiveness */
-    padding: 15px 50px !important;
-    font-size: 16px !important;
-    border: 2px solid #ddd !important;
-    border-radius: 25px !important;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
-    transition: all 0.3s ease !important;
-    outline: none !important;
-    background: #fff url('https://cdn-icons-png.flaticon.com/512/622/622669.png') no-repeat 15px center !important; /* Add a search icon */
-    background-size: 18px !important;
-    padding-left: 40px !important; /* Add space for the icon */
-    position: relative;
-    left: 900px;
-  }
-  
-  .search-bar input::placeholder {
-    color: #999 !important;
-    font-size: 14px !important;
-  }
-  
-  .search-bar input:focus {
-    border-color: #ff7a7a !important;
-    box-shadow: 0 6px 12px rgba(255, 77, 77, 0.2) !important;
-  }
-  
-  .search-bar input:hover {
-    border-color: #ff4d4d !important;
-  }
-  
-  
-  .titles {
-    width: 400px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    margin-top: 50px;
-    background-color: #0f0f0f; /* Light background for better readability */
-    border-radius: 10px; /* Rounded corners */
-    padding: 10px 40px; /* Space inside the container */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    margin-left: 50px;
-  }
-  
-  .available {
-    font-size: 24px; /* Large and readable */
-    font-weight: 500; /* Bold for emphasis */
-    color: #ffffff; /* Dark gray for readability */
-    margin: 0; /* Remove default margins */
-    width: 5000px;
-    padding-left: 50px;
-  }
-  
-   .pics {
-    display: flex;
-    justify-content: start;
-    padding-left: 50px;
-   }
-  
-  .texts{
-    display: flex;
-    justify-content: flex-start;
-    padding-left: 80px;
-    padding-top: 50px;
-    font-size: 20px;
-    font-weight: 500;
-  }
-  
-  .textss{
-    display: flex;
-    justify-content: flex-start;
-    padding-left: 80px;
-    padding-top: 30px;
-    font-size: 20px;
-    font-weight: 500;
-  }
-  
-  .pics img {
-    height: 260px;
-    width: 200px;
-    border-radius: 10px;
-    margin: 5px;
-    padding: 10px;
-    box-shadow: 1px 1px 0px rgba(215, 215, 218, 0.89); /* Adds a shadow effect */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover animation */
-  }
-  
-  .pics img:hover {
-    transform: scale(1.05); /* Slightly enlarges the image on hover */
-    box-shadow: 0 12px 20px rgba(100, 59, 59, 0.4); /* Enhances shadow on hover */
-  }
-  
-  
-   
+}
