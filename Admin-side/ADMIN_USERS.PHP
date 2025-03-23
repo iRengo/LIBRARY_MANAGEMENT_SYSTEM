@@ -355,6 +355,7 @@ $users_on_page = array_slice($all_users, $start_index, $users_per_page);
 </head>
 
 <body>
+ <Br><Br><br><Br><Br>
    <?php include 'HEADER-NAVBAR.PHP'; ?>
 
             <!-- Content HERE -->

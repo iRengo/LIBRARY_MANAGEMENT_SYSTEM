@@ -50,7 +50,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Use password_verify for hashed admin passwords
         if (password_verify($password, $hashed_password)) {
             $_SESSION['admin_no'] = $admin_no;
-            header("Location: ../admin-side/admin_dasboard.php");
+            header("Location: ../admin-side/admin_dashboard.php");
             exit();
         } else {
             $_SESSION['error_message'] = "Invalid password!";
