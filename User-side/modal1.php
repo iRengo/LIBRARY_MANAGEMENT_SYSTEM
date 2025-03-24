@@ -137,7 +137,7 @@
                     <p>2018 • 18+ • Romance • 8 chp</p>
 
                     <div class="btn-group" role="group">
-                        <a href="#borrow" class="btn btn-borrow">Borrow</a>
+                    <a href="BOOK_BORROW.php" class="btn btn-borrow">Borrow</a>
                         <a href="#sneakpeek" class="btn btn-sneakpeek">Sneak Peek</a>
                     </div>
 

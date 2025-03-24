@@ -1,3 +1,24 @@
+<?php
+// Include database connection
+include '../homepage/db_connect.php';
+session_start(); // Start session to access logged-in user data
+
+// Ensure user is logged in
+if (!isset($_SESSION['acc_no'])) {
+    die("Access Denied. Please log in.");
+}
+
+$acc_no = $_SESSION['acc_no']; // Get logged-in user's acc_no
+
+// Fetch books from collection_books table for the logged-in user, ordered by newest first
+$query = "SELECT * FROM collection_books WHERE acc_no = ? ORDER BY added_at DESC";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("i", $acc_no);
+$stmt->execute();
+$result = $stmt->get_result();
+?>
+
+
 <!DOCTYPE html>
         <html lang="en">
 
@@ -180,7 +201,7 @@ h1 {
                 </li>
 
                 <li>
-                    <a href="#">
+                <a href="USER_COLLECTION.PHP">
                         <span class="icon">
                             <ion-icon name="file-tray-stacked-outline"></ion-icon>
 
@@ -285,99 +306,54 @@ h1 {
                         </select>
                     </div>
                 <br>
-                <!-- Left and Right Panel Section -->
-            <div class="row mt-5">
-                <!-- Left Panel: Title, Description, Genre -->
-                <div class="col-md-6">
-                    <h2>The Last Four Things</h2>
-                    <p><strong>Description:</strong> TIn Along for the Ride by Sarah Dessen, Auden spends the summer in a beach town with her dad’s new family, feeling out of place. She meets Eli, a quiet, adventurous guy, and together they explore the town at night. Through their friendship, Auden learns to open up and enjoy life.</p>
-                         <!-- New Text Added Below Description -->
-                    <p>2005 • 18+ • Romance • 13 chp</p>
+               <!-- Left and Right Panel Section -->
+<div class="row mt-5">
+    <!-- Left Panel: Title, Description, Genre -->
+    <div class="col-md-6">
+        <?php if ($row = $result->fetch_assoc()): // Fetch the most recent book ?>
+            <h2><?= $row['book_title'] ?></h2>
+            <p><strong>Description:</strong> <?= $row['description'] ?></p>
+            <p>2005 • 18+ • Romance • 13 chp</p>
 
-                    <div class="btn-group" role="group">
-                        <a href="BOOK_BORROW.php" class="btn btn-borrow">Borrow</a>
-                        <a href="#sneakpeek" class="btn btn-sneakpeek">Remove</a>
-                    </div>
+            <div class="btn-group" role="group">
+    <a href="BOOK_BORROW.php" class="btn btn-borrow">Borrow</a>
+    <a href="remove_book.php?collection_id=<?= isset($row['collection_id']) ? $row['collection_id'] : '' ?>" 
+       class="btn btn-sneakpeek">Remove</a>
+</div>
 
-                </div>
+    </div>
 
-                <!-- Right Panel: Image -->
-                <div class="col-md-6">
-                    <img src="https://www.creativindiecovers.com/wp-content/uploads/2012/02/9780718155209.jpg" class="img-fluid" alt="Book Cover">
-                </div>
-            </div>
-                <br>
-                <div class="container">
-        <h1 style="margin-left: 50px;">RECENTLY ADDEDg  </h1>
-        <div class="book-grid">
-        <div class="book-card">
-        <img src="https://placeit-img-1-p.cdn.aws.placeit.net/uploads/stage/stage_image/22101/optimized_large_thumb_Horror_Book_Cover.jpg" alt="Harry Potter II">
-            <div class="info">
-                <h3>Ibong Adarna</h3>
-                <p>Francisco Balagtas</p>
-                <div class="colors">
-                    <div class="color-box color-purple"></div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="book-card">
-         <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT21aYKXv_LCrefM9wPnvHVBT4ntKzFi9c96nU8fqjHnDuX3NBFObZXXTnTpcqyCCkY8Bo&usqp=CAU" alt="Harry Potter II">
-            <div class="info">
-                <h3>Lord of the Rings</h3>
-                <p>J.R.R. Tolkien</p>
-                <div class="colors">
-                    <div class="color-box color-red"></div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="book-card">
-            <<img src="https://thebookcoverdesigner.com/wp-content/uploads/2020/01/TH00102.jpg" alt="Harry Potter II">
-            <div class="info">
-                <h3>Harry Potter I</h3>
-                <p>David Hume</p>
-                <div class="colors">
-                    <div class="color-box color-red"></div>
-                    <div class="color-box color-purple"></div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="book-card">
-            <img src="https://placeit-img-1-p.cdn.aws.placeit.net/uploads/stage/stage_image/39885/optimized_large_thumb_stage.jpg" alt="Harry Potter II">
-            <div class="info">
-                <h3>Harry Potter II</h3>
-                <p>David Hume</p>
-                <div class="colors">
-                    <div class="color-box color-red"></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="book-card">
-            <img src="https://ph.bbwbooks.com/cdn/shop/products/9780374351281_1_347413de-9f1c-468a-89b3-f0b2c0e408e0_600x.jpg?v=1625489251" alt="Harry Potter III">
-            <div class="info">
-                <h3>Harry Potter III</h3>
-                <p>David Hume</p>
-                <div class="colors">
-                    <div class="color-box color-red"></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="book-card">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRU--MXPOfwwWTvR9vCB2UkzeiBeX9ZkGayag&s" alt="Harry Potter IV">
-            <div class="info">
-                <h3>Harry Potter IV</h3>
-                <p>David Hume</p>
-                <div class="colors">
-                    <div class="color-box color-purple"></div>
-                </div>
-            </div>
-        </div>
+    <!-- Right Panel: Image -->
+    <div class="col-md-6">
+        <img src="<?= str_replace(' ', '%20', $row['image_path']) ?>" class="img-fluid" alt="Book Cover">
     </div>
 </div>
+<?php endif; ?>
+
+<br>
+
+<div class="container">
+    <h1 style="margin-left: 50px;">RECENTLY ADDED</h1>
+    <div class="book-grid">
+        <?php while ($row = $result->fetch_assoc()): ?>
+            <div class="book-card">
+                <img src="<?= str_replace(' ', '%20', $row['image_path']) ?>" alt="<?= $row['book_title'] ?>">
+                <div class="info">
+                    <h3><?= $row['book_title'] ?></h3>
+                    <p><?= $row['author'] ?></p>
+                    <div class="colors">
+                        <div class="color-box color-purple"></div>
+                    </div>
+                </div>
+            </div>
+        <?php endwhile; ?>
+    </div>
+</div>
+
+<?php
+// Close the database connection
+$conn->close();
+?>
 <div id="logoutModal" class="modal">
                 <div class="modal-content">
                     <span class="close">&times;</span>

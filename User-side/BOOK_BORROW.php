@@ -1,219 +1,215 @@
+<?php
+session_start();
+$servername = "localhost";
+$username = "root";  // Change if needed
+$password = "";      // Change if needed
+$dbname = "db_library_management_system";  
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Ensure user is logged in
+if (!isset($_SESSION['acc_no'])) {
+    die("Access Denied. Please log in.");
+}
+
+$acc_no = $_SESSION['acc_no']; // Get logged-in user's acc_no
+
+// Fetch book details dynamically
+$book_id = isset($_GET['book_id']) ? (int)$_GET['book_id'] : 1;
+$sql = "SELECT * FROM tbl_books WHERE book_id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $book_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$book = $result->fetch_assoc(); 
+$stmt->close();
+
+// Fetch like & dislike counts
+$stmt = $conn->prepare("SELECT 
+    SUM(CASE WHEN action='like' THEN 1 ELSE 0 END) AS likes, 
+    SUM(CASE WHEN action='dislike' THEN 1 ELSE 0 END) AS dislikes 
+    FROM book_likes_dislikes WHERE book_id = ?");
+$stmt->bind_param("i", $book_id);
+$stmt->execute();
+$stmt->bind_result($like_count, $dislike_count);
+$stmt->fetch();
+$stmt->close();
+
+if (!$book) {
+    die("Book not found!");
+}
+
+// Handle book borrowing & collection
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $action = $_POST['action'];
+    $book_title = $book['book_title'];
+    $author = $book['book_author'];
+    $image_path = $book['book_cover'];
+    $description = $book['book_description'];
+
+    if ($action == "borrow") {
+        // Insert into reserved_books with acc_no
+        $sql = "INSERT INTO reserved_books (acc_no, book_id, book_title, author) VALUES (?, ?, ?, ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("iiss", $acc_no, $book_id, $book_title, $author);
+        
+    
+        if ($stmt->execute()) {
+            // Now insert into reservation_history
+            $sql = "INSERT INTO reservation_history (acc_no, book_title, reservation_date, expiration_date) 
+        VALUES (?, ?, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 2 DAY))";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("is", $acc_no, $book_title);
+            $stmt->execute();
+
+
+        }
+    
+    } else {
+        // Insert into collection_books with acc_no
+        $sql = "INSERT INTO collection_books (acc_no, book_id, book_title, image_path, description) VALUES (?, ?, ?, ?, ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("iisss", $acc_no, $book_id, $book_title, $image_path, $description);
+    }
+    
+    if ($stmt->execute()) {
+        echo "<script>alert('Book has been " . ($action == "borrow" ? "borrowed" : "added to collection") . "!'); window.location.href='USER_DASHBOARD.PHP';</script>";
+    } else {
+        echo "<script>alert('Error: " . $stmt->error . "');</script>";
+    }
+    
+    $stmt->close();
+
+    
+    
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book Borrow</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhgj9UU2gEpeHXKuDjc8+aJBBZ/YYz7wkmP5Jxs6t" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="BOOK_BORROW.css">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+oONq6NMr76ENuc1Q+9FKOJe0ieDU" crossorigin="anonymous"></script>
-<style>
-       
-    .div1 {
-        background-image: url('the return.jpg'); 
-        background-size: cover; 
-        background-position: center;
-        height: 68vh;
-        border-radius: 10px 10px 15px 15px;
-        box-shadow: 0 15px 10px rgba(0, 0, 0, 0.4); 
-        position: relative; 
-        z-index: 0; 
-    }
-
-    
-    .div2 {
-        background-color: rgb(126, 126, 126);
-        height: 100vh; 
-        position: absolute; 
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 0; 
-        padding: 1px; 
-    }
-
-    
-    .floating-article {
-        background-color: rgb(240, 240, 240);
-        border-radius: 15px;
-        width: 70%;
-        height: 400px;
-        margin: 0 auto;
-        position: absolute;
-        top: 65%;
-        left: 50%;
-        transform: translate(-50%, -50%); 
-        display: flex;
-        flex-direction: row; 
-        box-shadow: 0 15px 15px rgba(0, 0, 0, 0.4); 
-        z-index: 2; 
-        padding: 10px;
-    }
-
-    
-    .button-container {
-        display: flex;
-        gap: 10px; 
-        justify-content: center;
-    }
-
- 
-    .btn {
-        font-size: 1.2rem;
-        padding: 8px 16px;
-        border-radius: 5px;
-        border: none;
-        cursor: pointer;
-    }
-
- 
-    .btn-like {
-        background-color: #1C2E5C;
-        color: white;
-        margin-left: 37px;
-        width: 100px;
-    }
-
-    .btn-dislike {
-        background-color: #674E4E;
-        color: white;
-        width: 115px;
-    }
-
-    .left-column {
-        flex: 1; 
-        display: flex;
-        flex-direction: column;
-        align-items: left;
-        justify-content: center;
-    }
-
-    .left-column img {
-        width: 210px;
-        height: 300px;
-        border-radius: 5px;
-        margin-bottom: 20px;
-        margin-left: 40px;
-    }
-
-    .right-column {
-        flex: 2; 
-        padding-left: 20px;
-        display: flex;
-        flex-direction: column;
-        margin-right: 600px;
-        margin-top: 20px; 
-        
-    }
-
-    .text {
-        margin-top: -40px;
-        font-family: Arial, Helvetica, sans-serif;
-    }
-
-
- 
-    .btn-borrow {
-        font-size: 15px;
-        width: 130px;
-        padding: 7px;
-        background-color: #1570E6; 
-        color: white;
-        border-radius: 17px;
-        border: none;
-        cursor: pointer;
-        margin-bottom: 10px; 
-    }
-
-   
-    .btn-collection {
-        font-size: 1.2rem;
-        width: 175px;
-        padding: 10px;
-        background-color: #1C2E5C; 
-        color: white;
-        border-radius: 17px;
-        border: none;
-        cursor: pointer;
-        margin-left: 180%;
-        margin-top: -50px;
-    }
-
-    .btn-fiction {
-        font-size: 13px;
-        width: 75px;
-        padding: 8px;
-        background-color: #7F00FF; 
-        color: white;
-        border-radius: 10px;
-        border: none;
-        cursor: pointer;
-        margin-left: 181% ;
-        margin-top: 10px;
-        
-    }
-    .btn-horror {
-        font-size: 13px;
-        width: 75px;
-        padding: 8px;
-        background-color: #8B0000; 
-        color: white;
-        border-radius: 10px;
-        border: none;
-        cursor: pointer;
-        margin-left: 200% ;
-        margin-top: -31px;
-        
-    }
-
-    
-</style>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        .container {
+            max-width: 900px;
+            margin: auto;
+            padding-top: 20px;
+        }
+        .book-card {
+            display: flex;
+            background-color: #f9f9f9;
+            border-radius: 15px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        .book-image {
+            width: 250px;
+            height: auto;   
+        }
+        .book-details {
+            padding: 20px;
+            flex: 1;
+        }
+        .btn-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .btn {
+            font-size: 16px;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            border: none;
+            color: white;
+        }
+        .btn-borrow {
+            background-color: #1570E6;
+        }
+        .btn-collection {
+            background-color: #1C2E5C;
+        }
+        .btn-like, .btn-dislike {
+            background-color: #674E4E;
+            margin-right: 10px;
+        }
+    </style>
 </head>
-
 <body>
-    <div class="container-fluid">
-        <!-- Background Div (div2) placed behind div1 and takes full screen with padding -->
-        <div class="row">
-            <div class="col-12 div2"></div> <!-- div2 now takes full screen height with padding -->
-        </div>
+    <div class="container">
+    <a href="USER_DASHBOARD.PHP" class="btn btn-secondary mt-3">
+    <i class="fas fa-arrow-left"></i> Back
+</a>
 
-        <!-- Content Div (div1) with background image -->
-        <div class="row">
-            <div class="col-6 div1"></div>
-        </div>
+        <div class="book-card">
+        <img src="<?= !empty($book['book_cover']) ? htmlspecialchars($book['book_cover']) : 'default.jpg'; ?>" 
+     class="book-image" 
+     alt="<?= htmlspecialchars($book['book_title']) ?>">
 
-        <article class="floating-article">
-            <!-- Left Column: Buttons and Image -->
-            <div class="left-column">
-                <img src="the return.jpg" alt="the return">
-                <div class="button-container">
-                    <button class="btn btn-like"><i class="fas fa-thumbs-up"></i> Like</button>
-                    <button class="btn btn-dislike"><i class="fas fa-thumbs-down"></i> Dislike</button>
-                </div>
+            <div class="book-details">
+                <h2><?= htmlspecialchars($book['book_title']) ?></h2>
+                <p><b>Author:</b> <?= htmlspecialchars($book['book_author']) ?></p>
+                <p><?= nl2br(htmlspecialchars($book['book_description'])) ?></p>
+                
+                <form method="post">
+                    <input type="hidden" name="action" value="borrow">
+                    <button type="submit" class="btn btn-borrow">BORROW THIS</button>
+                </form>
+
+                <form method="post">
+                    <input type="hidden" name="action" value="collection">
+                    <button type="submit" class="btn btn-collection">Add to Collection</button>
+                </form>
+
+                <div class="btn-container">
+    <button class="btn btn-like" data-action="like">
+        <i class="fas fa-thumbs-up"></i> Like (<span id="like-count"><?= $like_count ?? 0 ?></span>)
+    </button>
+    <button class="btn btn-dislike" data-action="dislike">
+        <i class="fas fa-thumbs-down"></i> Dislike (<span id="dislike-count"><?= $dislike_count ?? 0 ?></span>)
+    </button>
+</div>
+
             </div>
-
-            <!-- Right Column: Text Content -->
-            <div class="right-column">
-                <!-- Borrow This Button -->
-                <button class="btn-borrow">BORROW THIS</button>
-                <!-- Add to Collection Button -->
-                <button class="btn-collection">Add to Collection</button>
-                <button class="btn-fiction">FICTION</button>
-                <button class="btn-horror">HORROR</button>
-                <div class="text">
-                    <h2 style="font-size: 25px;">The Return</h2>
-                    <b style="font-size: 15px;">Author:</b> <span> Tolkien.</span>
-                    <p style="font-size: 15px; margin-top: 1px; color:rgb(97, 97, 97);">The Lord of the Rings is a high-fantasy epic novel, originally published in three volumes between 1954 and 1955. It follows the journey of Frodo Baggins, a hobbit, and his companions as they attempt to destroy a powerful ring that could bring darkness to the world. The story is set in the fictional world of Middle-earth and explores themes of friendship, courage, and the battle between good and evil. The novel has become one of the most influential works in modern fantasy literature.</p>
-                </div>
-            </div>
-        </article>
+        </div>
     </div>
 
-    
+    <script>
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".btn-like, .btn-dislike").forEach(button => {
+        button.addEventListener("click", function () {
+            let action = this.getAttribute("data-action");
+            let book_id = <?= $book_id ?>;
+            
+            fetch("like_dislike_book.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: `book_id=${book_id}&action=${action}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById("like-count").textContent = data.likes;
+                    document.getElementById("dislike-count").textContent = data.dislikes;
+                } else {
+                    alert(data.message);
+                }
+            });
+        });
+    });
+});
+</script>
 
 </body>
-
 </html>

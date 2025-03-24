@@ -1,3 +1,46 @@
+<?php
+// Include database connection
+include '../homepage/db_connect.php';
+
+// Start session
+session_start();
+if (!isset($_SESSION['acc_no'])) {
+    die("Access Denied. Please log in.");
+}
+
+$acc_no = $_SESSION['acc_no']; // Get the logged-in user's acc_no
+
+// Fetch Borrowing History
+$sql_borrow = "SELECT book_title, borrow_date, due_date, return_date FROM borrowing_history WHERE acc_no = ?";
+$stmt_borrow = $conn->prepare($sql_borrow);
+$stmt_borrow->bind_param("i", $acc_no);
+$stmt_borrow->execute();
+$result_borrow = $stmt_borrow->get_result();
+
+// Fetch Reservation History (JOIN books to get due_date)
+$sql_reserve = "SELECT book_title, reservation_date, expiration_date 
+                FROM reservation_history
+                WHERE acc_no = ?";
+$stmt_reserve = $conn->prepare($sql_reserve);
+$stmt_reserve->bind_param("i", $acc_no);
+$stmt_reserve->execute();
+$result_reserve = $stmt_reserve->get_result();
+
+// Fetch Renewal History (Include book_title)
+$sql_renew = "SELECT book_title, renewal_date, new_due_date
+              FROM book_renewal_history WHERE acc_no = ?";
+$stmt_renew = $conn->prepare($sql_renew);
+$stmt_renew->bind_param("i", $acc_no);
+$stmt_renew->execute();
+$result_renew = $stmt_renew->get_result();
+
+// Close statements
+$stmt_borrow->close();
+$stmt_reserve->close();
+$stmt_renew->close();
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -189,210 +232,22 @@
 
     <!-- Content Sections -->
 
-            <!-- Accounts Information Start... -->
+   <!-- Borrowing History -->
 <div id="account" class="content content-section">
     <div class="container_profile">
-        <!-- Profile Section -->
-        <section class="profile-section">
-            <div class="profile-form">
-            <div class="form-group full-width">
-                    <label for="email" class="history">Borrowing History</label>
-                    <div class="main-table">
-                    <div class="table">
-                        <div class="titlee">
-                            Book Title
-                            <div id="info">The Two Tower</div>
-                        </div>
-                    <div class="borrowdate">Borrow Date
-                    <div id="info">April 08, 2024</div>
-                    </div>
-                    <div class="duedate">
-                        Due Date
-                        <div id="info">April 15. 2024</div>
-                    </div>
-                    <div class="returndate">
-                        Return Date
-                        <div id="info">April 15, 2024</div>
-                    </div>
-                    </div>
-                    <div class="table1">
-                        <div class="titlee">
-                            <div id="info">The Two Tower</div>
-                        </div>
-                    <div class="borrowdate">
-                    <div id="info">April 08, 2024</div>
-                    </div>
-                    <div class="duedate">
-                        <div id="info">April 15. 2024</div>
-                    </div>
-                    <div class="returndate">
-                        <div id="info">April 15, 2024</div>
-                    </div>
-                    </div>
-                    <div class="table1">
-                        <div class="titlee">
-                            <div id="info">The Two Tower</div>
-                        </div>
-                    <div class="borrowdate">
-                    <div id="info">April 08, 2024</div>
-                    </div>
-                    <div class="duedate">
-                        <div id="info">April 15. 2024</div>
-                    </div>
-                    <div class="returndate">
-                        <div id="info">April 15, 2024</div>
-                    </div>
-                    </div>
-                    <div class="table1">
-                        <div class="titlee">
-                            <div id="info">The Two Tower</div>
-                        </div>
-                    <div class="borrowdate">
-                    <div id="info">April 08, 2024</div>
-                    </div>
-                    <div class="duedate">
-                        <div id="info">April 15. 2024</div>
-                    </div>
-                    <div class="returndate">
-                        <div id="info">April 15, 2024</div>
-                    </div>
-                    </div>
-                    <div class="table1">
-                        <div class="titlee">
-                            <div id="info">The Two Tower</div>
-                        </div>
-                    <div class="borrowdate">
-                    <div id="info">April 08, 2024</div>
-                    </div>
-                    <div class="duedate">
-                        <div id="info">April 15. 2024</div>
-                    </div>
-                    <div class="returndate">
-                        <div id="info">April 15, 2024</div>
-                    </div>
-                    </div>
-                    <div class="table1">
-                        <div class="titlee">
-                            <div id="info">The Two Tower</div>
-                        </div>
-                    <div class="borrowdate">
-                    <div id="info">April 08, 2024</div>
-                    </div>
-                    <div class="duedate">
-                        <div id="info">April 15. 2024</div>
-                    </div>
-                    <div class="returndate">
-                        <div id="info">April 15, 2024</div>
-                    </div>
-                    </div>
-                    <div class="table1">
-                        <div class="titlee">
-                            <div id="info">The Two Tower</div>
-                        </div>
-                    <div class="borrowdate">
-                    <div id="info">April 08, 2024</div>
-                    </div>
-                    <div class="duedate">
-                        <div id="info">April 15. 2024</div>
-                    </div>
-                    <div class="returndate">
-                        <div id="info">April 15, 2024</div>
-                    </div>
-                    </div>
-            </div>
-            </div>
-        </section>
-        
-        </div>
-    </div>
-
-            <!-- Accounts Information End... -->
-
-
-            <!-- Notifications Information Start... -->
-
-            <div id="notifications" class="content content-section">
-    <div class="container_profile">
-        <!-- Reservation Section -->
         <section class="profile-section">
             <div class="profile-form">
                 <div class="form-group full-width">
-                    <label for="reservation" class="history">Reservation History</label>
+                    <label class="history">Borrowing History</label>
                     <div class="main-table">
-                        <div class="table">
-                            <div class="titlee">
-                                Book Title
-                                <div id="info">The Hobbit</div>
+                        <?php while ($row = $result_borrow->fetch_assoc()) { ?>
+                            <div class="table">
+                                <div class="titlee">Book Title<div id="info"><?= $row['book_title'] ?></div></div>
+                                <div class="borrowdate">Borrow Date<div id="info"><?= $row['borrow_date'] ?></div></div>
+                                <div class="duedate">Due Date<div id="info"><?= $row['due_date'] ?></div></div>
+                                <div class="returndate">Return Date<div id="info"><?= $row['return_date'] ?? 'Not returned' ?></div></div>
                             </div>
-                            <div class="reservedate">
-                                Reservation Date
-                                <div id="info">April 08, 2024</div>
-                            </div>
-                            <div class="duedate">
-                                Due Date
-                                <div id="info">April 15, 2024</div>
-                            </div>
-                            <div class="action">
-                               
-                                <button class="cancel-btn" onclick="cancelReservation('The Hobbit')">Cancel</button>
-                            </div>
-                        </div>
-                        <div class="table1">
-                            <div class="titlee">
-                                <div id="info">The Hobbit</div>
-                            </div>
-                            <div class="reservedate">
-                                <div id="info">April 08, 2024</div>
-                            </div>
-                            <div class="duedate">
-                                <div id="info">April 15, 2024</div>
-                            </div>
-                            <div class="action">
-                                <button class="cancel-btn" onclick="cancelReservation('The Hobbit')">Cancel</button>
-                            </div>
-                        </div>
-                        <div class="table1">
-                            <div class="titlee">
-                                <div id="info">The Hobbit</div>
-                            </div>
-                            <div class="reservedate">
-                                <div id="info">April 08, 2024</div>
-                            </div>
-                            <div class="duedate">
-                                <div id="info">April 15, 2024</div>
-                            </div>
-                            <div class="action">
-                                <button class="cancel-btn" onclick="cancelReservation('The Hobbit')">Cancel</button>
-                            </div>
-                        </div>
-                        <div class="table1">
-                            <div class="titlee">
-                                <div id="info">The Hobbit</div>
-                            </div>
-                            <div class="reservedate">
-                                <div id="info">April 08, 2024</div>
-                            </div>
-                            <div class="duedate">
-                                <div id="info">April 15, 2024</div>
-                            </div>
-                            <div class="action">
-                                <button class="cancel-btn" onclick="cancelReservation('The Hobbit')">Cancel</button>
-                            </div>
-                        </div>
-                        <div class="table1">
-                            <div class="titlee">
-                                <div id="info">The Hobbit</div>
-                            </div>
-                            <div class="reservedate">
-                                <div id="info">April 08, 2024</div>
-                            </div>
-                            <div class="duedate">
-                                <div id="info">April 15, 2024</div>
-                            </div>
-                            <div class="action">
-                                <button class="cancel-btn" onclick="cancelReservation('The Hobbit')">Cancel</button>
-                            </div>
-                        </div>
+                        <?php } ?>
                     </div>
                 </div>
             </div>
@@ -400,94 +255,45 @@
     </div>
 </div>
 
-
-
-            <!-- Notifications Information End... -->
-                    
-
-            <!-- Fines Information Start... -->
-
-            <div id="fines" class="content content-section" style="display:none;">
+<!-- Reservation History -->
+<div id="notifications" class="content content-section">
     <div class="container_profile">
-        <!-- Profile Section -->
         <section class="profile-section">
             <div class="profile-form">
                 <div class="form-group full-width">
-                    <label for="email" class="history">Book Renewal History</label>
+                    <label class="history">Reservation History</label>
                     <div class="main-table">
-                        <div class="table">
-                            <div class="titlee">
-                                Book Title
-                                <div id="info">Filtered Life</div>
+                        <?php while ($row = $result_reserve->fetch_assoc()) { ?>
+                            <div class="table">
+                                <div class="titlee">Book Title<div id="info"><?= $row['book_title'] ?></div></div>
+                                <div class="reservedate">Reservation Date<div id="info"><?= $row['reservation_date'] ?></div></div>
+                                <div class="duedate">Expiration Date<div id="info"><?= $row['expiration_date'] ?></div></div>
+                                <div class="action">
+                                    <button class="cancel-btn" onclick="cancelReservation('<?= $row['book_title'] ?>')">Cancel</button>
+                                </div>
                             </div>
-                            <div class="borrowdate">Book Renewal
-                                <div id="info">April 08, 1992</div>
-                            </div>
-                            <div class="duedate">
-                                Due Date
-                                <div id="info">April 15, 1992</div>
-                            </div>
-                            <div class="returndate">
-                                Return Date
-                                <div id="info">April 08, 1992</div>
-                            </div>
-                        </div>
-                        <div class="table1">
-                            <div class="titlee">
-                                <div id="info">Filtered Life</div>
-                            </div>
-                            <div class="borrowdate">
-                                <div id="info">April 15, 1992</div>
-                            </div>
-                            <div class="duedate">
-                                <div id="info">April 22, 1992</div>
-                            </div>
-                            <div class="returndate">
-                                <div id="info">April 22, 1992</div>
-                            </div>
-                        </div>
-                        <div class="table1">
-                            <div class="titlee">
-                                <div id="info">Filtered Life</div>
-                            </div>
-                            <div class="borrowdate">
-                                <div id="info">April 10, 2024</div>
-                            </div>
-                            <div class="duedate">
-                                <div id="info">April 17, 2024</div>
-                            </div>
-                            <div class="returndate">
-                                <div id="info">April 17, 2024</div>
-                            </div>
-                        </div>
-                        <div class="table1">
-                            <div class="titlee">
-                                <div id="info">Filtered Life</div>
-                            </div>
-                            <div class="borrowdate">
-                                <div id="info">April 05, 2024</div>
-                            </div>
-                            <div class="duedate">
-                                <div id="info">April 12, 2024</div>
-                            </div>
-                            <div class="returndate">
-                                <div id="info">April 12, 2024</div>
-                            </div>
-                        </div>
-                        <div class="table1">
-                            <div class="titlee">
-                                <div id="info">Filtered Life</div>
-                            </div>
-                            <div class="borrowdate">
-                                <div id="info">March 29, 2024</div>
-                            </div>
-                            <div class="duedate">
-                                <div id="info">April 05, 2024</div>
-                            </div>
-                            <div class="returndate">
-                                <div id="info">April 05, 2024</div>
-                            </div>
-                        </div>
+                        <?php } ?>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<!-- Book Renewal History -->
+<div id="fines" class="content content-section" style="display:none;">
+    <div class="container_profile">
+        <section class="profile-section">
+            <div class="profile-form">
+                <div class="form-group full-width">
+                    <label class="history">Book Renewal History</label>
+                    <div class="main-table">
+                        <?php while ($row = $result_renew->fetch_assoc()) { ?>
+                            <div class="table">
+                                <div class="titlee">Book Title<div id="info"><?= $row['book_title'] ?></div></div>
+                                <div class="borrowdate">Book Renewal<div id="info"><?= $row['renewal_date'] ?></div></div>
+                                <div class="duedate">New Due Date<div id="info"><?= $row['new_due_date'] ?></div></div>
+                        <?php } ?>
                     </div>
                 </div>
             </div>
@@ -504,11 +310,22 @@
         <!-- ========================= Main END ==================== -->
    
 <!-- =========== Scripts =========  -->
- <script>
+<script>
 function cancelReservation(bookTitle) {
     if (confirm(`Are you sure you want to cancel the reservation for "${bookTitle}"?`)) {
-        alert(`${bookTitle} reservation has been canceled.`);
-        // Add your logic here to update the backend or UI
+        fetch('cancel_reservation.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `book_title=${encodeURIComponent(bookTitle)}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            if (data.status === "success") {
+                location.reload(); // Reload the page to reflect changes
+            }
+        })
+        .catch(error => console.error("Error:", error));
     }
 }
 </script>
