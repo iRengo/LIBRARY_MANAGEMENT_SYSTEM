@@ -1,3 +1,34 @@
+<?php
+session_start();
+include '../homepage/db_connect.php';
+
+
+
+// Check if the admin session exists
+if (!isset($_SESSION['acc_no'])) {
+    // If not, show a SweetAlert notification and then redirect
+    echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+        window.onload = function() {
+            // Show SweetAlert notification
+            Swal.fire({
+                title: "You are not logged in!",
+                text: "Please log in to access the page.",
+                icon: "error",
+                confirmButtonText: "OK",
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                willClose: () => {
+                    // Redirect to homepage after the notification is closed
+                    window.location.href = "../homepage/homepage.php";
+                }
+            });
+        }
+        </script>';
+    exit(); // Stop further execution after showing the notification and redirect script
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -21,212 +52,178 @@
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
-    
+
 
 </head>
 
 <body>
     <!-- =============== Navigation ================ -->
-    <div class="container">
-        <div class="navigation">
-            <ul>
-                <li>
-                    <div class="admin-gradient">
-                        <a href="#">
-                            <span class="icon">
-                                <ion-icon name="person-circle" class="admin-icon"></ion-icon>
-                            </span>
-                            <span class="title1">USER</span>
-                        </a>
-                    </div>
-                </li>
+    <?php include 'HEADER-NAVBAR.PHP' ?>
+    <!-- Content HERE -->
 
-                <li>
-                    <a href="USER_DASHBOARD.PHP">
-                        <span class="icon">
-                            <ion-icon name="home-outline"></ion-icon>
-                        </span>
-                        <span class="title">Dashboard</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="USER_COLLECTION.PHP">
-                        <span class="icon">
-                            <ion-icon name="file-tray-stacked-outline"></ion-icon>
-
-                        </span>
-                        <span class="title">Collection</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="#">
-                        <span class="icon">
-                            <ion-icon name="book-outline"></ion-icon>
-                        </span>
-                        <span class="title">Catalog</span>
-                    </a>
-                </li>
-
-                <li>
-                <a href="USER_HISTORY.PHP">
-                        <span class="icon">
-                            <i class='bx bx-history' style="font-size:35px;"></i>
-                        </span>
-                        <span class="title">History</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="USER_HELP&SUPPORT.PHP">
-                        <span class="icon">
-                            <ion-icon name="layers-outline"></ion-icon>
-                        </span>
-                        <span class="title">Help & Support</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="USER_NOTIFICATION.PHP">
-                        <span class="icon">
-                            <ion-icon name="notifications-outline"></ion-icon>
-                        </span>
-                        <span class="title">Notifications</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="USER_TRENDING.php">
-                        <span class="icon">
-                            <ion-icon name="trending-up-outline"></ion-icon>
-                        </span>
-                        <span class="title">Trending</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="USER_SETTINGS.php">
-                        <span class="icon">
-                            <ion-icon name="cog-outline"></ion-icon>
-                        </span>
-                        <span class="title">Settings</span>
-                    </a>
-                </li>
-                <div class="time-container" style="width: 150%;">
-                    <p style="font-size: 10px; color:white;">
-                        <?php echo date("l, F j, Y h:i:s"); // Full date and time format 
-                        ?>
-                    </p>
-                </div>
-            </ul>
-
-        </div>
-
-
-        <!-- ========================= Main ==================== -->
-        <div class="main">
-            <div class="topbar">
-                <div class="toggle">
-                    <ion-icon name="menu-outline"></ion-icon>
-                </div>
-                <div class="logo">
-                    <img src="../logosample1.png" style="height: 60px; width:60px; padding:4px;">
-                </div>
-                <div style="float:left; margin-right:75%; display: flex; align-items: baseline;">
-                    <p style="font-family: viga; margin: 0; padding-right:2px;">LIBRA</p>
-                    <p style="font-family: zilla slab highlight; letter-spacing: 2px; margin: 0;">SPHERE</p>
-                </div>
-                <div class="logo" title="LOGOUT YOUR ACCOUNT" style="margin-right: 1%; display: flex; align-items: center;">
-                    <a href="#" id="logoutIcon" style="display: flex; align-items: center; text-decoration: none; color: inherit;">
-                        <p style="margin: 0; font-size: 18px; margin-right: 8px;">LOGOUT</p>
-                        <i class='bx bx-log-in-circle' style="font-size:35px; color:#da1b1b;"></i>
-                    </a>
-                </div>
-            </div>
-
-            <!-- Content HERE -->
-
-            <div class="titles-container">
-    <div class="row align-items-center">
-        <div class="col-md-8">
+    <div class="titles-container">
+        <div class="header-container">
+            <!-- Available Books -->
             <div class="titles">
                 <div class="available">Available Books</div>
-                 <div class="col-md-4">
-                 <div class="search-bar">
-                    <input type="text" class="form-control" placeholder="Search books...">
-                </div>
-        </div>
+            </div>
+
+            <!-- Add Book Button & Search Bar -->
+
+
+            <!-- Search Bar -->
+            <div class="search-bar">
+                <input type="text" class="form-control" placeholder="Search books..." id="searchInput">
             </div>
         </div>
-        
     </div>
-</div>
-            <div class="row">
-                <div class="col-sm-2">
-                    <div class="categ">
-                        <div class="texts">Fantasy</div>
-                    <div class="pics" id="books">
-                    <a href="modal.php">
-                        <img src="https://www.creativindiecovers.com/wp-content/uploads/2012/02/9780718155209.jpg" alt="Book Cover">
-                    </a> 
-                    <img src="https://thebookcoverdesigner.com/wp-content/uploads/2020/01/TH00102.jpg"> 
-                    <img src="https://images-platform.99static.com//PiHWJxAcOnC7gw197YEXKtyxDXQ=/fit-in/500x500/99designs-contests-attachments/39/39493/attachment_39493946"> 
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSguJ4dTc3pn1POkE7ft20f_pDRPpJt71InoA&s"> 
-                    <img src="https://m.media-amazon.com/images/I/71ZD+cRahhL._AC_UF894,1000_QL80_.jpg"> 
-                    <img src="https://miblart.com/wp-content/uploads/2020/01/april-young-adult-768x1152-1.jpeg"> 
-                    <img src="https://i.pinimg.com/736x/7a/eb/13/7aeb13f6c1c004ff06163629948280dd.jpg">
+
+    <!--content-->
+    <!-- Book List -->
+    <div class="book-list">
+        <?php
+        // Fetch books from the database
+        $query = "SELECT book_id, book_cover, book_title, book_author FROM tbl_books WHERE status = 'available'";
+        $result = mysqli_query($conn, $query);
+
+        if (mysqli_num_rows($result) > 0) {
+            while ($row = mysqli_fetch_assoc($result)) {
+                $book_id = $row['book_id'];
+                $book_cover = $row['book_cover'];
+                $book_title = $row['book_title'];
+                $author = $row['book_author'];
+        ?>
+                <div class="book-main-container">
+                    <div class="book-container">
+                        <!-- Book Cover -->
+                        <img src="<?php echo htmlspecialchars($book_cover); ?>" class="book-cover" alt="Book Cover">
+
+
                     </div>
-                    <div class="categ">
-                    <div class="textss">Romance</div>
-                    <div class="pics" id="books">
-                    <img src="https://www.dochipo.com/wp-content/uploads/2022/08/Book-Cover-_-Romance-scaled.jpg"> 
-                    <img src="https://ph.bbwbooks.com/cdn/shop/products/9780374351281_1_347413de-9f1c-468a-89b3-f0b2c0e408e0_600x.jpg?v=1625489251"> 
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRU--MXPOfwwWTvR9vCB2UkzeiBeX9ZkGayag&s"> 
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQKYmrUbkRM3aWolsdDNGGUz9mgkcWlYTZyMY6yRBCbNknziBqxaeyCTBsmgYa1p86AHxg&usqp=CAU">     
-                    <img src="https://lbabooks.com/assets/books/_small/411NFkiBKwL-1.jpg"> 
-                    <img src="https://lbabooks.com/assets/books/_small/Before-We-Say-Goodbye-cover.jpg"> 
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRU--MXPOfwwWTvR9vCB2UkzeiBeX9ZkGayag&s"> 
+
+                    <!-- Book Title and Author (Now below the book-container) -->
+                    <div class="book-details">
+                        <h5><?php echo htmlspecialchars($book_title); ?></h5>
+                        <p><?php echo htmlspecialchars($author); ?></p>
+
                     </div>
-                    </div>
-                    <div class="categ">
-                    <div class="textss">Horror</div>
-                    <div class="pics" id="books">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR9nv5HqDJiJEAK-yg5bTKwv2CEDn5MXc8vIQ&s"> 
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT21aYKXv_LCrefM9wPnvHVBT4ntKzFi9c96nU8fqjHnDuX3NBFObZXXTnTpcqyCCkY8Bo&usqp=CAU"> 
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQc47tHO9PN683cD_sQtilP7P1PkflWjU05hjEdsfgIkNtYxvNt9yrA0Du-DCCi-kCjDkA&usqp=CAU"> 
-                    <img src="https://img1.wsimg.com/isteam/ip/4060628a-cb37-47f0-92a3-a877c77b19ab/ols/befunky_2024-10-3_17-8-57.png/:/cr=t:0%25,l:0%25,w:100%25,h:100%25/rs=w:600,cg:true">     
-                    <img src="https://placeit-img-1-p.cdn.aws.placeit.net/uploads/stage/stage_image/22101/optimized_large_thumb_Horror_Book_Cover.jpg"> 
-                    <img src="https://placeit-img-1-p.cdn.aws.placeit.net/uploads/stage/stage_image/39885/optimized_large_thumb_stage.jpg"> 
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVkcoc5HDUT8ywqJ0sna2mA8KG9EilKE_v3Q&s"> 
-                    
-                    </div>
-                    </div>
-                    </div>
+
                 </div>
-            </div>
 
+        <?php
+            }
+        } else {
+            echo "<p>No available books found.</p>";
+        }
+        ?>
+    </div>
 
-        </div>
+    </div>
 
 
 
     </div>
     <!-- ========================= Main END ==================== -->
 
-    <div id="logoutModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Confirm Logout</h2>
-            <p>Are you sure you want to logout?</p>
-            <div class="modal-actions">
-                <a href="../Homepage/signin.php" class="btn-action btn-yes">Yes</a>
-                <button class="btn-action btn-no" id="cancelLogout">No</button>
-            </div>
-        </div>
-    </div>
+    <script>
+        document.getElementById('searchInput').addEventListener('input', function() {
+            let searchQuery = this.value; // Get the value from the search input field
 
-    <!-- =========== Scripts =========  -->
-    <script src="User_css/admin.js"></script>
-    <script src="User_css/ADMIN_MODAL.js"></script>
+            if (searchQuery.length > 0) {
+                // Send AJAX request to search_books.php with the search query
+                fetch(`search_books.php?query=${encodeURIComponent(searchQuery)}`)
+                    .then(response => response.json()) // Parse the response as JSON
+                    .then(data => {
+                        // Clear the current book list
+                        const bookList = document.querySelector('.book-list');
+                        bookList.innerHTML = '';
+
+                        // Check if any books were found
+                        if (data.length > 0) {
+                            // Loop through the books and display them
+                            data.forEach(book => {
+                                const bookContainer = document.createElement('div');
+                                bookContainer.classList.add('book-main-container');
+
+                                bookContainer.innerHTML = `
+                            <div class="book-container">
+                                <!-- Book Cover -->
+                                <img src="${book.book_cover}" class="book-cover" alt="Book Cover">
+
+                                <!-- Overlay Buttons -->
+                                <div class="overlay">
+                                    <button class="archive-btn" onclick="archiveBook(${book.book_id})">ARCHIVE</button>
+                                    <button class="delete-btn" onclick="confirmDelete(${book.book_id})">DELETE</button>
+                                    <button class="edit-btn" onclick="editBook(${book.book_id})">EDIT</button>
+                                </div>
+                            </div>
+
+                            <!-- Book Title and Author -->
+                            <div class="book-details">
+                                <h5>${book.book_title}</h5>
+                                <p>${book.book_author}</p>
+                            </div>
+                        `;
+                                bookList.appendChild(bookContainer); // Add the book to the list
+                            });
+                        } else {
+                            bookList.innerHTML = '<p>No books found matching your search.</p>';
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Error:', err);
+                        alert('Something went wrong. Please try again.');
+                    });
+            } else {
+                // If the search query is empty, reload the books list
+                loadBooks();
+            }
+        });
+
+        // Function to load all books initially (if needed when search is empty)
+        function loadBooks() {
+            fetch('search_books.php?query=')
+                .then(response => response.json())
+                .then(data => {
+                    const bookList = document.querySelector('.book-list');
+                    bookList.innerHTML = ''; // Clear the book list
+
+                    if (data.length > 0) {
+                        data.forEach(book => {
+                            const bookContainer = document.createElement('div');
+                            bookContainer.classList.add('book-main-container');
+
+                            bookContainer.innerHTML = `
+                        <div class="book-container">
+                            <!-- Book Cover -->
+                            <img src="${book.book_cover}" class="book-cover" alt="Book Cover">
+
+                            <!-- Overlay Buttons -->
+                            <div class="overlay">
+                                <button class="archive-btn" onclick="archiveBook(${book.book_id})">ARCHIVE</button>
+                                <button class="delete-btn" onclick="confirmDelete(${book.book_id})">DELETE</button>
+                                <button class="edit-btn" onclick="editBook(${book.book_id})">EDIT</button>
+                            </div>
+                        </div>
+
+                        <!-- Book Title and Author -->
+                        <div class="book-details">
+                            <h5>${book.book_title}</h5>
+                            <p>${book.book_author}</p>
+                        </div>
+                    `;
+                            bookList.appendChild(bookContainer);
+                        });
+                    } else {
+                        bookList.innerHTML = '<p>No available books found.</p>';
+                    }
+                });
+        }
+
+        // Initial load of books
+        loadBooks();
+    </script>
+
 
 
     <!-- ====== ionicons ======= -->
