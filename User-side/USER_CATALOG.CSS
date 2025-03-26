@@ -1,3 +1,7 @@
+a {
+  text-decoration: none;
+  color: gray;
+}
 .search-bar {
   display: flex !important; /* Flex for layout control */
   align-items: center !important; /* Align vertically */
@@ -121,7 +125,7 @@
 .book-main-container {
   background: white;
   padding: 10px;
-  border-radius: 15px;
+  border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   width: 160px;
@@ -160,7 +164,7 @@
   max-width: 150px; 
   font-size: 16px;
   margin-top: 6%;
-  color:gray;
+  color:rgb(45, 45, 45);
 }
 .book-details p {
   white-space: nowrap; 

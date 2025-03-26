@@ -8,6 +8,12 @@ if (!isset($_SESSION['acc_no'])) {
 }
 
 $acc_no = $_SESSION['acc_no']; // Get logged-in user's account number
+$login_time = date("Y-m-d H:i:s");
+
+// Update the last_login column
+$stmt = $conn->prepare("UPDATE stud_acc SET last_logged_in = ? WHERE acc_no = ?");
+$stmt->bind_param("si", $login_time, $acc_no);
+$stmt->execute();
 
 // Fetch Borrowed Count (Only for logged-in user)
 $stmt = $conn->prepare("SELECT COUNT(*) FROM borrowed_books WHERE acc_no = ? AND status = 'borrowed'");
@@ -67,7 +73,7 @@ $result = $conn->query($query);
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhgj9UU2gEpeHXKuDjc8+aJBBZ/YYz7wkmP5zPpsjLh4RxJMfP5Jxs6t" crossorigin="anonymous">
     <title> Admin Dashboard</title>
@@ -77,7 +83,7 @@ $result = $conn->query($query);
     <link rel="stylesheet" href="USER_STYLE2.CSS">
     <link rel="stylesheet" href="User_css/ADMIN_MODAL.css">
     <link rel="stylesheet" href="USER_DASHBOARD.css">
-    
+
 
 
     <!-- ======= Scripts ====== -->
@@ -206,110 +212,110 @@ $result = $conn->query($query);
                 </div>
             </div>
 
- <!-- Content Grid with Clickable Sections -->
-<div class="content-grid">
-    <div class="content-item" onclick="showBooks('due')">
-        <ion-icon name="calendar-outline" style="font-size: 50px; color: #4CAF50;"></ion-icon>
-        <div class="content-text">
-            <p>DUE DATE</p>
-            <h1><?= $due_count ?></h1>
-        </div>
-    </div>
+            <!-- Content Grid with Clickable Sections -->
+            <div class="content-grid">
+                <div class="content-item" onclick="showBooks('due')">
+                    <ion-icon name="calendar-outline" style="font-size: 50px; color: #4CAF50;"></ion-icon>
+                    <div class="content-text">
+                        <p>DUE DATE</p>
+                        <h1><?= $due_count ?></h1>
+                    </div>
+                </div>
 
-    <div class="content-item" onclick="showBooks('borrowed')">
-        <ion-icon name="book-outline" style="font-size: 50px; color: #2196F3;"></ion-icon>
-        <div class="content-text">
-            <p>Borrowed</p>
-            <h1><?= $borrowed_count ?></h1>
-        </div>
-    </div>
+                <div class="content-item" onclick="showBooks('borrowed')">
+                    <ion-icon name="book-outline" style="font-size: 50px; color: #2196F3;"></ion-icon>
+                    <div class="content-text">
+                        <p>Borrowed</p>
+                        <h1><?= $borrowed_count ?></h1>
+                    </div>
+                </div>
 
-    <div class="content-item" onclick="showBooks('overdue')">
-        <ion-icon name="alert-circle-outline" style="font-size: 50px; color: #FF5722;"></ion-icon>
-        <div class="content-text">
-            <p>Overdue</p>
-            <h1><?= $overdue_count ?></h1>
-        </div>
-    </div>
+                <div class="content-item" onclick="showBooks('overdue')">
+                    <ion-icon name="alert-circle-outline" style="font-size: 50px; color: #FF5722;"></ion-icon>
+                    <div class="content-text">
+                        <p>Overdue</p>
+                        <h1><?= $overdue_count ?></h1>
+                    </div>
+                </div>
 
-    <div class="content-item" onclick="showBooks('reserved')">
-        <ion-icon name="bookmark-outline" style="font-size: 50px; color: #FFC107;"></ion-icon>
-        <div class="content-text">
-            <p>Reserved</p>
-            <h1><?= $reserved_count ?></h1>
-        </div>
-    </div>
-</div>
-
-<!-- Bootstrap Modal -->
-<div class="modal fade" id="bookDetailsModal" tabindex="-1" aria-labelledby="bookDetailsLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content custom-modal">
-            <!-- Modal Header -->
-            <div class="modal-header custom-header">
-                <h5 class="modal-title" id="bookDetailsLabel">📖 Book Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="content-item" onclick="showBooks('reserved')">
+                    <ion-icon name="bookmark-outline" style="font-size: 50px; color: #FFC107;"></ion-icon>
+                    <div class="content-text">
+                        <p>Reserved</p>
+                        <h1><?= $reserved_count ?></h1>
+                    </div>
+                </div>
             </div>
 
-            <!-- Modal Body -->
-            <div class="modal-body">
-                <p><strong>📌 Title:</strong> <span id="modalBookTitle"></span></p>
-                <p><strong>✍ Author:</strong> <span id="modalBookAuthor"></span></p>
-                <p id="modalReservedDate" style="display: none;"><strong>📅 Reserved on:</strong> <span></span></p>
-                <p id="modalBorrowedAt" style="display: none;"><strong>📆 Borrowed at:</strong> <span></span></p>
-                <p id="modalDueDate" style="display: none;"><strong>⏳ Due Date:</strong> <span></span></p>
+            <!-- Bootstrap Modal -->
+            <div class="modal fade" id="bookDetailsModal" tabindex="-1" aria-labelledby="bookDetailsLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content custom-modal">
+                        <!-- Modal Header -->
+                        <div class="modal-header custom-header">
+                            <h5 class="modal-title" id="bookDetailsLabel">📖 Book Details</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+
+                        <!-- Modal Body -->
+                        <div class="modal-body">
+                            <p><strong>📌 Title:</strong> <span id="modalBookTitle"></span></p>
+                            <p><strong>✍ Author:</strong> <span id="modalBookAuthor"></span></p>
+                            <p id="modalReservedDate" style="display: none;"><strong>📅 Reserved on:</strong> <span></span></p>
+                            <p id="modalBorrowedAt" style="display: none;"><strong>📆 Borrowed at:</strong> <span></span></p>
+                            <p id="modalDueDate" style="display: none;"><strong>⏳ Due Date:</strong> <span></span></p>
+                        </div>
+
+                        <!-- Modal Footer -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Modal Footer -->
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
+            <!-- Custom CSS -->
+            <style>
+                /* Modal Styling */
+                .custom-modal {
+                    border-radius: 10px;
+                    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+                    overflow: hidden;
+                }
 
-<!-- Custom CSS -->
-<style>
-    /* Modal Styling */
-    .custom-modal {
-        border-radius: 10px;
-        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
-        overflow: hidden;
-    }
+                /* Header with Soft Gradient */
+                .custom-header {
+                    background: linear-gradient(to right, #6a11cb, #2575fc);
+                    color: white;
+                    padding: 15px;
+                    font-weight: bold;
+                    border-radius: 10px 10px 0 0;
+                }
 
-    /* Header with Soft Gradient */
-    .custom-header {
-        background: linear-gradient(to right, #6a11cb, #2575fc);
-        color: white;
-        padding: 15px;
-        font-weight: bold;
-        border-radius: 10px 10px 0 0;
-    }
+                /* Modal Body Text */
+                .modal-body p {
+                    font-size: 1rem;
+                    color: #333;
+                    margin-bottom: 8px;
+                    padding: 8px 12px;
+                    border-left: 4px solid #6a11cb;
+                    background: #f9f9f9;
+                    border-radius: 5px;
+                }
 
-    /* Modal Body Text */
-    .modal-body p {
-        font-size: 1rem;
-        color: #333;
-        margin-bottom: 8px;
-        padding: 8px 12px;
-        border-left: 4px solid #6a11cb;
-        background: #f9f9f9;
-        border-radius: 5px;
-    }
+                /* Modal Footer Buttons */
+                .btn-secondary {
+                    background-color: #6a11cb;
+                    border: none;
+                    padding: 8px 15px;
+                    font-weight: bold;
+                    transition: 0.3s ease-in-out;
+                }
 
-    /* Modal Footer Buttons */
-    .btn-secondary {
-        background-color: #6a11cb;
-        border: none;
-        padding: 8px 15px;
-        font-weight: bold;
-        transition: 0.3s ease-in-out;
-    }
-
-    .btn-secondary:hover {
-        background-color: #2575fc;
-    }
-</style>
+                .btn-secondary:hover {
+                    background-color: #2575fc;
+                }
+            </style>
 
 
 
@@ -318,35 +324,35 @@ $result = $conn->query($query);
 
 
 
-<!-- Table Section -->
-<div class="table-container">
-    <!-- Table Header -->
-    <h2 class="table-header">TOP BOOKS RANKING</h2> 
+            <!-- Table Section -->
+            <div class="table-container">
+                <!-- Table Header -->
+                <h2 class="table-header">TOP BOOKS RANKING</h2>
 
-    <!-- Table -->
-    <table class="styled-table">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Title</th>
-                <th>Author</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php
-            if (isset($_SESSION['message'])) {
-                echo "<div class='alert alert-info'>" . $_SESSION['message'] . "</div>";
-                unset($_SESSION['message']); // Clear message after displaying
-            }
-            ?>
+                <!-- Table -->
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        if (isset($_SESSION['message'])) {
+                            echo "<div class='alert alert-info'>" . $_SESSION['message'] . "</div>";
+                            unset($_SESSION['message']); // Clear message after displaying
+                        }
+                        ?>
 
-            
-            <?php
-            if ($result->num_rows > 0) {
-                $rank = 1;
-                while ($row = $result->fetch_assoc()) {
-                    echo "<tr>
+
+                        <?php
+                        if ($result->num_rows > 0) {
+                            $rank = 1;
+                            while ($row = $result->fetch_assoc()) {
+                                echo "<tr>
                     <td>{$rank}</td>
                     <td>{$row['book_title']}</td>
                     <td>{$row['book_author']}</td>
@@ -366,16 +372,16 @@ $result = $conn->query($query);
                         </form>
                     </td>
                 </tr>";
-            
-                    $rank++;
-                }
-            } else {
-                echo "<tr><td colspan='4'>No data available this week.</td></tr>";
-            }
-            ?>
-        </tbody>
-    </table>
-</div>
+
+                                $rank++;
+                            }
+                        } else {
+                            echo "<tr><td colspan='4'>No data available this week.</td></tr>";
+                        }
+                        ?>
+                    </tbody>
+                </table>
+            </div>
 
             <!-- Book Container Section -->
             <div class="book-header">Upcoming Books </div> <!-- Moved outside book-container -->
@@ -446,11 +452,11 @@ $result = $conn->query($query);
             </div>
 
             <!-- Recommended Books-->
-             <Div class="recommended-header">
+            <Div class="recommended-header">
                 <h2> Recommended Books </h2>
-             </Div>
+            </Div>
 
-             <div class="recommended-books-container" id="recommendedBooksContainer">
+            <div class="recommended-books-container" id="recommendedBooksContainer">
                 <div class="recommended-books">
                     <div class="recommended-book">
                         <img src="book-covers/gatsby.jpg" alt="Book Cover" class="recommended-book-cover">
@@ -524,16 +530,16 @@ $result = $conn->query($query);
                             <p class="recommended-book-genre action">Action</p>
                         </div>
                     </div>
-                    
+
                     <!-- Add more recommended books here -->
                 </div>
             </div>
 
             <div id="bookModal" style="display:none; position:fixed; top:20%; left:50%; transform:translate(-50%, 0); background:white; padding:20px; box-shadow:0px 4px 6px rgba(0,0,0,0.1);">
-    <h2 id="modal-title"></h2>
-    <div id="modal-content"></div>
-    <button onclick="document.getElementById('bookModal').style.display='none'">Close</button>
-</div>
+                <h2 id="modal-title"></h2>
+                <div id="modal-content"></div>
+                <button onclick="document.getElementById('bookModal').style.display='none'">Close</button>
+            </div>
 
 
 
@@ -564,16 +570,16 @@ $result = $conn->query($query);
 
 
             <script>
-function showBooks(type) {
-    fetch(`fetch_books.php?type=${type}`)
-        .then(response => response.json())
-        .then(data => {
-            let modalBody = document.querySelector(".modal-body");
-            modalBody.innerHTML = ""; // Clear previous content
+                function showBooks(type) {
+                    fetch(`fetch_books.php?type=${type}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            let modalBody = document.querySelector(".modal-body");
+                            modalBody.innerHTML = ""; // Clear previous content
 
-            if (data.length > 0) {
-                data.forEach(book => {
-                    let bookDetails = `
+                            if (data.length > 0) {
+                                data.forEach(book => {
+                                    let bookDetails = `
                         <p><strong>📌 Title:</strong> ${book.book_title}</p>
                         <p><strong>✍ Author:</strong> ${book.author}</p>
                         ${book.reserved_date ? `<p><strong>📅 Reserved on:</strong> ${book.reserved_date}</p>` : ""}
@@ -581,21 +587,20 @@ function showBooks(type) {
                         ${book.due_date ? `<p><strong>⏳ Due Date:</strong> ${book.due_date}</p>` : ""}
                         <hr>
                     `;
-                    modalBody.innerHTML += bookDetails;
-                });
-            } else {
-                // Display a message when no books are found
-                modalBody.innerHTML = `<p class="text-center text-muted">📌 No records found.</p>`;
-            }
+                                    modalBody.innerHTML += bookDetails;
+                                });
+                            } else {
+                                // Display a message when no books are found
+                                modalBody.innerHTML = `<p class="text-center text-muted">📌 No records found.</p>`;
+                            }
 
-            // Open the modal
-            let modal = new bootstrap.Modal(document.getElementById("bookDetailsModal"));
-            modal.show();
-        })
-        .catch(error => console.error("Error fetching book details:", error));
-}
-
-</script>
+                            // Open the modal
+                            let modal = new bootstrap.Modal(document.getElementById("bookDetailsModal"));
+                            modal.show();
+                        })
+                        .catch(error => console.error("Error fetching book details:", error));
+                }
+            </script>
 
 
             <!-- =========== Scripts =========  -->
@@ -608,7 +613,7 @@ function showBooks(type) {
             <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
             <!-- Bootstrap CSS -->
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 
 </body>

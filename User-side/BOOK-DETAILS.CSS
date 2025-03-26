@@ -1,0 +1,463 @@
+@import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap");
+
+@import url('https://fonts.googleapis.com/css2?family=Teachers:ital,wght@0,400..800;1,400..800&family=Viga&family=Zilla+Slab+Highlight:wght@400;700&display=swap');
+/* General Styling */
+* {
+    font-family: "Ubuntu", sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Container Layout */
+.container1 {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: 40px;
+    padding: 40px;
+}
+
+/* Book Cover Section */
+.book-cover-section {
+    text-align: center;
+}
+
+.book-cover {
+    width: 250px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+}
+
+.enlarge-text {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #777;
+}
+
+/* Book Info Section */
+.book-info-section {
+    padding-right: 20px;
+}
+
+.book-title {
+    font-size: 2rem;
+    margin: 0;
+}
+
+.author {
+    margin-top: 5px;
+    font-size: 1.1rem;
+}
+
+/* Like and Dislike Buttons */
+.reaction-buttons {
+    margin: 20px 0;
+    display: flex;
+    gap: 15px;
+}
+
+.like-btn,
+.dislike-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    font-size: 13px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+/* Like Button Styling */
+.like-btn {
+    background-color: #4CAF50; /* Green */
+    color: white;
+}
+
+.like-btn:hover {
+    background-color: #45a049;
+}
+
+/* Dislike Button Styling */
+.dislike-btn {
+    background-color: #F44336; /* Red */
+    color: white;
+}
+
+.dislike-btn:hover {
+    background-color: #d32f2f;
+}
+
+/* Book Description */
+.description {
+    line-height: 1.6;
+    margin: 20px 0;
+}
+
+.read-more {
+    color: #0077cc;
+    text-decoration: none;
+}
+
+.read-more:hover {
+    text-decoration: underline;
+}
+
+/* Book Details Table */
+.book-details-table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+}
+
+.book-details-table td {
+    padding: 8px 0;
+    vertical-align: top;
+}
+
+/* Related Books Section */
+.related-books-section {
+    border-left: 2px solid #686253;
+    padding-left: 10px;
+    display: flex;
+    flex-direction: column; /* Updated for vertical listing */
+    align-items: center; /* Centers content horizontally */
+    text-align: center; /* Ensures text is centered */
+    border:1px solid rgb(178, 177, 177);
+    border-radius: 10px;
+    width: 80%;
+
+}
+
+
+.related-books-section h3 {
+    margin-top: 0;
+}
+
+.related-book {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;    /* Center content vertically */
+    width: 160px;               /* Reduced book width */
+    margin-bottom: 0;           /* Remove extra space below */
+    background: #fff;           
+    border-radius: 12px;
+    padding: 15px;              /* Slightly smaller padding */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    white-space: nowrap;        /* Prevents text wrapping */
+    overflow: hidden;           /* Hides overflow text */
+}
+
+.related-book img {
+    width: 160px;
+    height: 180px;
+    border-radius: 4px;
+
+    margin-bottom: 10px; /* Space between image and text */
+}
+
+.related-book p {
+    margin: 5px 0; /* Space between title and author */
+    font-size: 19px; /* Adjust size as needed */
+}
+
+.related-book em {
+    font-size: 18px; 
+    color: #777;
+}
+
+/* =========== Google Fonts ============ */
+
+
+/* =============== Globals ============== */
+* {
+    font-family: "Ubuntu", sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --blue: #1C2E5C;
+    --white: #fff;
+    --gray: #f5f5f5;
+    --black1: #222;
+    --black2: #999;
+}
+
+body {
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.container {
+    position: relative;
+    width: 100%;
+    min-height: 100vh; /* Ensure it fills the viewport height */
+    margin-bottom: 0; /* Ensure no gap at the bottom */
+}
+
+/* =============== Navigation ================ */
+.navigation {
+    position: fixed;
+    width: 300px;
+    height: 100%;
+    background: var(--blue);
+    transition: 0.5s;
+    overflow: hidden;
+}
+
+.navigation.active {
+    width: 80px;
+}
+
+.navigation ul {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+
+.navigation ul li {
+    position: relative;
+    width: 100%;
+    list-style: none;
+    border-top-left-radius: 30px;
+    border-bottom-left-radius: 30px;
+}
+
+.navigation ul li:hover,
+.navigation ul li.hovered {
+    background-color: var(--white);
+}
+
+.navigation ul li:nth-child(1) {
+    margin-bottom: 40px;
+    pointer-events: none;
+}
+
+.navigation ul li a {
+    position: relative;
+    display: block;
+    width: 100%;
+    display: flex;
+    text-decoration: none;
+    color: var(--white);
+}
+
+.navigation ul li:hover a,
+.navigation ul li.hovered a {
+    color: var(--blue);
+}
+
+.navigation ul li a .icon {
+    position: relative;
+    display: block;
+    min-width: 60px;
+    height: 60px;
+    line-height: 75px;
+    text-align: center;
+    margin-left: -5px;
+}
+
+.navigation ul li a .icon ion-icon {
+    font-size: 1.75rem;
+
+}
+
+.navigation ul li a .title,
+.navigation ul li a .title1 {
+    position: relative;
+    display: block;
+    padding: 0 10px;
+    height: 60px;
+    line-height: 60px;
+    text-align: start;
+    white-space: nowrap;
+    
+}
+
+.navigation ul li a .title1 {
+    font-size: 20px;
+    margin-top: 7%;
+    margin-left: 10%;
+}
+
+/* --------- curve outside ---------- */
+.navigation ul li:hover a::before,
+.navigation ul li.hovered a::before {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: -50px;
+    width: 50px;
+    height: 50px;
+    background-color: transparent;
+    border-radius: 50%;
+    box-shadow: 35px 35px 0 10px var(--white);
+    pointer-events: none;
+}
+
+.navigation ul li:hover a::after,
+.navigation ul li.hovered a::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: -50px;
+    width: 50px;
+    height: 50px;
+    background-color: transparent;
+    border-radius: 50%;
+    box-shadow: 35px -35px 0 10px var(--white);
+    pointer-events: none;
+}
+
+/* ===================== Main ===================== */
+.main {
+    position: absolute;
+    width: calc(100% - 300px);
+    left: 300px;
+    min-height: 100vh;
+    background: var(--white);
+    transition: 0.5s;
+}
+
+.main.active {
+    width: calc(100% - 80px);
+    left: 80px;
+}
+
+.topbar {
+    width: 100%;
+    height: 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+    box-shadow: 0 4px 6px rgba(150, 150, 150, 0.2);
+}
+
+.toggle {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.5rem;
+    cursor: pointer;
+    margin-right: 2%;
+}
+
+.viga-regular {
+    font-family: "Viga", serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.zilla-slab-highlight-regular {
+    font-family: "Zilla Slab Highlight", serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.zilla-slab-highlight-bold {
+    font-family: "Zilla Slab Highlight", serif;
+    font-weight: 700;
+    font-style: normal;
+}
+
+.admin-icon {
+    width: 63px;
+    height: 63px;
+    margin-top: 30%;
+}
+
+/* Time and Date Display Styling */
+.time-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px;
+    background: linear-gradient(to bottom, #1C2E5C, #343536);
+    color: #fff;
+    border-radius: 8px;
+    box-sizing: border-box;
+    text-align: left;
+}
+
+.admin-gradient {
+    background: linear-gradient(to top, #1C2E5C, #343536);
+    background-size: 500px 190px 120px;
+    background-position: 0 0;
+    height: 100px;
+    padding: 0;
+    margin: 0;
+}
+
+/* Logout Link Styling */
+.logout-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+}
+
+.logout-text {
+    margin: 0;
+    font-size: 18px;
+    margin-right: 8px;
+}
+
+.logout-icon {
+    font-size: 35px;
+    color: #da1b1b;
+}
+
+
+.related-books-container {
+    display: flex;
+    flex-direction: column; /* Vertical layout */
+    gap: 20px;              /* Space between books */
+    max-height: 600px;      /* Limit height for scroll */
+    overflow-y: auto;       /* Enable vertical scrolling */
+    padding-right: 10px;    /* Avoid content clipping */
+}
+
+.related-book:hover {
+    transform: scale(0.95);      /* Zoom in effect */
+}
+/* Hide Scrollbar - Works for most browsers */
+.related-books-container::-webkit-scrollbar {
+    width: 0;
+    display: none; /* Hide scrollbar */
+}
+
+.related-books-container {
+    -ms-overflow-style: none;  /* Hide scrollbar in IE and Edge */
+    scrollbar-width: none;     /* Hide scrollbar in Firefox */
+}
+
+/* Ensure 3-book limit before scrolling */
+.related-book {
+    min-height: 310px;    /* Ensures consistent height */
+}
+
+/* Hover effect */
+.related-book:hover {
+    transform: scale(0.95); /* Zoom-out effect */
+}
+
+/* Handle Text Overflow */
+.related-book p, 
+.related-book em {
+    overflow: hidden;
+    text-overflow: ellipsis; 
+    max-width: 100%;
+
+}
+
