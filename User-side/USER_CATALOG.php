@@ -93,22 +93,24 @@ if (!isset($_SESSION['acc_no'])) {
                 $book_title = $row['book_title'];
                 $author = $row['book_author'];
         ?>
+
+
                 <div class="book-main-container">
-                    <div class="book-container">
-                        <!-- Book Cover -->
-                        <img src="<?php echo htmlspecialchars($book_cover); ?>" class="book-cover" alt="Book Cover">
+                    <a href="../Homepage/BOOK-DETAILS.PHP?echo urlencode($book_id); ?>" class="book-link">
+                        <div class="book-container">
+                            <!-- Book Cover -->
+                            <img src="<?php echo htmlspecialchars($book_cover); ?>" class="book-cover" alt="Book Cover">
+                        </div>
 
-
-                    </div>
-
-                    <!-- Book Title and Author (Now below the book-container) -->
-                    <div class="book-details">
-                        <h5><?php echo htmlspecialchars($book_title); ?></h5>
-                        <p><?php echo htmlspecialchars($author); ?></p>
-
-                    </div>
-
+                        <!-- Book Title and Author -->
+                        <div class="book-details">
+                            <h5><?php echo htmlspecialchars($book_title); ?></h5>
+                            <p><?php echo htmlspecialchars($author); ?></p>
+                        </div>
+                    </a>
                 </div>
+
+
 
         <?php
             }
@@ -126,67 +128,52 @@ if (!isset($_SESSION['acc_no'])) {
     <!-- ========================= Main END ==================== -->
 
     <script>
+        // Improved search handling
         document.getElementById('searchInput').addEventListener('input', function() {
-            let searchQuery = this.value; // Get the value from the search input field
+            let searchQuery = this.value.trim();
 
             if (searchQuery.length > 0) {
-                // Send AJAX request to search_books.php with the search query
                 fetch(`search_books.php?query=${encodeURIComponent(searchQuery)}`)
-                    .then(response => response.json()) // Parse the response as JSON
+                    .then(response => response.json())
                     .then(data => {
-                        // Clear the current book list
                         const bookList = document.querySelector('.book-list');
                         bookList.innerHTML = '';
 
-                        // Check if any books were found
                         if (data.length > 0) {
-                            // Loop through the books and display them
                             data.forEach(book => {
                                 const bookContainer = document.createElement('div');
                                 bookContainer.classList.add('book-main-container');
 
                                 bookContainer.innerHTML = `
-                            <div class="book-container">
-                                <!-- Book Cover -->
-                                <img src="${book.book_cover}" class="book-cover" alt="Book Cover">
-
-                                <!-- Overlay Buttons -->
-                                <div class="overlay">
-                                    <button class="archive-btn" onclick="archiveBook(${book.book_id})">ARCHIVE</button>
-                                    <button class="delete-btn" onclick="confirmDelete(${book.book_id})">DELETE</button>
-                                    <button class="edit-btn" onclick="editBook(${book.book_id})">EDIT</button>
+                            <a href="BOOK-DETAILS.PHP?book_id=${encodeURIComponent(book.book_id)}" class="book-link">
+                                <div class="book-container">
+                                    <img src="${book.book_cover}" class="book-cover" alt="Book Cover">
                                 </div>
-                            </div>
-
-                            <!-- Book Title and Author -->
-                            <div class="book-details">
-                                <h5>${book.book_title}</h5>
-                                <p>${book.book_author}</p>
-                            </div>
+                                <div class="book-details">
+                                    <h5>${book.book_title}</h5>
+                                    <p>${book.book_author}</p>
+                                </div>
+                            </a>
                         `;
-                                bookList.appendChild(bookContainer); // Add the book to the list
+                                bookList.appendChild(bookContainer);
                             });
                         } else {
                             bookList.innerHTML = '<p>No books found matching your search.</p>';
                         }
                     })
-                    .catch(err => {
-                        console.error('Error:', err);
-                        alert('Something went wrong. Please try again.');
-                    });
+                    .catch(err => console.error('Error:', err));
             } else {
-                // If the search query is empty, reload the books list
                 loadBooks();
             }
         });
 
-        // Function to load all books initially (if needed when search is empty)
-        function loadBooks() {
-            fetch('search_books.php?query=')
+        // Function to load books (initial + search fallback)
+        function loadBooks(query = '') {
+            fetch(`search_books.php?query=${encodeURIComponent(query)}`)
                 .then(response => response.json())
                 .then(data => {
                     const bookList = document.querySelector('.book-list');
-                    bookList.innerHTML = ''; // Clear the book list
+                    bookList.innerHTML = '';
 
                     if (data.length > 0) {
                         data.forEach(book => {
@@ -194,23 +181,15 @@ if (!isset($_SESSION['acc_no'])) {
                             bookContainer.classList.add('book-main-container');
 
                             bookContainer.innerHTML = `
-                        <div class="book-container">
-                            <!-- Book Cover -->
-                            <img src="${book.book_cover}" class="book-cover" alt="Book Cover">
-
-                            <!-- Overlay Buttons -->
-                            <div class="overlay">
-                                <button class="archive-btn" onclick="archiveBook(${book.book_id})">ARCHIVE</button>
-                                <button class="delete-btn" onclick="confirmDelete(${book.book_id})">DELETE</button>
-                                <button class="edit-btn" onclick="editBook(${book.book_id})">EDIT</button>
+                        <a href="BOOK-DETAILS.PHP?book_id=${encodeURIComponent(book.book_id)}" class="book-link">
+                            <div class="book-container">
+                                <img src="${book.book_cover}" class="book-cover" alt="Book Cover">
                             </div>
-                        </div>
-
-                        <!-- Book Title and Author -->
-                        <div class="book-details">
-                            <h5>${book.book_title}</h5>
-                            <p>${book.book_author}</p>
-                        </div>
+                            <div class="book-details">
+                                <h5>${book.book_title}</h5>
+                                <p>${book.book_author}</p>
+                            </div>
+                        </a>
                     `;
                             bookList.appendChild(bookContainer);
                         });
@@ -221,7 +200,7 @@ if (!isset($_SESSION['acc_no'])) {
         }
 
         // Initial load of books
-        loadBooks();
+        document.addEventListener('DOMContentLoaded', () => loadBooks());
     </script>
 
 
