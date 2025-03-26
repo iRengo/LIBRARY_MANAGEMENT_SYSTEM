@@ -150,12 +150,7 @@ if (!isset($_SESSION['acc_no'])) {
                                 <!-- Book Cover -->
                                 <img src="${book.book_cover}" class="book-cover" alt="Book Cover">
 
-                                <!-- Overlay Buttons -->
-                                <div class="overlay">
-                                    <button class="archive-btn" onclick="archiveBook(${book.book_id})">ARCHIVE</button>
-                                    <button class="delete-btn" onclick="confirmDelete(${book.book_id})">DELETE</button>
-                                    <button class="edit-btn" onclick="editBook(${book.book_id})">EDIT</button>
-                                </div>
+                        
                             </div>
 
                             <!-- Book Title and Author -->
@@ -198,12 +193,7 @@ if (!isset($_SESSION['acc_no'])) {
                             <!-- Book Cover -->
                             <img src="${book.book_cover}" class="book-cover" alt="Book Cover">
 
-                            <!-- Overlay Buttons -->
-                            <div class="overlay">
-                                <button class="archive-btn" onclick="archiveBook(${book.book_id})">ARCHIVE</button>
-                                <button class="delete-btn" onclick="confirmDelete(${book.book_id})">DELETE</button>
-                                <button class="edit-btn" onclick="editBook(${book.book_id})">EDIT</button>
-                            </div>
+                            
                         </div>
 
                         <!-- Book Title and Author -->
