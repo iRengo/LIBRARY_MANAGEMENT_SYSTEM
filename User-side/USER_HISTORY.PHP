@@ -10,27 +10,30 @@ if (!isset($_SESSION['acc_no'])) {
 
 $acc_no = $_SESSION['acc_no']; // Get the logged-in user's acc_no
 
-// Fetch Borrowing History
-$sql_borrow = "SELECT book_title, borrow_date, due_date, return_date FROM borrowing_history WHERE acc_no = ?";
-$stmt_borrow = $conn->prepare($sql_borrow);
-$stmt_borrow->bind_param("i", $acc_no);
+// Fetch Borrowing History (Including Status and Due Date)
+$query_borrow = "SELECT bh.borrowing_id, bh.book_id, bh.status, b.book_title, bh.borrow_date, bh.due_date 
+                 FROM borrowing_history bh
+                 JOIN tbl_books b ON bh.book_id = b.book_id
+                 WHERE bh.acc_no = ?";
+$stmt_borrow = $conn->prepare($query_borrow);
+$stmt_borrow->bind_param("s", $acc_no);
 $stmt_borrow->execute();
 $result_borrow = $stmt_borrow->get_result();
 
-// Fetch Reservation History (JOIN books to get due_date)
+// Fetch Reservation History
 $sql_reserve = "SELECT book_title, reservation_date, expiration_date 
                 FROM reservation_history
                 WHERE acc_no = ?";
 $stmt_reserve = $conn->prepare($sql_reserve);
-$stmt_reserve->bind_param("i", $acc_no);
+$stmt_reserve->bind_param("s", $acc_no);
 $stmt_reserve->execute();
 $result_reserve = $stmt_reserve->get_result();
 
-// Fetch Renewal History (Include book_title)
+// Fetch Renewal History
 $sql_renew = "SELECT book_title, renewal_date, new_due_date
               FROM book_renewal_history WHERE acc_no = ?";
 $stmt_renew = $conn->prepare($sql_renew);
-$stmt_renew->bind_param("i", $acc_no);
+$stmt_renew->bind_param("s", $acc_no);
 $stmt_renew->execute();
 $result_renew = $stmt_renew->get_result();
 
@@ -57,7 +60,7 @@ $stmt_renew->close();
     <link rel="stylesheet" href="User_css/ADMIN_STYLES2.CSS">
     <link rel="stylesheet" href="User_css/ADMIN_MODAL.css">
     <link rel="stylesheet" href="User_css/User.css">
-    <link rel="stylesheet" href="USER_HISTORY1.CSS">
+    <link rel="stylesheet" href="USER_HISTORY2.CSS">
 
     <!-- ======= User Styles Start ====== -->
 
@@ -75,7 +78,26 @@ $stmt_renew->close();
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     
-    
+    <style>
+        .cancel-btn {
+    background-color: #ff4d4d; /* Red color */
+    color: white;
+    border: none;
+    padding: 7px 8px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.cancel-btn:hover {
+    background-color: #cc0000; /* Darker red */
+    transform: scale(1.05);
+}
+
+    </style>
 </head>
 
 <body>
@@ -232,7 +254,7 @@ $stmt_renew->close();
 
     <!-- Content Sections -->
 
-   <!-- Borrowing History -->
+   <!-- Borrowing History Section -->
 <div id="account" class="content content-section">
     <div class="container_profile">
         <section class="profile-section">
@@ -242,10 +264,40 @@ $stmt_renew->close();
                     <div class="main-table">
                         <?php while ($row = $result_borrow->fetch_assoc()) { ?>
                             <div class="table">
-                                <div class="titlee">Book Title<div id="info"><?= $row['book_title'] ?></div></div>
-                                <div class="borrowdate">Borrow Date<div id="info"><?= $row['borrow_date'] ?></div></div>
-                                <div class="duedate">Due Date<div id="info"><?= $row['due_date'] ?></div></div>
-                                <div class="returndate">Return Date<div id="info"><?= $row['return_date'] ?? 'Not returned' ?></div></div>
+                                <div class="titlee">Book Title
+                                    <div id="info"><?= htmlspecialchars($row['book_title']) ?></div>
+                                </div>
+                                <div class="borrowdate">Borrow Date
+                                    <div id="info"><?= htmlspecialchars($row['borrow_date']) ?></div>
+                                </div>
+
+                                <!-- Show "Status" only if it's Pending -->
+                                <?php if ($row['status'] == 'Pending') { ?>
+                                    <div class="status">Status
+                                        <div id="info"><?= htmlspecialchars($row['status']) ?></div>
+                                    </div>
+                                <?php } ?>
+
+                                <!-- Show "Due Date" only if status is NOT Pending -->
+                                <?php if ($row['status'] != 'Pending') { ?>
+                                    <div class="duedate">Due Date
+                                        <div id="info"><?= htmlspecialchars($row['due_date']) ?></div>
+                                    </div>
+                                <?php } ?>
+
+                                <?php if ($row['status'] == 'Pending') { ?>
+                                    <div class="cancel">
+                                        <form action="cancel_borrow.php" method="POST">
+                                            <input type="hidden" name="book_id" value="<?= htmlspecialchars($row['book_id']) ?>">
+                                            <input type="hidden" name="borrowing_id" value="<?= htmlspecialchars($row['borrowing_id']) ?>">
+                                            <button type="submit" class="cancel-btn">Cancel</button>
+                                        </form>
+                                    </div>
+                                <?php } else { ?>
+                                    <div class="returndate">Return Date
+                                        <div id="info"><?= htmlspecialchars($row['return_date'] ?? 'Not returned') ?></div>
+                                    </div>
+                                <?php } ?>
                             </div>
                         <?php } ?>
                     </div>

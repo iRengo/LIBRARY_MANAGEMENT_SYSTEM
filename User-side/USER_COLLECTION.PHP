@@ -16,7 +16,12 @@ $stmt = $conn->prepare($query);
 $stmt->bind_param("i", $acc_no);
 $stmt->execute();
 $result = $stmt->get_result();
+
+// Fetch the first book separately
+$topBook = $result->fetch_assoc();
 ?>
+
+
 
 
 <!DOCTYPE html>
@@ -306,37 +311,42 @@ h1 {
                         </select>
                     </div>
                 <br>
-               <!-- Left and Right Panel Section -->
-<div class="row mt-5">
+              <!-- Left and Right Panel Section -->
+<?php if ($topBook): ?>
+<div class="row mt-5" id="top-book">
     <!-- Left Panel: Title, Description, Genre -->
     <div class="col-md-6">
-        <?php if ($row = $result->fetch_assoc()): // Fetch the most recent book ?>
-            <h2><?= $row['book_title'] ?></h2>
-            <p><strong>Description:</strong> <?= $row['description'] ?></p>
-            <p>2005 • 18+ • Romance • 13 chp</p>
+        <h2 id="top-title"><?= $topBook['book_title'] ?></h2>
+        <p><strong>Description:</strong> <span id="top-description"><?= $topBook['description'] ?></span></p>
+        <p>2005 • 18+ • Romance • 13 chp</p>
 
-            <div class="btn-group" role="group">
-    <a href="BOOK_BORROW.php" class="btn btn-borrow">Borrow</a>
-    <a href="remove_book.php?collection_id=<?= isset($row['collection_id']) ? $row['collection_id'] : '' ?>" 
-       class="btn btn-sneakpeek">Remove</a>
-</div>
-
+        <div class="btn-group" role="group">
+            <a href="BOOK_BORROW.php" class="btn btn-borrow">Borrow</a>
+            <a id="top-remove" href="remove_book.php?collection_id=<?= $topBook['collection_id'] ?>" 
+               class="btn btn-sneakpeek">Remove</a>
+        </div>
     </div>
 
     <!-- Right Panel: Image -->
     <div class="col-md-6">
-        <img src="<?= str_replace(' ', '%20', $row['image_path']) ?>" class="img-fluid" alt="Book Cover">
+        <img id="top-image" src="<?= str_replace(' ', '%20', $topBook['image_path']) ?>" class="img-fluid" alt="Book Cover">
     </div>
 </div>
 <?php endif; ?>
 
 <br>
 
+<!-- Recently Added Section -->
 <div class="container">
     <h1 style="margin-left: 50px;">RECENTLY ADDED</h1>
     <div class="book-grid">
         <?php while ($row = $result->fetch_assoc()): ?>
-            <div class="book-card">
+            <div class="book-card"
+                 data-title="<?= $row['book_title'] ?>"
+                 data-description="<?= $row['description'] ?>"
+                 data-image="<?= str_replace(' ', '%20', $row['image_path']) ?>"
+                 data-remove-link="remove_book.php?collection_id=<?= $row['collection_id'] ?>"
+                 onclick="moveToTop(this)">
                 <img src="<?= str_replace(' ', '%20', $row['image_path']) ?>" alt="<?= $row['book_title'] ?>">
                 <div class="info">
                     <h3><?= $row['book_title'] ?></h3>
@@ -369,8 +379,15 @@ $conn->close();
 
 
                 <!-- ========================= Main END ==================== -->
-
-
+                <script>
+function moveToTop(clickedBook) {
+    document.getElementById("top-title").innerText = clickedBook.getAttribute("data-title");
+    document.getElementById("top-description").innerText = clickedBook.getAttribute("data-description");
+    document.getElementById("top-image").src = clickedBook.getAttribute("data-image");
+    document.getElementById("top-remove").href = clickedBook.getAttribute("data-remove-link"); // ✅ Update Remove link
+}
+</script>
+            
 
                 <!-- =========== Scripts =========  -->
                 <script src="User_css/admin.js"></script>

@@ -41,12 +41,12 @@ function timeAgo($timestamp)
     $seconds = $time_difference;
 
     // Seconds, minutes, hours, days, weeks, months, years
-    $minutes      = round($seconds / 60);           // value 60 is seconds
-    $hours        = round($seconds / 3600);         // value 3600 is 60 minutes * 60 sec
-    $days         = round($seconds / 86400);        // value 86400 is 24 hours * 60 minutes * 60 sec
-    $weeks        = round($seconds / 604800);       // value 604800 is 7 days * 24 hours * 60 minutes * 60 sec
-    $months       = round($seconds / 2629440);      // value 2629440 is ((365+365+365+365+365)/5/12) 
-    $years        = round($seconds / 31553280);     // value 31553280 is 365.25 days * 24 hours * 60 minutes * 60 sec
+    $minutes      = round($seconds / 60);          
+    $hours        = round($seconds / 3600);        
+    $days         = round($seconds / 86400);        
+    $weeks        = round($seconds / 604800);      
+    $months       = round($seconds / 2629440);      
+    $years        = round($seconds / 31553280);    
 
     // Now, we need to display appropriate relative time:
     if ($seconds <= 60) {

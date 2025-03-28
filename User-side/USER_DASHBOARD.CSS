@@ -382,21 +382,4 @@ body h1 {
     color:white;
 }
 
-/* Attractive Light Green Button */
-.btn-collection {
-    background-color: #90EE90; /* Light Green */
-    color: #fff;
-    border: none;
-    padding: 8px 15px;
-    font-size: 14px;
-    font-weight: bold;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
-}
-
-.btn-collection:hover {
-    background-color: #76C776; /* Slightly Darker Green */
-    transform: scale(1.05);
-}
 

@@ -1,35 +1,22 @@
 <?php
-session_start();
+// fetch_books.php
+
+// Include database connection
 include '../homepage/db_connect.php';
 
-header('Content-Type: application/json');
+// Get the status from the POST request
+$status = json_decode(file_get_contents('php://input'))->status;
 
-if (!isset($_SESSION['acc_no']) || !isset($_GET['type'])) {
-    echo json_encode(["error" => "Access Denied."]);
-    exit;
-}
-
-$acc_no = $_SESSION['acc_no'];
-$type = $_GET['type'];
-
-$query = "";
-if ($type == "due") {
-    $query = "SELECT book_title, author, due_date FROM borrowed_books WHERE acc_no = ? AND due_date = CURDATE() AND status = 'borrowed'";
-} elseif ($type == "borrowed") {
-    $query = "SELECT book_title, author, borrowed_at FROM borrowed_books WHERE acc_no = ? AND status = 'borrowed'";
-} elseif ($type == "overdue") {
-    $query = "SELECT book_title, author, borrowed_at FROM borrowed_books WHERE acc_no = ? AND due_date < NOW() AND status = 'borrowed'";
-} elseif ($type == "reserved") {
-    $query = "SELECT book_title, author, reserved_date FROM reserved_books WHERE acc_no = ? AND status = 'reserved'";
+if ($status == 'borrowed') {
+    $query = "SELECT book_title, author, borrow_date, status FROM borrowed_books";
+} elseif ($status == 'reserved') {
+    $query = "SELECT book_title, author, reserved_date AS borrow_date, status FROM reserved_books";
 } else {
-    echo json_encode(["error" => "Invalid request."]);
+    echo json_encode([]);
     exit;
 }
 
-$stmt = $conn->prepare($query);
-$stmt->bind_param("i", $acc_no);
-$stmt->execute();
-$result = $stmt->get_result();
+$result = $conn->query($query);
 
 $books = [];
 while ($row = $result->fetch_assoc()) {
@@ -38,6 +25,5 @@ while ($row = $result->fetch_assoc()) {
 
 echo json_encode($books);
 
-$stmt->close();
 $conn->close();
 ?>
