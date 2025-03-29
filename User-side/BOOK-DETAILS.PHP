@@ -23,7 +23,7 @@ if (!isset($_SESSION['acc_no'])) {
     exit();
 }
 
-$acc_no = $_SESSION['acc_no'];
+$user_id = $_SESSION['acc_no'];
 
 if (isset($_SESSION['error'])) {
     echo '<div class="alert alert-danger">' . $_SESSION['error'] . '</div>';
@@ -38,7 +38,7 @@ $due_date = date("Y-m-d", strtotime("+3 day")); // Set due date to tomorrow
 // Get student details based on logged-in user
 if (isset($_SESSION['acc_no'])) {
     $acc_no = $_SESSION['acc_no'];
-    $student_query = "SELECT first_name, last_name, student_no FROM stud_acc WHERE acc_no = ?";
+    $student_query = "SELECT first_name, last_name, student_no, email, contact FROM stud_acc WHERE acc_no = ?";
     $student_stmt = $conn->prepare($student_query);
     $student_stmt->bind_param("s", $acc_no);
     $student_stmt->execute();
@@ -48,6 +48,8 @@ if (isset($_SESSION['acc_no'])) {
         $first_name = $student['first_name'];
         $last_name = $student['last_name'];
         $student_no = $student['student_no'];
+        $email = $student['email'];
+        $contact = $student['contact'];
     }
 }
 
@@ -110,7 +112,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_to_collection'])) 
             echo "<script>alert('Book not found!');</script>";
         }
     }
-} 
+}
 
 // Check if book_id is provided
 if (!isset($_GET['book_id']) || empty($_GET['book_id'])) {
@@ -179,6 +181,7 @@ $related_result = mysqli_stmt_get_result($related_stmt);
 $likes_query = "SELECT COUNT(*) as likes FROM book_likes_dislikes WHERE book_id = ? AND action = 'like'";
 $dislikes_query = "SELECT COUNT(*) as dislikes FROM book_likes_dislikes WHERE book_id = ? AND action = 'dislike'";
 
+
 $likes_stmt = mysqli_prepare($conn, $likes_query);
 mysqli_stmt_bind_param($likes_stmt, "i", $book_id);
 mysqli_stmt_execute($likes_stmt);
@@ -191,32 +194,56 @@ mysqli_stmt_execute($dislikes_stmt);
 $dislikes_result = mysqli_stmt_get_result($dislikes_stmt);
 $dislikes = mysqli_fetch_assoc($dislikes_result)['dislikes'];
 
+$liked_query = "SELECT action FROM book_likes_dislikes WHERE acc_no = ? AND book_id = ?";
+$liked_stmt = mysqli_prepare($conn, $liked_query);
+mysqli_stmt_bind_param($liked_stmt, "ii", $user_id, $book_id);
+mysqli_stmt_execute($liked_stmt);
+$liked_result = mysqli_stmt_get_result($liked_stmt);
+$user_reaction = mysqli_fetch_assoc($liked_result)['action'] ?? null; // Fetch user reaction
+
+$like_class = ($user_reaction === 'like') ? 'liked' : ''; // Add class if liked
+$like_text = ($user_reaction === 'like') ? 'Liked' : 'Like'; // Change text if liked
 // Handle like/dislike actions
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reaction'])) {
-    $reaction = $_POST['reaction'] == 'like' ? 'like' : 'dislike';
+    $reaction = 'like'; // We only handle 'like' in this case
 
-    // Check if user already reacted
-    $check_query = "SELECT * FROM book_likes_dislikes WHERE acc_no = ? AND book_id = ?";
+    // Check if user already liked the book
+    $check_query = "SELECT action FROM book_likes_dislikes WHERE acc_no = ? AND book_id = ?";
     $check_stmt = mysqli_prepare($conn, $check_query);
     mysqli_stmt_bind_param($check_stmt, "ii", $user_id, $book_id);
     mysqli_stmt_execute($check_stmt);
     $check_result = mysqli_stmt_get_result($check_stmt);
+    $existing_reaction = mysqli_fetch_assoc($check_result)['action'] ?? null;
 
-    if (mysqli_num_rows($check_result) > 0) {
-        // Update reaction if already exists
-        $update_query = "UPDATE book_likes_dislikes SET action = ?, created_at = NOW() WHERE acc_no = ? AND book_id = ?";
-        $update_stmt = mysqli_prepare($conn, $update_query);
-        mysqli_stmt_bind_param($update_stmt, "sii", $reaction, $user_id, $book_id);
-        mysqli_stmt_execute($update_stmt);
+    if ($existing_reaction === 'like') {
+        // Unlike (Remove from table)
+        $delete_query = "DELETE FROM book_likes_dislikes WHERE acc_no = ? AND book_id = ?";
+        $delete_stmt = mysqli_prepare($conn, $delete_query);
+        mysqli_stmt_bind_param($delete_stmt, "ii", $user_id, $book_id);
+        mysqli_stmt_execute($delete_stmt);
     } else {
-        // Insert new reaction
+        // Insert new like
         $insert_query = "INSERT INTO book_likes_dislikes (acc_no, book_id, action, created_at) VALUES (?, ?, ?, NOW())";
         $insert_stmt = mysqli_prepare($conn, $insert_query);
         mysqli_stmt_bind_param($insert_stmt, "iis", $user_id, $book_id, $reaction);
         mysqli_stmt_execute($insert_stmt);
     }
+
     header("Location: book-details.php?book_id=$book_id");
     exit();
+}
+// Initialize $borrow_status to avoid undefined warnings
+$borrow_status = null;
+
+// Check if the user has borrowed the book before
+$borrow_check_query = "SELECT status FROM borrowed_books WHERE student_no = ? AND book_id = ? LIMIT 1";
+$borrow_check_stmt = mysqli_prepare($conn, $borrow_check_query);
+mysqli_stmt_bind_param($borrow_check_stmt, "si", $student_no, $book_id);
+mysqli_stmt_execute($borrow_check_stmt);
+$borrow_check_result = mysqli_stmt_get_result($borrow_check_stmt);
+
+if ($borrow_check_row = mysqli_fetch_assoc($borrow_check_result)) {
+    $borrow_status = $borrow_check_row['status']; // Assign status if found
 }
 
 ?>
@@ -237,89 +264,91 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reaction'])) {
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
     <!-- Custom Modal Styling -->
-<style>
-    /* Light-Themed Modal */
-    .custom-modal {
-        background: #ffffff; /* Light background */
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        animation: fadeIn 0.4s ease-in-out;
-        padding: 20px;
-    }
-
-    /* Modal Header */
-    .modal-header {
-        border-bottom: none;
-        text-align: center;
-        position: relative;
-    }
-
-    /* Borrow Button */
-    .borrow-btn {
-        background: linear-gradient(45deg, #ffafbd, #ffc3a0);
-        border: none;
-        color: white;
-        font-weight: bold;
-        padding: 12px 20px;
-        border-radius: 30px;
-        transition: all 0.3s ease-in-out;
-    }
-
-    .borrow-btn:hover {
-        transform: scale(1.1);
-        box-shadow: 0 0 15px rgba(255, 172, 193, 0.8);
-    }
-
-    /* Custom Submit Button */
-    .btn-custom {
-        background: linear-gradient(45deg,rgba(5, 93, 165, 0.45),rgb(5, 93, 165));
-        border: none;
-        padding: 12px;
-        font-size: 16px;
-        font-weight: bold;
-        color: white;
-        border-radius: 25px;
-        transition: all 0.3s ease-in-out;
-    }
-
-    .btn-custom:hover {
-        background: linear-gradient(45deg,rgb(30, 159, 223),rgb(5, 113, 255));
-        transform: scale(1.05);
-        box-shadow: 0 0 10px rgba(132, 250, 176, 0.8);
-    }
-
-    /* Modal Fade In Animation */
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(10px);
+    <style>
+        /* Light-Themed Modal */
+        .custom-modal {
+            background: #ffffff;
+            /* Light background */
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 0.4s ease-in-out;
+            padding: 20px;
         }
-        to {
-            opacity: 1;
-            transform: translateY(0);
+
+        /* Modal Header */
+        .modal-header {
+            border-bottom: none;
+            text-align: center;
+            position: relative;
         }
-    }
 
-    /* Input Field Styling */
-    .form-control {
-        background: #f8f9fa;
-        border: 1px solid #ced4da;
-        color: #495057;
-    }
+        /* Borrow Button */
+        .borrow-btn {
+            background: linear-gradient(45deg, #ffafbd, #ffc3a0);
+            border: none;
+            color: white;
+            font-weight: bold;
+            padding: 12px 20px;
+            border-radius: 30px;
+            transition: all 0.3s ease-in-out;
+        }
 
-    .form-control:focus {
-        background: #ffffff;
-        border-color: #80bdff;
-        box-shadow: 0 0 5px rgba(128, 189, 255, 0.5);
-        color:rgb(22, 22, 22);
-    }
+        .borrow-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(255, 172, 193, 0.8);
+        }
 
-    /* Labels */
-    .form-label {
-        font-weight: 600;
-        color: #333;
-    }
-</style>
+        /* Custom Submit Button */
+        .btn-custom {
+            background: linear-gradient(45deg, rgba(5, 93, 165, 0.45), rgb(5, 93, 165));
+            border: none;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            border-radius: 25px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .btn-custom:hover {
+            background: linear-gradient(45deg, rgb(30, 159, 223), rgb(5, 113, 255));
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(132, 250, 176, 0.8);
+        }
+
+        /* Modal Fade In Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Input Field Styling */
+        .form-control {
+            background: #f8f9fa;
+            border: 1px solid #ced4da;
+            color: #495057;
+        }
+
+        .form-control:focus {
+            background: #ffffff;
+            border-color: #80bdff;
+            box-shadow: 0 0 5px rgba(128, 189, 255, 0.5);
+            color: rgb(22, 22, 22);
+        }
+
+        /* Labels */
+        .form-label {
+            font-weight: 600;
+            color: #333;
+        }
+    </style>
 </head>
 
 <body>
@@ -446,86 +475,175 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reaction'])) {
                 </a>
                 <img src="<?php echo htmlspecialchars($book['book_cover']); ?>" alt="Book Cover" class="book-cover">
                 <p class="enlarge-text">Tap to enlarge</p>
-                <?php if ($book['book_stocks'] > 0): ?>
-            <!-- Borrow Button -->
-            <button class="btn btn-success mt-3" style="width: 100%;" data-bs-toggle="modal" data-bs-target="#borrowModal">
-                Borrow This
-            </button>
-        <?php else: ?>
-            <!-- Reserve Button -->
-            <button class="btn btn-warning mt-3" style="width: 100%;" data-bs-toggle="modal" data-bs-target="#reserveModal">
-                Reserve This
-            </button>
-        <?php endif; ?>
+
+
+
+                <?php if ($borrow_status === 'Accepted'): ?>
+                    <button class="btn btn-secondary mt-3" style="width: 100%; background-color:#E6E6E6;color:black;border:none;" disabled>
+                        Already Borrowed
+                    </button>
+                <?php elseif ($borrow_status === 'Pending'): ?>
+                    <button class="btn btn-info mt-3" style="width: 100%;" disabled>
+                        Borrowing on Process
+                    </button>
+                <?php elseif ($borrow_status === null && $book['book_stocks'] > 0): ?>
+                    <button class="btn btn-success mt-3" style="width: 100%;background-color:#5897EE;border:none;" id="borrow-btn">
+                        Borrow This
+                    </button>
+                <?php elseif ($borrow_status === null && $book['book_stocks'] == 0): ?>
+                    <button class="btn btn-warning mt-3" style="width: 100%;" data-bs-toggle="modal" data-bs-target="#reserveModal">
+                        Reserve This
+                    </button>
+                <?php endif; ?>
+
+
 
                 <!-- Add to Collection Button -->
                 <form method="POST" action="">
                     <input type="hidden" name="book_id" value="<?= $book_id; ?>">
-                    <button type="submit" name="add_to_collection" class="btn mt-3" style="width: 100%; background-color:rgb(224, 18, 18); color: white;">
+                    <button type="submit" name="add_to_collection" class="btn mt-3" style="width: 100%; background-color:rgb(66, 75, 136); color: white;">
                         <i class="fas fa-bookmark"></i> Add to Collection
                     </button>
                 </form>
             </div>
-            
 
-            <!-- Middle Section (Book Info) -->
-            <div class="book-info-section">
-                <h1 class="book-title"><?php echo htmlspecialchars($book['book_title']); ?> </h1>
-                <p class="author">by <strong><?php echo htmlspecialchars($book['book_author']); ?></strong></p>
 
-                <!-- Like and Dislike Buttons -->
-                <form method="POST" action="">
-                    <div class="reaction-buttons">
-                        <!-- Like Button -->
-                        <button type="submit" name="reaction" value="like" class="like-btn">
-                            <ion-icon name="thumbs-up"></ion-icon> Like
-                            <span id="like-count"><?php echo $likes; ?></span>
-                        </button>
+            <!-- Book Info and Borrow Form Wrapper -->
+            <div id="content-wrapper">
+                <!-- Middle Section (Book Info) -->
+                <div class="book-info-section" id="book-info">
+                    <h1 class="book-title"><?php echo htmlspecialchars($book['book_title']); ?> </h1>
+                    <p class="author">by <strong><?php echo htmlspecialchars($book['book_author']); ?></strong></p>
 
-                        <!-- Dislike Button -->
-                        <button type="submit" name="reaction" value="dislike" class="dislike-btn">
-                            <ion-icon name="thumbs-down"></ion-icon> Dislike
-                            <span id="dislike-count"><?php echo $dislikes; ?></span>
-                        </button>
-                    </div>
-                </form>
+                    <form method="POST" action="">
+                        <div class="reaction-buttons">
+                            <!-- Like Button -->
+                            <button type="submit" name="reaction" value="like" class="like-btn <?php echo $like_class; ?>">
+                                <ion-icon name="thumbs-up"></ion-icon>
+                                <span id="like-text"><?php echo $like_text; ?></span>
+                                <span id="like-count"><?php echo $likes; ?></span>
+                            </button>
+                        </div>
+                    </form>
 
-                <p class="description">
-                    <?php echo nl2br(htmlspecialchars($book['book_description'])); ?>
-                    <a href="#" class="read-more">Read More</a>
-                </p>
+                    <p class="description">
+                        <?php echo nl2br(htmlspecialchars($book['book_description'])); ?>
+                        <a href="#" class="read-more">Read More</a>
+                    </p>
 
-                <table class="book-details-table">
-                    <tr>
-                        <td><strong>Original Title:</strong></td>
-                        <td><?php echo htmlspecialchars($book['book_title']); ?></td>
-                    </tr>
-                    <tr>
-                        <td><strong>ISBN:</strong></td>
-                        <td><?php echo htmlspecialchars($book['ISBN']); ?></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Edition Language:</strong></td>
-                        <td>English</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Publisher:</strong></td>
-                        <td><?php echo htmlspecialchars($book['publisher']); ?></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Publication Date:</strong></td>
-                        <td><?php echo htmlspecialchars($book['publication_date']); ?></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Available Stocks:</strong></td>
-                        <td><?php echo htmlspecialchars($book['book_stocks']); ?></td>
-                    </tr>
-                </table>
+                    <table class="book-details-table">
+                        <tr>
+                            <td><strong>Original Title:</strong></td>
+                            <td><?php echo htmlspecialchars($book['book_title']); ?></td>
+                        </tr>
+                        <tr>
+                            <td><strong>ISBN:</strong></td>
+                            <td><?php echo htmlspecialchars($book['ISBN']); ?></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Edition Language:</strong></td>
+                            <td>English</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Publisher:</strong></td>
+                            <td><?php echo htmlspecialchars($book['publisher']); ?></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Publication Date:</strong></td>
+                            <td><?php echo htmlspecialchars($book['publication_date']); ?></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Available Stocks:</strong></td>
+                            <td><?php echo htmlspecialchars($book['book_stocks']); ?></td>
+                        </tr>
+                    </table>
+
+
+                </div>
+
+                <!-- Borrow Form (Initially Hidden) -->
+                <div class="borrow-form-section" id="borrow-form" style="display: none;">
+                    <h1 class="book-title"><?php echo htmlspecialchars($book['book_title']); ?> </h1>
+                    <p class="author">by <strong><?php echo htmlspecialchars($book['book_author']); ?></strong></p>
+
+                    <br><br>
+                    <b style="background-color: black;color:white;padding:10px; font-size:20px;"> BORROWING FORM </b> <Br>
+                    <Br>
+                    <p style="color: gray;"> Please ensure that all details are correct </p>
+
+                    <form method="POST" action="borrow_book.php">
+                        <br>
+                        <input type="hidden" name="book_id" value="<?= htmlspecialchars($book['book_id']); ?>">
+                        <input type="hidden" name="book_title" value="<?= htmlspecialchars($book['book_title']); ?>">
+
+                        <div class="form-group">
+                            <div class="input-container">
+                                <label>ISBN:</label>
+                                <input type="text" name="isbn" class="form-control underline-input" value="<?php echo htmlspecialchars($ISBN); ?>" readonly required>
+                                <input type="hidden" name="isbn" value="<?php echo htmlspecialchars($ISBN); ?>">
+                            </div>
+                            <div class="input-container">
+                                <label>Student Number:</label>
+                                <input type="text" name="student_no" class="form-control underline-input" value="<?php echo htmlspecialchars($student_no); ?>" readonly required>
+                                <input type="hidden" name="student_no" value="<?php echo htmlspecialchars($student_no); ?>">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-container">
+                                <label>First Name:</label>
+                                <input type="text" name="first_name" class="form-control underline-input" value="<?php echo htmlspecialchars($first_name); ?>" readonly required>
+                                <input type="hidden" name="first_name" value="<?php echo htmlspecialchars($first_name); ?>">
+                            </div>
+                            <div class="input-container">
+                                <label>Last Name:</label>
+                                <input type="text" name="last_name" class="form-control underline-input" value="<?php echo htmlspecialchars($last_name); ?>" readonly required>
+                                <input type="hidden" name="last_name" value="<?php echo htmlspecialchars($last_name); ?>">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-container">
+                                <label>Email:</label>
+                                <input type="email" name="email" class="form-control underline-input" value="<?php echo htmlspecialchars($email ?? ''); ?>" readonly required>
+                                <input type="hidden" name="email" value="<?php echo htmlspecialchars($email ?? ''); ?>">
+                            </div>
+                            <div class="input-container">
+                                <label>Contact:</label>
+                                <input type="text" name="contact" class="form-control underline-input" value="<?php echo htmlspecialchars($contact ?? ''); ?>" readonly required>
+                                <input type="hidden" name="contact" value="<?php echo htmlspecialchars($contact ?? ''); ?>">
+                            </div>
+                        </div>
+                        <Br><BR>
+                        <div class="form-group" style="justify-content: center;">
+                            <div class="input-container" style="width: 200px;">
+                                <label>Preferred Pickup Date:</label>
+                                <input type="date" name="preferred_date" class="form-control underline-input" required>
+                            </div>
+                            <div class="input-container" style="width: 200px;">
+                                <label>Borrowing Request ID:</label>
+                                <input type="text" name="borrow_id" class="form-control underline-input" value="<?php echo htmlspecialchars($borrow_id ?? 'N/A'); ?>" readonly>
+                                <input type="hidden" name="borrow_id" value="<?php echo htmlspecialchars($borrow_id ?? ''); ?>">
+                            </div>
+                        </div>
+
+                        <br><br>
+
+                        <div class="d-flex justify-content-end gap-2 mt-3">
+                            <button type="button" class="btn btn-secondary px-4" id="cancel-borrow">Cancel</button>
+                            <button type="submit" class="btn btn-primary px-4">Submit Request</button>
+                        </div>
+                    </form>
+
+
+
+                </div>
 
 
 
 
             </div>
+
 
             <!-- Right Section (Related Books) -->
             <div class="related-books-section">
@@ -543,63 +661,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reaction'])) {
                 </div>
 
             </div>
-           <!-- Borrow Modal -->
-<div class="modal fade" id="borrowModal" tabindex="-1" aria-labelledby="borrowModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="borrowModalLabel">Reserve Book</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-            <form method="post" action="process_borrow.php">
-            <!-- Student Information -->
-            <div class="mb-3">
-                <label class="form-label">Student Name:</label>
-                <input type="text" class="form-control" name="student_name" value="<?= htmlspecialchars($first_name . ' ' . $last_name) ?>" readonly>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Student Number:</label>
-                <input type="text" class="form-control" name="student_no" value="<?= htmlspecialchars($student_no) ?>" readonly>
-            </div>
 
-            <!-- Book Information -->
-            <div class="mb-3">
-                <label class="form-label">Book Title:</label>
-                <input type="text" class="form-control" name="book_title" value="<?= htmlspecialchars($book_title) ?>" readonly>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Book Author:</label>
-                <input type="text" class="form-control" name="book_author" value="<?= htmlspecialchars($book_author) ?>" readonly>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">ISBN:</label>
-                <input type="text" class="form-control" name="isbn" value="<?= htmlspecialchars($ISBN) ?>" readonly>
-
-            </div>
-
-            <!-- Borrow & Due Dates -->
-            <div class="mb-3">
-                <label class="form-label">Borrow Date:</label>
-                <input type="text" class="form-control" name="borrow_date" value="<?= htmlspecialchars($borrow_date) ?>" readonly>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Due Date:</label>
-                <input type="text" class="form-control" name="due_date" value="<?= htmlspecialchars($due_date) ?>" readonly>
-            </div>
-
-            <!-- Hidden Inputs -->
-            <input type="hidden" name="book_id" value="<?= htmlspecialchars($book_id) ?>">
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" class="btn" name="borrow_book" style="background-color: #007bff; color: white;">Borrow Book</button>
-            </div>
-        </form>
-            </div>
-        </div>
-    </div>
-</div>
 
         </div>
         <script>
@@ -619,25 +681,70 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reaction'])) {
                     }
                 });
             });
-            document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll(".btn-borrow").forEach(button => {
-        button.addEventListener("click", function () {
-            let bookTitle = document.getElementById("top-title").innerText;
-            let bookAuthor = ""; // Set author dynamically if available
-            let bookISBN = ""; // Set ISBN dynamically if available
+            document.addEventListener("DOMContentLoaded", function() {
+                document.querySelectorAll(".btn-borrow").forEach(button => {
+                    button.addEventListener("click", function() {
+                        let bookTitle = document.getElementById("top-title").innerText;
+                        let bookAuthor = ""; // Set author dynamically if available
+                        let bookISBN = ""; // Set ISBN dynamically if available
 
-            document.getElementById("bookTitle").value = bookTitle;
-            document.getElementById("author").value = bookAuthor;
-            document.getElementById("isbn").value = bookISBN;
-        });
-    });
-});
+                        document.getElementById("bookTitle").value = bookTitle;
+                        document.getElementById("author").value = bookAuthor;
+                        document.getElementById("isbn").value = bookISBN;
+                    });
+                });
+            });
         </script>
         <script>
             // Redirect function to open new book details
             function redirectToBook(bookId) {
                 window.location.href = 'book-details.php?book_id=' + bookId;
             }
+        </script>
+
+        <script>
+            document.getElementById("borrow-btn").addEventListener("click", function() {
+                document.getElementById("book-info").style.display = "none";
+                document.getElementById("borrow-form").style.display = "block";
+            });
+
+            document.getElementById("cancel-borrow").addEventListener("click", function() {
+                document.getElementById("borrow-form").style.display = "none";
+                document.getElementById("book-info").style.display = "block";
+            });
+        </script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const borrowBtn = document.getElementById("borrow-btn"); // "Borrow This" button
+                const reserveBtn = document.querySelector("[data-bs-target='#reserveModal']"); // "Reserve This" button
+                const addToCollectionBtn = document.querySelector("button[name='add_to_collection']"); // "Add to Collection" button
+                const borrowForm = document.getElementById("borrow-form"); // Borrow form section
+                const cancelBtn = document.getElementById("cancel-borrow"); // Cancel button in borrow form
+
+                if (borrowBtn) {
+                    borrowBtn.addEventListener("click", function() {
+                        // Hide the buttons
+                        borrowBtn.style.display = "none";
+                        if (reserveBtn) reserveBtn.style.display = "none";
+                        if (addToCollectionBtn) addToCollectionBtn.style.display = "none";
+
+                        // Show the borrow form
+                        borrowForm.style.display = "block";
+                    });
+                }
+
+                if (cancelBtn) {
+                    cancelBtn.addEventListener("click", function() {
+                        // Show the buttons again
+                        borrowBtn.style.display = "block";
+                        if (reserveBtn) reserveBtn.style.display = "block";
+                        if (addToCollectionBtn) addToCollectionBtn.style.display = "block";
+
+                        // Hide the borrow form
+                        borrowForm.style.display = "none";
+                    });
+                }
+            });
         </script>
 
 

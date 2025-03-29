@@ -11,12 +11,12 @@ $acc_no = $_SESSION['acc_no']; // Get logged-in user's account number
 $login_time = date("Y-m-d H:i:s");
 
 // Update the last_login column
-$stmt = $conn->prepare("UPDATE stud_acc SET last_logged_in = ? WHERE acc_no = ?");
+$stmt = $conn->prepare("UPDATE stud_acc SET last_logged_in = ? WHERE student_no = ?");
 $stmt->bind_param("si", $login_time, $acc_no);
 $stmt->execute();
 
-// Fetch Borrowed Count (Including both Pending and Borrowed statuses)
-$stmt = $conn->prepare("SELECT COUNT(*) FROM borrowed_books WHERE acc_no = ? AND (status = 'borrowed' OR status = 'Pending')");
+// Fetch Borrowed Count (Only for logged-in user)
+$stmt = $conn->prepare("SELECT COUNT(*) FROM borrowed_books WHERE student_no = ? AND status = 'borrowed'");
 $stmt->bind_param("i", $acc_no);
 $stmt->execute();
 $stmt->bind_result($borrowed_count);
@@ -24,7 +24,7 @@ $stmt->fetch();
 $stmt->close();
 
 // Fetch Reserved Count
-$stmt = $conn->prepare("SELECT COUNT(*) FROM reserved_books WHERE acc_no = ? AND status = 'reserved'");
+$stmt = $conn->prepare("SELECT COUNT(*) FROM reserved_books WHERE student_no = ? AND status = 'reserved'");
 $stmt->bind_param("i", $acc_no);
 $stmt->execute();
 $stmt->bind_result($reserved_count);
@@ -32,7 +32,7 @@ $stmt->fetch();
 $stmt->close();
 
 // Fetch Overdue Count
-$stmt = $conn->prepare("SELECT COUNT(*) FROM borrowed_books WHERE acc_no = ? AND due_date < NOW() AND status = 'borrowed'");
+$stmt = $conn->prepare("SELECT COUNT(*) FROM borrowed_books WHERE student_no = ? AND due_date < NOW() AND status = 'borrowed'");
 $stmt->bind_param("i", $acc_no);
 $stmt->execute();
 $stmt->bind_result($overdue_count);
@@ -40,7 +40,7 @@ $stmt->fetch();
 $stmt->close();
 
 // Fetch Due Books Count
-$stmt = $conn->prepare("SELECT COUNT(*) FROM borrowed_books WHERE acc_no = ? AND due_date = CURDATE() AND status = 'borrowed'");
+$stmt = $conn->prepare("SELECT COUNT(*) FROM borrowed_books WHERE student_no = ? AND due_date = CURDATE() AND status = 'borrowed'");
 $stmt->bind_param("i", $acc_no);
 $stmt->execute();
 $stmt->bind_result($due_count);
@@ -61,6 +61,8 @@ $query = "
    HAVING total_count > 0
    ORDER BY total_count DESC
    LIMIT 10";
+
+
 $result = $conn->query($query);
 ?>
 
@@ -90,44 +92,6 @@ $result = $conn->query($query);
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
-    <style>
-        /* Basic modal styling */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    padding-top: 50px;
-}
-
-.modal-content {
-    background-color: white;
-    margin: auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-}
-
-.close {
-    color: #aaa;
-    font-size: 28px;
-    font-weight: bold;
-    position: absolute;
-    top: 10px;
-    right: 25px;
-}
-
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
-    </style>
 
 </head>
 
@@ -248,51 +212,112 @@ $result = $conn->query($query);
                 </div>
             </div>
 
-          <!-- Content Grid with Clickable Function -->
-<div class="content-grid">
-    <div class="content-item" data-status="due" onclick="showBooks('due')">
-        <ion-icon name="calendar-outline" style="font-size: 50px; color: #4CAF50;"></ion-icon>
-        <div class="content-text">
-            <p>DUE DATE</p>
-            <h1><?= $due_count ?></h1>
-        </div>
-    </div>
+            <!-- Content Grid with Clickable Sections -->
+            <div class="content-grid">
+                <div class="content-item" onclick="showBooks('due')">
+                    <ion-icon name="calendar-outline" style="font-size: 50px; color: #4CAF50;"></ion-icon>
+                    <div class="content-text">
+                        <p>DUE DATE</p>
+                        <h1><?= $due_count ?></h1>
+                    </div>
+                </div>
 
-    <div class="content-item" data-status="borrowed" onclick="showBooks('borrowed')">
-        <ion-icon name="book-outline" style="font-size: 50px; color: #2196F3;"></ion-icon>
-        <div class="content-text">
-            <p>Borrowed</p>
-            <h1><?= $borrowed_count ?></h1>
-        </div>
-    </div>
+                <div class="content-item" onclick="showBooks('borrowed')">
+                    <ion-icon name="book-outline" style="font-size: 50px; color: #2196F3;"></ion-icon>
+                    <div class="content-text">
+                        <p>Borrowed</p>
+                        <h1><?= $borrowed_count ?></h1>
+                    </div>
+                </div>
 
-    <div class="content-item" data-status="overdue" onclick="showBooks('overdue')">
-        <ion-icon name="alert-circle-outline" style="font-size: 50px; color: #FF5722;"></ion-icon>
-        <div class="content-text">
-            <p>Overdue</p>
-            <h1><?= $overdue_count ?></h1>
-        </div>
-    </div>
+                <div class="content-item" onclick="showBooks('overdue')">
+                    <ion-icon name="alert-circle-outline" style="font-size: 50px; color: #FF5722;"></ion-icon>
+                    <div class="content-text">
+                        <p>Overdue</p>
+                        <h1><?= $overdue_count ?></h1>
+                    </div>
+                </div>
 
-    <div class="content-item" data-status="reserved" onclick="showBooks('reserved')">
-        <ion-icon name="bookmark-outline" style="font-size: 50px; color: #FFC107;"></ion-icon>
-        <div class="content-text">
-            <p>Reserved</p>
-            <h1><?= $reserved_count ?></h1>
-        </div>
-    </div>
-</div>
+                <div class="content-item" onclick="showBooks('reserved')">
+                    <ion-icon name="bookmark-outline" style="font-size: 50px; color: #FFC107;"></ion-icon>
+                    <div class="content-text">
+                        <p>Reserved</p>
+                        <h1><?= $reserved_count ?></h1>
+                    </div>
+                </div>
+            </div>
 
-       <!-- Modal for Showing Book Details -->
-<div class="modal" id="bookModal">
-    <div class="modal-content">
-        <span class="close" onclick="closeModal()">&times;</span>
-        <h2 class="modal-title">📚 Book Details</h2>
-        <div id="bookDetails">
-            <!-- Book details will be dynamically inserted here -->
-        </div>
-    </div>
-</div>
+            <!-- Bootstrap Modal -->
+            <div class="modal fade" id="bookDetailsModal" tabindex="-1" aria-labelledby="bookDetailsLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content custom-modal">
+                        <!-- Modal Header -->
+                        <div class="modal-header custom-header">
+                            <h5 class="modal-title" id="bookDetailsLabel">📖 Book Details</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+
+                        <!-- Modal Body -->
+                        <div class="modal-body">
+                            <p><strong>📌 Title:</strong> <span id="modalBookTitle"></span></p>
+                            <p><strong>✍ Author:</strong> <span id="modalBookAuthor"></span></p>
+                            <p id="modalReservedDate" style="display: none;"><strong>📅 Reserved on:</strong> <span></span></p>
+                            <p id="modalBorrowedAt" style="display: none;"><strong>📆 Borrowed at:</strong> <span></span></p>
+                            <p id="modalDueDate" style="display: none;"><strong>⏳ Due Date:</strong> <span></span></p>
+                        </div>
+
+                        <!-- Modal Footer -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Custom CSS -->
+            <style>
+                /* Modal Styling */
+                .custom-modal {
+                    border-radius: 10px;
+                    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+                    overflow: hidden;
+                }
+
+                /* Header with Soft Gradient */
+                .custom-header {
+                    background: linear-gradient(to right, #6a11cb, #2575fc);
+                    color: white;
+                    padding: 15px;
+                    font-weight: bold;
+                    border-radius: 10px 10px 0 0;
+                }
+
+                /* Modal Body Text */
+                .modal-body p {
+                    font-size: 1rem;
+                    color: #333;
+                    margin-bottom: 8px;
+                    padding: 8px 12px;
+                    border-left: 4px solid #6a11cb;
+                    background: #f9f9f9;
+                    border-radius: 5px;
+                }
+
+                /* Modal Footer Buttons */
+                .btn-secondary {
+                    background-color: #6a11cb;
+                    border: none;
+                    padding: 8px 15px;
+                    font-weight: bold;
+                    transition: 0.3s ease-in-out;
+                }
+
+                .btn-secondary:hover {
+                    background-color: #2575fc;
+                }
+            </style>
+
+
 
 
 
@@ -328,33 +353,25 @@ $result = $conn->query($query);
                             $rank = 1;
                             while ($row = $result->fetch_assoc()) {
                                 echo "<tr>
-                                <td>{$rank}</td>
-                                <td>{$row['book_title']}</td>
-                                <td>{$row['book_author']}</td>
-                                <td class='action-column'>
-                                    <a href='BOOK-DETAILS.PHP?book_id=" . $row['book_id'] . "' class='btn view-btn'
-                                        style='background-color: #007BFF; color: #fff; border: none; padding: 6px 12px; 
-                                        font-size: 14px; font-weight: bold; border-radius: 5px; cursor: pointer; 
-                                        transition: all 0.3s ease-in-out; text-decoration: none;'
-                                        onmouseover=\"this.style.backgroundColor='#0056b3'; this.style.transform='scale(1.05)';\"
-                                        onmouseout=\"this.style.backgroundColor='#007BFF'; this.style.transform='scale(1)';\">
-                                        View
-                                    </a>
+                    <td>{$rank}</td>
+                    <td>{$row['book_title']}</td>
+                    <td>{$row['book_author']}</td>
+                    <td class='action-column'>
+                        <button class='btn view-btn' onclick=\"viewBook({$row['book_id']})\">View</button>
                         
-                                    <form method='post' action='add_to_collection.php' style='display:inline;'>
-                                        <input type='hidden' name='book_id' value='" . $row['book_id'] . "'>
-                                        <button type='submit' class='btn btn-collection' 
-                                            style='background-color:rgb(95, 183, 95); color: #fff; border: none; padding: 6px 12px; 
-                                                font-size: 14px; font-weight: bold; border-radius: 5px; cursor: pointer; 
-                                                transition: all 0.3s ease-in-out;'
-                                            onmouseover=\"this.style.backgroundColor='#4DA04D'; this.style.transform='scale(1.05)';\"
-                                            onmouseout=\"this.style.backgroundColor='rgb(95, 183, 95)'; this.style.transform='scale(1)';\">
-                                            Add to Collection
-                                        </button>
-                                    </form>
-                                </td>
-                              </tr>";
-                        
+                        <form method='post' action='add_to_collection.php' style='display:inline;'>
+                            <input type='hidden' name='book_id' value='" . $row['book_id'] . "'>
+                            <button type='submit' class='btn btn-collection' 
+                                style='background-color:rgb(95, 183, 95); color: #fff; border: none; padding: 6px 12px; 
+                                       font-size: 14px; font-weight: bold; border-radius: 5px; cursor: pointer; 
+                                       transition: all 0.3s ease-in-out;'
+                                onmouseover=\"this.style.backgroundColor='#4DA04D'; this.style.transform='scale(1.05)';\"
+                                onmouseout=\"this.style.backgroundColor='rgb(95, 183, 95);'; this.style.transform='scale(1)';\">
+                                Add to Collection
+                            </button>
+                        </form>
+                    </td>
+                </tr>";
 
                                 $rank++;
                             }
@@ -551,56 +568,39 @@ $result = $conn->query($query);
                 </div>
             </div>
 
-                            
-    <script>
-       function showBooks(status) {
-    // Example of sending an AJAX request to fetch book details
-    let url = "fetch_books.php"; // PHP file that fetches the data
-    let data = { status: status };
 
-    // Send an AJAX request to get books data based on status
-    fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-    })
-    .then(response => response.json())
-    .then(data => {
-        // Populate the modal with the book details
-        let bookDetailsContainer = document.getElementById('bookDetails');
-        bookDetailsContainer.innerHTML = ''; // Clear previous details
+            <script>
+                function showBooks(type) {
+                    fetch(`fetch_books.php?type=${type}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            let modalBody = document.querySelector(".modal-body");
+                            modalBody.innerHTML = ""; // Clear previous content
 
-        if (data.length > 0) {
-            data.forEach(book => {
-                let bookDetail = document.createElement('div');
-                bookDetail.classList.add('book-detail');
-                bookDetail.innerHTML = `
-                    <h3>${book.book_title}</h3>
-                    <p><strong>Author:</strong> ${book.author}</p>
-                    <p><strong>Status:</strong> ${book.status}</p>
-                    <p><strong>Borrow Date:</strong> ${book.borrow_date || 'N/A'}</p>
-                    
-                `;
-                bookDetailsContainer.appendChild(bookDetail);
-            });
-        } else {
-            bookDetailsContainer.innerHTML = '<p>No books found.</p>';
-        }
+                            if (data.length > 0) {
+                                data.forEach(book => {
+                                    let bookDetails = `
+                        <p><strong>📌 Title:</strong> ${book.book_title}</p>
+                        <p><strong>✍ Author:</strong> ${book.author}</p>
+                        ${book.reserved_date ? `<p><strong>📅 Reserved on:</strong> ${book.reserved_date}</p>` : ""}
+                        ${book.borrowed_at ? `<p><strong>📆 Borrowed at:</strong> ${book.borrowed_at}</p>` : ""}
+                        ${book.due_date ? `<p><strong>⏳ Due Date:</strong> ${book.due_date}</p>` : ""}
+                        <hr>
+                    `;
+                                    modalBody.innerHTML += bookDetails;
+                                });
+                            } else {
+                                // Display a message when no books are found
+                                modalBody.innerHTML = `<p class="text-center text-muted">📌 No records found.</p>`;
+                            }
 
-        // Show the modal
-        document.getElementById('bookModal').style.display = 'block';
-    })
-    .catch(error => {
-        console.error('Error fetching book data:', error);
-    });
-}
-
-function closeModal() {
-    // Close the modal when the close button is clicked
-    document.getElementById('bookModal').style.display = 'none';
-}
-    </script>
-                          
+                            // Open the modal
+                            let modal = new bootstrap.Modal(document.getElementById("bookDetailsModal"));
+                            modal.show();
+                        })
+                        .catch(error => console.error("Error fetching book details:", error));
+                }
+            </script>
 
 
             <!-- =========== Scripts =========  -->
