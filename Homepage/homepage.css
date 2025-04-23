@@ -344,6 +344,72 @@ ul li a:hover {
     display: block;
 }
 
+/* Latest News Section */
+.latest-news {
+    padding: 5%;
+    background-color: #f9f9f9;
+    border-top: 1px solid #e0e0e0;
+}
+
+.latest-news h2 {
+    text-align: center;
+    font-family: Arial, sans-serif;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.latest-news .news-item {
+    flex: 1;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Testimonials Section */
+.testimonials {
+    padding: 5%;
+    background-color: #ffffff;
+    border-top: 1px solid #e0e0e0;
+}
+
+.testimonials h2 {
+    text-align: center;
+    font-family: Arial, sans-serif;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.testimonials .testimonial-item {
+    flex: 1;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    font-style: italic;
+    color: #555;
+}
+
+.testimonials .testimonial-item p:last-child {
+    text-align: right;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Enhanced Contact Form */
+.contact-us select {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 10px 0;
+    border-radius: 8px;
+    background-color: #f0f4f7;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+    color: #333;
+    transition: all 0.3s ease;
+}
+
 html {
     scroll-behavior: smooth;
 }

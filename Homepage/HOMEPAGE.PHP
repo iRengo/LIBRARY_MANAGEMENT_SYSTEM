@@ -289,7 +289,38 @@ include 'db_connect.php';
             </ul>
         </div>
     </div>
-    <!-- Contact Us Section -->
+
+    <!-- Latest News Section -->
+    <div style="padding: 5%; background-color: #f9f9f9; border-top: 1px solid #e0e0e0;">
+        <h2 style="text-align: center; font-family: Arial, sans-serif; font-weight: 700; margin-bottom: 20px;">Latest News</h2>
+        <div style="display: flex; gap: 20px; justify-content: center;">
+            <div style="flex: 1; padding: 20px; background-color: white; border-radius: 8px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
+                <h4 style="font-family: Arial, sans-serif; font-weight: bold;">New Books Added</h4>
+                <p style="color: #333;">Explore our latest collection of books added this month. Visit the catalog to find your next read!</p>
+            </div>
+            <div style="flex: 1; padding: 20px; background-color: white; border-radius: 8px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
+                <h4 style="font-family: Arial, sans-serif; font-weight: bold;">Upcoming Events</h4>
+                <p style="color: #333;">Join us for our upcoming book fair on January 15th. Don't miss out on exciting activities and giveaways!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Testimonials Section -->
+    <div style="padding: 5%; background-color: #ffffff; border-top: 1px solid #e0e0e0;">
+        <h2 style="text-align: center; font-family: Arial, sans-serif; font-weight: 700; margin-bottom: 20px;">What Our Users Say</h2>
+        <div style="display: flex; gap: 20px; justify-content: center;">
+            <div style="flex: 1; padding: 20px; background-color: #f9f9f9; border-radius: 8px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
+                <p style="font-style: italic; color: #555;">"Librasphere has completely transformed the way I manage my library activities. It's fast, reliable, and user-friendly!"</p>
+                <p style="text-align: right; font-weight: bold; color: #333;">- John Doe</p>
+            </div>
+            <div style="flex: 1; padding: 20px; background-color: #f9f9f9; border-radius: 8px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
+                <p style="font-style: italic; color: #555;">"The personalized collection feature is a game-changer. I can now organize my favorite books effortlessly."</p>
+                <p style="text-align: right; font-weight: bold; color: #333;">- Jane Smith</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Contact Us Section -->
     <div class="contact-us" style="padding: 5%; background:rgb(240, 240, 240); border-top: 1px solid #e0e0e0; color: white; border:1px solid gray;" id="contact-us">
         <h2 style="font-family: Arial, sans-serif; font-weight: 700; margin-bottom: 20px; color: black;">Contact Us</h2>
         <div style="display: flex; gap: 20px;">
@@ -321,6 +352,16 @@ include 'db_connect.php';
                         onfocus="this.style.borderColor='#1C2E5C'; this.style.boxShadow='0 0 8px rgba(28, 46, 92, 0.2)';"
                         onblur="this.style.borderColor='#ddd'; this.style.boxShadow='0 2px 4px rgba(0, 0, 0, 0.1)';" />
 
+                    <label for="inquiry" style="font-weight: bold; color: #333;">Inquiry Type:</label>
+                    <select id="inquiry" name="inquiry"
+                        style="width: 100%; padding: 12px 20px; margin: 10px 0; border-radius: 8px; 
+                    background-color: #f0f4f7; border: 1px solid #ddd; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+                    font-size: 16px; color: #333; transition: all 0.3s ease;">
+                        <option value="general">General Inquiry</option>
+                        <option value="support">Support</option>
+                        <option value="feedback">Feedback</option>
+                    </select>
+
                     <label for="message" style="font-weight: bold; color: #333;">Message:</label>
                     <textarea id="message" name="message" placeholder="Your Message"
                         style="width: 100%; padding: 12px 20px; margin: 10px 0; height: 100px; border-radius: 8px; 
@@ -338,7 +379,6 @@ include 'db_connect.php';
             </div>
         </div>
     </div>
-
 
     <!-- FAQ Section with Taller Height -->
     <div class="faq-container" style="padding: 40px; margin-top: 20px; height: 800px; overflow-y: auto;" id="faq">
