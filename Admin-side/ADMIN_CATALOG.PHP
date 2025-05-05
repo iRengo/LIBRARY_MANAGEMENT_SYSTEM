@@ -1,6 +1,13 @@
 <?php
+session_start();
 include '../homepage/db_connect.php';
 
+
+$successMessage = '';
+if (isset($_SESSION['archive_success'])) {
+    $successMessage = $_SESSION['archive_success'];
+    unset($_SESSION['archive_success']); // Prevent it from showing again
+}
 ?>
 
 <!DOCTYPE html>
@@ -36,21 +43,23 @@ include '../homepage/db_connect.php';
 
     <div class="titles-container">
         <div class="header-container">
-            <!-- Available Books -->
+
             <div class="titles">
-                <div class="available">Available Books</div>
+                <div class="available" id="bookSectionTitle">Available Books</div>
             </div>
+
 
             <!-- Add Book Button & Search Bar -->
             <div class="search-container">
-                <div>
-                    <button class="btn import-book-btn" onclick="confirmImport()">Import Book</button>
-
+                <button class="btn archived-book-btn" id="toggleBooksBtn" onclick="toggleBookView()">Archived</button>
+                <br>
+                <div id="mainActionButtons">
+                    <button class="btn import-book-btn" onclick="confirmImport()">Import Book</button> &nbsp; &nbsp;
                     <button class="btn add-book-btn" onclick="openAddBookForm()">Add Book</button>
                 </div>
 
-                <!-- Search Bar -->
-                <div class="search-bar">
+
+                <div class="search-bar" id="searchBar">
                     <input type="text" class="form-control" placeholder="Search books..." id="searchInput">
                 </div>
             </div>
@@ -59,73 +68,96 @@ include '../homepage/db_connect.php';
 
 
     <!-- Book List -->
-    <div class="book-list">
-        <?php
-        // Fetch books from the database
-        $query = "SELECT book_id, book_cover, book_title, book_author FROM tbl_books WHERE status = 'available'";
-        $result = mysqli_query($conn, $query);
+    <!-- Available Books Section -->
+    <div id="availableBooksSection" class="book-section">
+        <div class="book-list">
+            <?php
+            $query = "SELECT book_id, book_cover, book_title, book_author FROM tbl_books WHERE status = 'available'";
+            $result = mysqli_query($conn, $query);
 
-        if (mysqli_num_rows($result) > 0) {
-            while ($row = mysqli_fetch_assoc($result)) {
-                $book_id = $row['book_id'];
-                $book_cover = $row['book_cover'];
-                $book_title = $row['book_title'];
-                $author = $row['book_author'];
-        ?>
-                <div class="book-main-container">
-                    <div class="book-container">
-                        <!-- Book Cover -->
-                        <img src="<?php echo htmlspecialchars($book_cover); ?>" class="book-cover" alt="Book Cover">
-
-                        <!-- Overlay Buttons -->
-                        <div class="overlay">
-                            <button class="archive-btn" onclick="archiveBook(<?php echo $book_id; ?>)">ARCHIVE</button>
-                            <button class="delete-btn" onclick="confirmDelete(<?php echo $book_id; ?>)">DELETE</button>
-                            <button class="edit-btn" onclick="editBook(<?php echo $book_id; ?>)">EDIT</button>
+            if (mysqli_num_rows($result) > 0) {
+                while ($row = mysqli_fetch_assoc($result)) {
+            ?>
+                    <div class="book-main-container">
+                        <div class="book-container">
+                            <img src="<?= htmlspecialchars($row['book_cover']); ?>" class="book-cover" alt="Book Cover">
+                            <div class="overlay">
+                                <button class="archive-btn" onclick="archiveBook(<?= $row['book_id']; ?>)">ARCHIVE</button>
+                                <button class="edit-btn" onclick="editBook(<?= $row['book_id']; ?>)">EDIT</button>
+                            </div>
+                        </div>
+                        <div class="book-details">
+                            <h5><?= htmlspecialchars($row['book_title']); ?></h5>
+                            <p><?= htmlspecialchars($row['book_author']); ?></p>
                         </div>
                     </div>
-
-                    <!-- Book Title and Author (Now below the book-container) -->
-                    <div class="book-details">
-                        <h5><?php echo htmlspecialchars($book_title); ?></h5>
-                        <p><?php echo htmlspecialchars($author); ?></p>
-
-                    </div>
-
-                </div>
-
-        <?php
+            <?php
+                }
+            } else {
+                echo "<p>No available books found.</p>";
             }
-        } else {
-            echo "<p>No available books found.</p>";
-        }
-        ?>
+            ?>
+        </div>
     </div>
 
+    <!-- Archived Books Section (initially hidden) -->
+    <div id="archivedBooksSection" class="book-section" style="display: none;">
+        <div class="book-list">
+            <?php
+            $archivedQuery = "SELECT book_id, book_cover, book_title, book_author FROM tbl_archived_books";
+            $archivedResult = mysqli_query($conn, $archivedQuery);
+
+            if (mysqli_num_rows($archivedResult) > 0) {
+                while ($row = mysqli_fetch_assoc($archivedResult)) {
+            ?>
+                    <div class="book-main-container">
+                        <div class="book-container">
+                            <img src="<?= htmlspecialchars($row['book_cover']); ?>" class="book-cover" alt="Book Cover">
+
+                            <!-- Overlay for Restore Button -->
+                            <div class="overlay">
+                                <button class="restore-btn" onclick="restoreBook(<?= $row['book_id']; ?>)">Restore</button>
+                            </div>
+                        </div>
+                        <div class="book-details">
+                            <h5><?= htmlspecialchars($row['book_title']); ?></h5>
+                            <p><?= htmlspecialchars($row['book_author']); ?></p>
+                        </div>
+                    </div>
+            <?php
+                }
+            } else {
+                echo "<p>No archived books found.</p>";
+            }
+            ?>
+        </div>
+    </div>
+
+
     <script>
-        function confirmDelete(bookId) {
+        function archiveBook(bookId) {
             Swal.fire({
                 title: 'Are you sure?',
-                text: "You will delete this book!",
+                text: "This book will be archived!",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
                 cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Yes, delete it!'
+                confirmButtonText: 'Yes, archive it!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Redirect to delete handler
                     window.location.href = 'admin_delete_book.php?book_id=' + bookId;
                 }
             });
         }
+
 
         // Display SweetAlert if a success message exists in the URL
         document.addEventListener('DOMContentLoaded', function() {
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.has('success')) {
                 Swal.fire({
-                    title: 'Deleted!',
+                    title: 'Archived!',
                     text: urlParams.get('success'),
                     icon: 'success',
                     timer: 3000,
@@ -134,6 +166,41 @@ include '../homepage/db_connect.php';
             }
         });
     </script>
+    <script>
+        let showingArchived = false;
+
+        function toggleBookView() {
+            const available = document.getElementById('availableBooksSection');
+            const archived = document.getElementById('archivedBooksSection');
+            const toggleBtn = document.getElementById('toggleBooksBtn');
+            const titleText = document.getElementById('bookSectionTitle');
+            const actionButtons = document.getElementById('mainActionButtons');
+            const searchBar = document.getElementById('searchBar');
+
+            if (showingArchived) {
+                // Show available books
+                archived.style.display = 'none';
+                available.style.display = 'block';
+                toggleBtn.textContent = 'Archived';
+                titleText.textContent = 'Available Books';
+                actionButtons.style.display = 'flex';
+                searchBar.style.display = 'block';
+            } else {
+                // Show archived books
+                archived.style.display = 'block';
+                available.style.display = 'none';
+                toggleBtn.textContent = 'Back to Available';
+                titleText.textContent = 'Archived Books';
+                actionButtons.style.display = 'none';
+                searchBar.style.display = 'none';
+            }
+
+            showingArchived = !showingArchived;
+        }
+    </script>
+
+
+
     <script>
         // Open SweetAlert2 form for adding a book
         function openAddBookForm() {
@@ -261,21 +328,36 @@ include '../homepage/db_connect.php';
         }
 
         // Confirm Delete Function
-        function confirmDelete(bookId) {
+        function archiveBook(bookId) {
             Swal.fire({
                 title: 'Are you sure?',
-                text: "You will delete this book!",
+                text: "This book will be archived!",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
                 cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Yes, delete it!'
+                confirmButtonText: 'Yes, archive it!'
             }).then((result) => {
                 if (result.isConfirmed) {
                     window.location.href = 'admin_delete_book.php?book_id=' + bookId;
                 }
             });
         }
+
+
+        // Display SweetAlert if a success message exists in the URL
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('success')) {
+                Swal.fire({
+                    title: 'Archived!',
+                    text: urlParams.get('success'),
+                    icon: 'success',
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+            }
+        });
     </script>
     <script>
         // Function to confirm and trigger book import
@@ -317,26 +399,26 @@ include '../homepage/db_connect.php';
         }
     </script>
     <script>
-document.getElementById('searchInput').addEventListener('input', function() {
-    let searchQuery = this.value; // Get the value from the search input field
+        document.getElementById('searchInput').addEventListener('input', function() {
+            let searchQuery = this.value; // Get the value from the search input field
 
-    if (searchQuery.length > 0) {
-        // Send AJAX request to search_books.php with the search query
-        fetch(`search_books.php?query=${encodeURIComponent(searchQuery)}`)
-            .then(response => response.json()) // Parse the response as JSON
-            .then(data => {
-                // Clear the current book list
-                const bookList = document.querySelector('.book-list');
-                bookList.innerHTML = '';
+            if (searchQuery.length > 0) {
+                // Send AJAX request to search_books.php with the search query
+                fetch(`search_books.php?query=${encodeURIComponent(searchQuery)}`)
+                    .then(response => response.json()) // Parse the response as JSON
+                    .then(data => {
+                        // Clear the current book list
+                        const bookList = document.querySelector('.book-list');
+                        bookList.innerHTML = '';
 
-                // Check if any books were found
-                if (data.length > 0) {
-                    // Loop through the books and display them
-                    data.forEach(book => {
-                        const bookContainer = document.createElement('div');
-                        bookContainer.classList.add('book-main-container');
+                        // Check if any books were found
+                        if (data.length > 0) {
+                            // Loop through the books and display them
+                            data.forEach(book => {
+                                const bookContainer = document.createElement('div');
+                                bookContainer.classList.add('book-main-container');
 
-                        bookContainer.innerHTML = `
+                                bookContainer.innerHTML = `
                             <div class="book-container">
                                 <!-- Book Cover -->
                                 <img src="${book.book_cover}" class="book-cover" alt="Book Cover">
@@ -344,7 +426,6 @@ document.getElementById('searchInput').addEventListener('input', function() {
                                 <!-- Overlay Buttons -->
                                 <div class="overlay">
                                     <button class="archive-btn" onclick="archiveBook(${book.book_id})">ARCHIVE</button>
-                                    <button class="delete-btn" onclick="confirmDelete(${book.book_id})">DELETE</button>
                                     <button class="edit-btn" onclick="editBook(${book.book_id})">EDIT</button>
                                 </div>
                             </div>
@@ -355,36 +436,36 @@ document.getElementById('searchInput').addEventListener('input', function() {
                                 <p>${book.book_author}</p>
                             </div>
                         `;
-                        bookList.appendChild(bookContainer); // Add the book to the list
+                                bookList.appendChild(bookContainer); // Add the book to the list
+                            });
+                        } else {
+                            bookList.innerHTML = '<p>No books found matching your search.</p>';
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Error:', err);
+                        alert('Something went wrong. Please try again.');
                     });
-                } else {
-                    bookList.innerHTML = '<p>No books found matching your search.</p>';
-                }
-            })
-            .catch(err => {
-                console.error('Error:', err);
-                alert('Something went wrong. Please try again.');
-            });
-    } else {
-        // If the search query is empty, reload the books list
-        loadBooks();
-    }
-});
+            } else {
+                // If the search query is empty, reload the books list
+                loadBooks();
+            }
+        });
 
-// Function to load all books initially (if needed when search is empty)
-function loadBooks() {
-    fetch('search_books.php?query=')
-        .then(response => response.json())
-        .then(data => {
-            const bookList = document.querySelector('.book-list');
-            bookList.innerHTML = ''; // Clear the book list
+        // Function to load all books initially (if needed when search is empty)
+        function loadBooks() {
+            fetch('search_books.php?query=')
+                .then(response => response.json())
+                .then(data => {
+                    const bookList = document.querySelector('.book-list');
+                    bookList.innerHTML = ''; // Clear the book list
 
-            if (data.length > 0) {
-                data.forEach(book => {
-                    const bookContainer = document.createElement('div');
-                    bookContainer.classList.add('book-main-container');
+                    if (data.length > 0) {
+                        data.forEach(book => {
+                            const bookContainer = document.createElement('div');
+                            bookContainer.classList.add('book-main-container');
 
-                    bookContainer.innerHTML = `
+                            bookContainer.innerHTML = `
                         <div class="book-container">
                             <!-- Book Cover -->
                             <img src="${book.book_cover}" class="book-cover" alt="Book Cover">
@@ -392,7 +473,6 @@ function loadBooks() {
                             <!-- Overlay Buttons -->
                             <div class="overlay">
                                 <button class="archive-btn" onclick="archiveBook(${book.book_id})">ARCHIVE</button>
-                                <button class="delete-btn" onclick="confirmDelete(${book.book_id})">DELETE</button>
                                 <button class="edit-btn" onclick="editBook(${book.book_id})">EDIT</button>
                             </div>
                         </div>
@@ -403,18 +483,59 @@ function loadBooks() {
                             <p>${book.book_author}</p>
                         </div>
                     `;
-                    bookList.appendChild(bookContainer);
+                            bookList.appendChild(bookContainer);
+                        });
+                    } else {
+                        bookList.innerHTML = '<p>No available books found.</p>';
+                    }
                 });
-            } else {
-                bookList.innerHTML = '<p>No available books found.</p>';
+        }
+
+        // Initial load of books
+        loadBooks();
+    </script>
+    <?php if (!empty($successMessage)) : ?>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: '<?= addslashes($successMessage) ?>'
+            });
+        </script>
+    <?php endif; ?>
+
+    <script>
+        function restoreBook(bookId) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "This book will be restored back to the available books list!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745', // Green
+                cancelButtonColor: '#3085d6', // Blue
+                confirmButtonText: 'Yes, restore it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Send a request to restore the book (via a PHP script)
+                    window.location.href = 'restore_book.php?book_id=' + bookId;
+                }
+            });
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('success')) {
+                Swal.fire({
+                    title: 'Restored!',
+                    text: urlParams.get('success'),
+                    icon: 'success',
+                    timer: 3000,
+                    showConfirmButton: false
+                });
             }
         });
-}
+    </script>
 
-// Initial load of books
-loadBooks();
-
-        </script>
 
     <!-- ========================= Main END ==================== -->
 

@@ -4,6 +4,8 @@ session_start();
 // Retrieve error message if it exists
 $error_message = isset($_SESSION['error_message']) ? $_SESSION['error_message'] : "";
 unset($_SESSION['error_message']); // Clear error message after displaying
+
+
 ?>
 
 
@@ -21,9 +23,11 @@ unset($_SESSION['error_message']); // Clear error message after displaying
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ionicons@5.5.4/dist/ionicons/ionicons.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Teachers:ital,wght@0,400..800;1,400..800&family=Viga&family=Zilla+Slab+Highlight:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="signin.css">
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
     <link href="https://cdn.jsdelivr.net/npm/boxicons/css/boxicons.min.css" rel="stylesheet">
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    
     <style>
         .recaptcha-container {
             width: 250px;
@@ -117,7 +121,7 @@ unset($_SESSION['error_message']); // Clear error message after displaying
                         <p style="color:red;"><?php echo $error_message; ?> </p>
                     </div>
                 <?php endif; ?>
-                <div class="form-group" style="margin-left: 7%;">
+                <div class="form-group">
                     <div class="g-recaptcha" data-sitekey="6LcbyK0qAAAAAD3K5wZbObRk5Z2_bbEVgir6thO7"></div>
                 </div>
 
@@ -222,6 +226,38 @@ unset($_SESSION['error_message']); // Clear error message after displaying
             modal.style.display = "none";
         }
     };
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const message = urlParams.get('message');
+
+    if (message) {
+      let toastOptions = {
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+      };
+
+      switch (message) {
+        case 'verified':
+          Swal.fire({ ...toastOptions, icon: 'success', title: 'Email successfully verified!' });
+          break;
+        case 'already_verified':
+          Swal.fire({ ...toastOptions, icon: 'info', title: 'Email already verified or invalid.' });
+          break;
+        case 'invalid':
+          Swal.fire({ ...toastOptions, icon: 'error', title: 'Invalid verification request.' });
+          break;
+      }
+
+      // Clean the URL after showing the toast
+      const cleanUrl = window.location.origin + window.location.pathname;
+      window.history.replaceState({}, document.title, cleanUrl);
+    }
+  });
 </script>
 
 

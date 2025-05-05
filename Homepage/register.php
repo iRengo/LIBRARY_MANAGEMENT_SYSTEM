@@ -1,18 +1,24 @@
 <?php
 session_start();
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require '../phpmailer/vendor/autoload.php';
 include 'db_connect.php';
 
+// Redirect if session is not set
 if (!isset($_SESSION['student_no'])) {
-    header("Location: signup.php"); // Redirect if session is not set
+    header("Location: signup.php");
     exit();
 }
 
+// Retrieve session data
 $student_no = $_SESSION['student_no'];
 $firstname = $_SESSION['first_name'];
 $lastname = $_SESSION['last_name'];
 $email = $_SESSION['email'];
 
-// Handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = mysqli_real_escape_string($conn, $_POST['password']);
     $confirm_password = mysqli_real_escape_string($conn, $_POST['confirm_password']);
@@ -25,13 +31,72 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Hash the password
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-        // Insert into database
+        // Insert the new account
         $sql = "INSERT INTO stud_acc (student_no, password, first_name, last_name, contact, email) 
                 VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("ssssss", $student_no, $hashed_password, $firstname, $lastname, $contact, $email);
 
         if ($stmt->execute()) {
+
+            echo '
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Registration Successful</title>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <style>
+        .swal2-popup {
+        font-family: "Poppins", sans-serif;
+    }
+        </style>
+    </head>
+    <body>
+        <script>
+            Swal.fire({
+                icon: "success",
+                title: "Registration Successful!",
+                text: "Please check your email to verify your account.",
+                confirmButtonText: "OK"
+            }).then(() => {
+                window.location.href = "signin.php";
+            });
+        </script>
+    </body>
+    </html>';
+            exit();
+
+            $update = $conn->prepare("UPDATE stud_acc SET verified = 0 WHERE student_no = ?");
+            $update->bind_param("s", $student_no);
+            $update->execute();
+
+            // Send verification email
+            $mail = new PHPMailer(true);
+            try {
+                $mail->isSMTP();
+                $mail->Host = 'smtp.gmail.com';
+                $mail->SMTPAuth = true;
+                $mail->Username = 'systemlibrarymanagement8@gmail.com';
+                $mail->Password = 'ndur otbh aalt vicl'; // Use Gmail app password
+                $mail->SMTPSecure = 'tls';
+                $mail->Port = 587;
+
+                $mail->setFrom('no-reply@librasphere.com', 'LibraSphere Support');
+                $mail->addAddress($email, "$firstname $lastname");
+                $mail->isHTML(true);
+                $mail->Subject = 'Verify Your Email';
+                $mail->Body = "Hi $firstname, <br><br>
+                    Please click the link below to verify your email:<br>
+                    <a href='http://localhost:3000/Homepage/verify.php?email=$email'>Verify Account</a><br><br>
+                    This link will expire in 15 minutes.";
+
+                $mail->send();
+            } catch (Exception $e) {
+                $error_message = "Email could not be sent. Mailer Error: {$mail->ErrorInfo}";
+            }
+
+            // Redirect after success
             header("Location: signin.php");
             exit();
         } else {
@@ -39,8 +104,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 }
-
 ?>
+
 
 
 <!DOCTYPE html>
@@ -187,7 +252,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
 
                 <!-- Submit Button -->
-                <a href="signin.php" style="text-decoration: none;color:white;"> <button type="submit" class="btn btn-primary">SUBMIT</button> </a>
+                <button type="submit" class="btn btn-primary">SUBMIT</button>
 
 
 

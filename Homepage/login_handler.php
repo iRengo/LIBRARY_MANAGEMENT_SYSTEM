@@ -1,5 +1,6 @@
 <?php
 session_start();
+
 include 'db_connect.php';
 
 // Check connection
@@ -88,7 +89,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->close();
 
     // 3️⃣ **Check if the user is a student**
-    $stmt = $conn->prepare("SELECT acc_no, student_no, password FROM stud_acc WHERE student_no = ?");
+    $stmt = $conn->prepare("SELECT acc_no, student_no, password, verified FROM stud_acc WHERE student_no = ?");
+
     if (!$stmt) {
         die("Query Error: " . $conn->error);
     }
@@ -97,9 +99,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->store_result();
 
     if ($stmt->num_rows === 1) {
-        $stmt->bind_result($acc_no, $student_no, $hashed_password);
+        $stmt->bind_result($acc_no, $student_no, $hashed_password, $verified);
         $stmt->fetch();
         $stmt->close();
+
+        if (!$verified) {
+            $_SESSION['error_message'] = "Please verify your email before logging in. <Br> (Check your Email) <Br> <Br>";
+            header("Location: signin.php");
+            exit();
+        }
 
         // Use password_verify for hashed student passwords
         if (password_verify($password, $hashed_password)) {
@@ -121,4 +129,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     header("Location: signin.php");
     exit();
 }
-?>

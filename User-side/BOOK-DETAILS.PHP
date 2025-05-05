@@ -617,13 +617,17 @@ if ($borrow_check_row = mysqli_fetch_assoc($borrow_check_result)) {
                         <Br><BR>
                         <div class="form-group" style="justify-content: center;">
                             <div class="input-container" style="width: 200px;">
-                                <label>Preferred Pickup Date:</label>
-                                <input type="date" name="preferred_date" class="form-control underline-input" required>
+                                <label for="preferredDate">Preferred Date</label>
+                                <input type="date" id="preferredDate" class="form-control">
                             </div>
                             <div class="input-container" style="width: 200px;">
                                 <label>Borrowing Request ID:</label>
                                 <input type="text" name="borrow_id" class="form-control underline-input" value="<?php echo htmlspecialchars($borrow_id ?? 'N/A'); ?>" readonly>
                                 <input type="hidden" name="borrow_id" value="<?php echo htmlspecialchars($borrow_id ?? ''); ?>">
+                            </div>
+                            <div class="input-container" style="width: 200px;">
+                                <label for="dueDate">Estimated Due Date</label>
+                                <input type="date" id="dueDate" class="form-control" readonly>
                             </div>
                         </div>
 
@@ -744,6 +748,41 @@ if ($borrow_check_row = mysqli_fetch_assoc($borrow_check_result)) {
                         borrowForm.style.display = "none";
                     });
                 }
+            });
+        </script>
+        <script>
+            document.getElementById('preferredDate').addEventListener('change', function() {
+                let preferredDate = new Date(this.value); // Get the selected date
+
+                // Check if the selected date is a weekend (Saturday or Sunday)
+                if (preferredDate.getDay() === 6 || preferredDate.getDay() === 0) {
+                    Swal.fire({
+                        title: 'Weekend Not Allowed!',
+                        text: 'The library is closed on weekends. Please select a weekday (Monday to Friday).',
+                        icon: 'warning',
+                        confirmButtonText: 'Okay'
+                    });
+                    this.value = ''; // Clear the selected date
+                    return;
+                }
+
+                let dueDate = new Date(preferredDate); // Make a copy of the selected date
+                dueDate.setDate(preferredDate.getDate() + 3); // Add 3 days to the preferred date
+
+                // Ensure the due date is not a weekend (Saturday or Sunday)
+                if (dueDate.getDay() === 6) {
+                    dueDate.setDate(dueDate.getDate() + 2); // If due date falls on Saturday, set to Monday
+                } else if (dueDate.getDay() === 0) {
+                    dueDate.setDate(dueDate.getDate() + 1); // If due date falls on Sunday, set to Monday
+                }
+
+                // Format the due date in YYYY-MM-DD format
+                let year = dueDate.getFullYear();
+                let month = (dueDate.getMonth() + 1).toString().padStart(2, '0');
+                let day = dueDate.getDate().toString().padStart(2, '0');
+
+                // Set the due date value
+                document.getElementById('dueDate').value = `${year}-${month}-${day}`;
             });
         </script>
 
