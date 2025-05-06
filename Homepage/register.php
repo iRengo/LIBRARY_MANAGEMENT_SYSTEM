@@ -39,34 +39,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if ($stmt->execute()) {
 
-            echo '
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Registration Successful</title>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <style>
-        .swal2-popup {
-        font-family: "Poppins", sans-serif;
-    }
-        </style>
-    </head>
-    <body>
-        <script>
-            Swal.fire({
-                icon: "success",
-                title: "Registration Successful!",
-                text: "Please check your email to verify your account.",
-                confirmButtonText: "OK"
-            }).then(() => {
-                window.location.href = "signin.php";
-            });
-        </script>
-    </body>
-    </html>';
-            exit();
-
             $update = $conn->prepare("UPDATE stud_acc SET verified = 0 WHERE student_no = ?");
             $update->bind_param("s", $student_no);
             $update->execute();
@@ -95,6 +67,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             } catch (Exception $e) {
                 $error_message = "Email could not be sent. Mailer Error: {$mail->ErrorInfo}";
             }
+
+            echo '
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Registration Successful</title>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <style>
+        .swal2-popup {
+        font-family: "Poppins", sans-serif;
+    }
+        </style>
+    </head>
+    <body>
+        <script>
+            Swal.fire({
+                icon: "success",
+                title: "Registration Successful!",
+                text: "Please check your email to verify your account.",
+                confirmButtonText: "OK"
+            }).then(() => {
+                window.location.href = "signin.php";
+            });
+        </script>
+    </body>
+    </html>';
+
 
             // Redirect after success
             header("Location: signin.php");

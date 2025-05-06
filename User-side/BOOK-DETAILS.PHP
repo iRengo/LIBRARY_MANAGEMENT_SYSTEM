@@ -618,7 +618,7 @@ if ($borrow_check_row = mysqli_fetch_assoc($borrow_check_result)) {
                         <div class="form-group" style="justify-content: center;">
                             <div class="input-container" style="width: 200px;">
                                 <label for="preferredDate">Preferred Date</label>
-                                <input type="date" id="preferredDate" class="form-control">
+                                <input type="date" id="borrow_date" name="borrow_date" class="form-control" required>
                             </div>
                             <div class="input-container" style="width: 200px;">
                                 <label>Borrowing Request ID:</label>
@@ -627,7 +627,7 @@ if ($borrow_check_row = mysqli_fetch_assoc($borrow_check_result)) {
                             </div>
                             <div class="input-container" style="width: 200px;">
                                 <label for="dueDate">Estimated Due Date</label>
-                                <input type="date" id="dueDate" class="form-control" readonly>
+                                <input type="date" id="due_date" class="form-control" readonly>
                             </div>
                         </div>
 
@@ -751,7 +751,7 @@ if ($borrow_check_row = mysqli_fetch_assoc($borrow_check_result)) {
             });
         </script>
         <script>
-            document.getElementById('preferredDate').addEventListener('change', function() {
+            document.getElementById('borrow_date').addEventListener('change', function() {
                 let preferredDate = new Date(this.value); // Get the selected date
 
                 // Check if the selected date is a weekend (Saturday or Sunday)
@@ -782,7 +782,7 @@ if ($borrow_check_row = mysqli_fetch_assoc($borrow_check_result)) {
                 let day = dueDate.getDate().toString().padStart(2, '0');
 
                 // Set the due date value
-                document.getElementById('dueDate').value = `${year}-${month}-${day}`;
+                document.getElementById('due_date').value = `${year}-${month}-${day}`;
             });
         </script>
 

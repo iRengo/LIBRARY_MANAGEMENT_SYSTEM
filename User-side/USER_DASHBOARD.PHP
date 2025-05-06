@@ -357,7 +357,7 @@ $result = $conn->query($query);
                     <td>{$row['book_title']}</td>
                     <td>{$row['book_author']}</td>
                     <td class='action-column'>
-                        <button class='btn view-btn' onclick=\"viewBook({$row['book_id']})\">View</button>
+                        <button class='btn view-btn' onclick=\"viewBook({$row['book_id      ']})\">View</button>
                         
                         <form method='post' action='add_to_collection.php' style='display:inline;'>
                             <input type='hidden' name='book_id' value='" . $row['book_id'] . "'>
