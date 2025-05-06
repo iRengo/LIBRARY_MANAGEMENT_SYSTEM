@@ -59,7 +59,7 @@
                 </li>
 
                 <li>
-                    <a href="#">
+                    <a href="USER_CATALOG.php">
                         <span class="icon">
                             <ion-icon name="book-outline"></ion-icon>
                         </span>
@@ -68,20 +68,11 @@
                 </li>
 
                 <li>
-                <a href="USER_HISTORY.PHP">
+                    <a href="USER_HISTORY.PHP">
                         <span class="icon">
                             <i class='bx bx-history' style="font-size:35px;"></i>
                         </span>
                         <span class="title">History</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="USER_HELP&SUPPORT.PHP">
-                        <span class="icon">
-                            <ion-icon name="layers-outline"></ion-icon>
-                        </span>
-                        <span class="title">Help & Support</span>
                     </a>
                 </li>
 
@@ -93,14 +84,7 @@
                         <span class="title">Notifications</span>
                     </a>
                 </li>
-                <li>
-                    <a href="USER_TRENDING.php">
-                        <span class="icon">
-                            <ion-icon name="trending-up-outline"></ion-icon>
-                        </span>
-                        <span class="title">Trending</span>
-                    </a>
-                </li>
+
                 <li>
                     <a href="USER_SETTINGS.php">
                         <span class="icon">
@@ -140,7 +124,7 @@
                 </div>
             </div>
 
-            
+
 
             <script>
                 document.getElementById('logoutIcon').addEventListener('click', function(event) {
@@ -172,6 +156,7 @@
             <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
             <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+            
 
 
 </body>

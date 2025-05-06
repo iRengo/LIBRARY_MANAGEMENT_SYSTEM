@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $book_id = $_POST['book_id'] ?? null;
     $ISBN = $_POST['isbn'] ?? null;
     $book_title = $_POST['book_title'] ?? null;
-    $preferred_date = $_POST['borrow_date'] ?? null;
+    $preferred_date = $_POST['preferred_date'] ?? null;
     $due_date = $_POST['due_date'] ?? null;
     $status = "Pending";
     $acc_no = $_SESSION['acc_no'];
@@ -36,58 +36,56 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 
-// Insert into `reserved_books` table
-$insert_query = "INSERT INTO reserved_books 
-(book_title, author, reserved_date, status, acc_no, book_id, student_no, first_name, last_name, ISBN, borrow_date, due_date, email)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    // Insert into `reserved_books` table
+    $insert_query = "INSERT INTO borrowed_books 
+(student_no, first_name, last_name, email, contact, book_id, ISBN, book_title, preferred_date, due_date, status)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-$stmt = $conn->prepare($insert_query);
-if (!$stmt) {
-    die("Error preparing statement: " . $conn->error);
-}
-
-$acc_no = $_SESSION['acc_no'];
-$reserved_date = date('Y-m-d'); // Current date for reservation
-$status = "Pending"; // Assuming default status
-
-$stmt->bind_param(
-    "sssssssssssss",
-    $book_title,        // 1
-    $author,            // 2
-    $reserved_date,     // 3
-    $status,            // 4
-    $acc_no,            // 5
-    $book_id,           // 6
-    $student_no,        // 7
-    $first_name,        // 8
-    $last_name,         // 9
-    $ISBN,              // 10
-    $preferred_date,    // 11
-    $due_date,          // 12
-    $email              // 13
-);
-
-    if ($stmt->execute()) {
-        echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-            <script>
-            window.onload = function() {
-                Swal.fire({
-                    title: "Success!",
-                    text: "Your borrowing request has been submitted. Please wait for approval.",
-                    icon: "success",
-                    confirmButtonText: "OK",
-                    backdrop: "rgba(187, 184, 184, 0.4)" 
-                }).then(() => {
-                    window.location.href = "user_catalog.php";
-                });
-            }
-            </script>';
-    } else {
-        echo '<script>
-            alert("Error submitting request: ' . $stmt->error . '");
-            window.location.href = "book-details.php?book_id=' . htmlspecialchars($book_id) . '";
-        </script>';
+    $stmt = $conn->prepare($insert_query);
+    if (!$stmt) {
+        die("Error preparing statement: " . $conn->error);
     }
+
+    $acc_no = $_SESSION['acc_no'];
+    $reserved_date = date('Y-m-d'); // Current date for reservation
+    $status = "Pending"; // Assuming default status
+
+    $stmt->bind_param(
+        "sssssssssss",
+        $student_no,
+        $first_name,
+        $last_name,
+        $email,
+        $contact,
+        $book_id,
+        $ISBN,
+        $book_title,
+        $preferred_date,
+        $due_date,
+        $status
+    );
+    if ($stmt->execute()) {
+        // Decrease book stock by 1
+        $update_stock = $conn->prepare("UPDATE tbl_books SET book_stocks = book_stocks - 1 WHERE book_id = ?");
+        $update_stock->bind_param("i", $book_id);
+        $update_stock->execute();
+        $update_stock->close();
+
+        echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+        window.onload = function() {
+            Swal.fire({
+                title: "Success!",
+                text: "Your borrowing request has been submitted. Please wait for approval.",
+                icon: "success",
+                confirmButtonText: "OK",
+                backdrop: "rgba(187, 184, 184, 0.4)" 
+            }).then(() => {
+                window.location.href = "book-details.php?book_id=' . htmlspecialchars($book_id) . '";
+            });
+        }
+        </script>';
+    } 
 
     $stmt->close();
     $conn->close();

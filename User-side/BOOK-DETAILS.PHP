@@ -2,27 +2,6 @@
 session_start();
 include '../homepage/db_connect.php';
 
-// Ensure student is logged in
-if (!isset($_SESSION['acc_no'])) {
-    echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script>
-        window.onload = function() {
-            Swal.fire({
-                title: "You are not logged in!",
-                text: "Please log in to continue.",
-                icon: "error",
-                confirmButtonText: "OK",
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-                willClose: () => {
-                    window.location.href = "../homepage/homepage.php";
-                }
-            });
-        }
-        </script>';
-    exit();
-}
-
 $user_id = $_SESSION['acc_no'];
 
 if (isset($_SESSION['error'])) {
@@ -245,6 +224,16 @@ $borrow_check_result = mysqli_stmt_get_result($borrow_check_stmt);
 if ($borrow_check_row = mysqli_fetch_assoc($borrow_check_result)) {
     $borrow_status = $borrow_check_row['status']; // Assign status if found
 }
+$book_reserved = false;
+$sql_check = "SELECT * FROM reserved_books WHERE book_id = ? AND student_no = ?";
+$stmt_check = $conn->prepare($sql_check);
+$stmt_check->bind_param("ii", $book['book_id'], $student_no);
+$stmt_check->execute();
+$result_check = $stmt_check->get_result();
+if ($result_check->num_rows > 0) {
+    $book_reserved = true; // The book has already been reserved by the student
+}
+$stmt_check->close();
 
 ?>
 
@@ -491,10 +480,49 @@ if ($borrow_check_row = mysqli_fetch_assoc($borrow_check_result)) {
                         Borrow This
                     </button>
                 <?php elseif ($borrow_status === null && $book['book_stocks'] == 0): ?>
-                    <button class="btn btn-warning mt-3" style="width: 100%;" data-bs-toggle="modal" data-bs-target="#reserveModal">
-                        Reserve This
-                    </button>
+                    <?php if (!$book_reserved): ?>
+                        <form method="POST" action="book_reserve.php">
+                            <input type="hidden" name="book_id" value="<?= htmlspecialchars($book['book_id']); ?>">
+                            <input type="hidden" name="book_title" value="<?= htmlspecialchars($book['book_title']); ?>">
+                            <input type="hidden" name="author" value="<?= htmlspecialchars($book['book_author']); ?>">
+                            <input type="hidden" name="ISBN" value="<?= htmlspecialchars($book['ISBN']); ?>">
+                            <input type="hidden" name="acc_no" value="<?= htmlspecialchars($_SESSION['acc_no']); ?>">
+                            <input type="hidden" name="student_no" value="<?= htmlspecialchars($student_no); ?>">
+                            <input type="hidden" name="first_name" value="<?= htmlspecialchars($first_name); ?>">
+                            <input type="hidden" name="last_name" value="<?= htmlspecialchars($last_name); ?>">
+                            <input type="hidden" name="email" value="<?= htmlspecialchars($email); ?>">
+
+                            <button type="submit" class="btn btn-warning mt-3" style="width: 100%;">
+                                Reserve This
+                            </button>
+                        </form>
+                    <?php else: ?>
+                        <button class="btn btn-secondary mt-3" style="width: 100%;" disabled>
+                            Already Reserved
+                        </button>
+                    <?php endif; ?>
                 <?php endif; ?>
+                <?php if (isset($_GET['success']) && $_GET['success'] == 1): ?>
+                    <script>
+                        // Show the SweetAlert
+                        Swal.fire({
+                            title: 'Successfully Reserved!',
+                            text: 'We will send you an email once the book is available!',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        });
+
+                        // Remove the success=1 from the URL without reloading the page
+                        if (window.history.replaceState) {
+                            const url = new URL(window.location);
+                            url.searchParams.delete('success');
+                            window.history.replaceState({}, document.title, url);
+                        }
+                    </script>
+                <?php endif; ?>
+
+
+
 
 
 
@@ -572,62 +600,56 @@ if ($borrow_check_row = mysqli_fetch_assoc($borrow_check_result)) {
                     <p style="color: gray;"> Please ensure that all details are correct </p>
 
                     <form method="POST" action="borrow_book.php">
-                        <br>
                         <input type="hidden" name="book_id" value="<?= htmlspecialchars($book['book_id']); ?>">
                         <input type="hidden" name="book_title" value="<?= htmlspecialchars($book['book_title']); ?>">
 
                         <div class="form-group">
                             <div class="input-container">
                                 <label>ISBN:</label>
-                                <input type="text" name="isbn" class="form-control underline-input" value="<?php echo htmlspecialchars($ISBN); ?>" readonly required>
-                                <input type="hidden" name="isbn" value="<?php echo htmlspecialchars($ISBN); ?>">
+                                <input type="text" name="isbn" class="form-control underline-input" value="<?= htmlspecialchars($ISBN); ?>" readonly required>
                             </div>
                             <div class="input-container">
                                 <label>Student Number:</label>
-                                <input type="text" name="student_no" class="form-control underline-input" value="<?php echo htmlspecialchars($student_no); ?>" readonly required>
-                                <input type="hidden" name="student_no" value="<?php echo htmlspecialchars($student_no); ?>">
+                                <input type="text" name="student_no" class="form-control underline-input" value="<?= htmlspecialchars($student_no); ?>" readonly required>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <div class="input-container">
                                 <label>First Name:</label>
-                                <input type="text" name="first_name" class="form-control underline-input" value="<?php echo htmlspecialchars($first_name); ?>" readonly required>
-                                <input type="hidden" name="first_name" value="<?php echo htmlspecialchars($first_name); ?>">
+                                <input type="text" name="first_name" class="form-control underline-input" value="<?= htmlspecialchars($first_name); ?>" readonly required>
                             </div>
                             <div class="input-container">
                                 <label>Last Name:</label>
-                                <input type="text" name="last_name" class="form-control underline-input" value="<?php echo htmlspecialchars($last_name); ?>" readonly required>
-                                <input type="hidden" name="last_name" value="<?php echo htmlspecialchars($last_name); ?>">
+                                <input type="text" name="last_name" class="form-control underline-input" value="<?= htmlspecialchars($last_name); ?>" readonly required>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <div class="input-container">
                                 <label>Email:</label>
-                                <input type="email" name="email" class="form-control underline-input" value="<?php echo htmlspecialchars($email ?? ''); ?>" readonly required>
-                                <input type="hidden" name="email" value="<?php echo htmlspecialchars($email ?? ''); ?>">
+                                <input type="email" name="email" class="form-control underline-input" value="<?= htmlspecialchars($email ?? ''); ?>" readonly required>
                             </div>
                             <div class="input-container">
                                 <label>Contact:</label>
-                                <input type="text" name="contact" class="form-control underline-input" value="<?php echo htmlspecialchars($contact ?? ''); ?>" readonly required>
-                                <input type="hidden" name="contact" value="<?php echo htmlspecialchars($contact ?? ''); ?>">
+                                <input type="text" name="contact" class="form-control underline-input" value="<?= htmlspecialchars($contact ?? ''); ?>" readonly required>
                             </div>
                         </div>
-                        <Br><BR>
+
+                        <br><br>
+
                         <div class="form-group" style="justify-content: center;">
                             <div class="input-container" style="width: 200px;">
-                                <label for="preferredDate">Preferred Date</label>
-                                <input type="date" id="borrow_date" name="borrow_date" class="form-control" required>
+                                <label for="borrow_date">Preferred Date</label>
+                                <input type="date" id="preferred_date" name="preferred_date" class="form-control" required>
                             </div>
                             <div class="input-container" style="width: 200px;">
                                 <label>Borrowing Request ID:</label>
-                                <input type="text" name="borrow_id" class="form-control underline-input" value="<?php echo htmlspecialchars($borrow_id ?? 'N/A'); ?>" readonly>
-                                <input type="hidden" name="borrow_id" value="<?php echo htmlspecialchars($borrow_id ?? ''); ?>">
+                                <input type="text" name="borrow_id" class="form-control underline-input" value="<?= htmlspecialchars($borrow_id ?? 'N/A'); ?>" readonly>
                             </div>
                             <div class="input-container" style="width: 200px;">
-                                <label for="dueDate">Estimated Due Date</label>
-                                <input type="date" id="due_date" class="form-control" readonly>
+                                <label for="due_date">Estimated Due Date</label>
+                                <input type="date" id="due_date" name="due_date" class="form-control" readonly required>
                             </div>
                         </div>
 
@@ -638,6 +660,7 @@ if ($borrow_check_row = mysqli_fetch_assoc($borrow_check_result)) {
                             <button type="submit" class="btn btn-primary px-4">Submit Request</button>
                         </div>
                     </form>
+
 
 
 
@@ -751,7 +774,7 @@ if ($borrow_check_row = mysqli_fetch_assoc($borrow_check_result)) {
             });
         </script>
         <script>
-            document.getElementById('borrow_date').addEventListener('change', function() {
+            document.getElementById('preferred_date').addEventListener('change', function() {
                 let preferredDate = new Date(this.value); // Get the selected date
 
                 // Check if the selected date is a weekend (Saturday or Sunday)
