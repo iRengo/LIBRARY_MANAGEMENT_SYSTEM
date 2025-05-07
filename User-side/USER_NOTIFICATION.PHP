@@ -40,38 +40,64 @@ $approved_result = $approved_stmt->get_result();
         <p class="text-muted">Manage, renew and review your books</p>
 
         <!-- Approved Notifications -->
-        <?php while ($row = $approved_result->fetch_assoc()): ?>
-            <div class="notification-box green clearfix">
-                <div class="avatar">
-                    <img src="https://img.icons8.com/ios-filled/50/ffffff/user.png" alt="user">
-                </div>
-                <div class="notification-time text-success">
-                    <strong><?= date('M d, Y H:i', strtotime($row['updated_at'] ?? 'now')) ?></strong>
-                </div>
-                <div class="notification-content">
-                    <span class="status">Approved</span>
-                    <div>Your request to borrow <strong><?= htmlspecialchars($row['book_title']) ?></strong> has been approved.</div>
-                </div>
-            </div>
-        <?php endwhile; ?>
+<?php 
+// Query to fetch approved borrowed books with book_cover
+$approved_sql = "
+    SELECT bb.*, b.book_cover 
+    FROM borrowed_books bb
+    JOIN tbl_books b ON bb.book_id = b.book_id
+    WHERE bb.status = 'Approved'
+";
 
-        <!-- Rejected Notifications -->
-        <?php while ($row = $rejected_result->fetch_assoc()): ?>
-            <div class="notification-box red clearfix">
-                <div class="avatar">
-                    <img src="https://img.icons8.com/ios-filled/50/ffffff/user.png" alt="user">
-                </div>
-                <div class="notification-time text-danger">
-                    <strong><?= date('M d, Y H:i', strtotime($row['created_at'] ?? 'now')) ?></strong>
-                </div>
-                <div class="notification-content">
-                    <span class="status">Rejected</span>
-                    <div>Your request to borrow <strong><?= htmlspecialchars($row['book_title']) ?></strong> was rejected.</div>
-                    <br>
-                    <div><em>Reason: <?= htmlspecialchars($row['reason']) ?></em></div>
-                </div>
-            </div>
-        <?php endwhile; ?>
+$approved_result = mysqli_query($conn, $approved_sql);
+
+while ($row = $approved_result->fetch_assoc()): ?>
+    <div class="notification-box green clearfix">
+        <div class="avatar">
+            <!-- Displaying the book cover inside the avatar -->
+            <img src="<?= htmlspecialchars($row['book_cover']) ?>" alt="Book Cover" style="width: 50px; height: auto; border-radius: 4px;">
+        </div>
+        <div class="notification-time text-success">
+            <strong><?= date('M d, Y H:i', strtotime($row['due_date'] ?? 'now')) ?></strong>
+        </div>
+        <div class="notification-content">
+            <span class="status">Approved</span>
+            <div>Your request to borrow <strong><?= htmlspecialchars($row['book_title']) ?></strong> has been approved.</div>
+        </div>
+    </div>
+<?php endwhile; ?>
+
+<!-- Rejected Notifications -->
+<?php 
+// Query to fetch rejected borrow requests with book_cover
+$rejected_sql = "
+    SELECT rr.*, b.book_cover 
+    FROM rejected_requests rr
+    JOIN tbl_books b ON rr.book_id = b.book_id
+
+";
+
+
+$rejected_result = mysqli_query($conn, $rejected_sql);
+
+while ($row = $rejected_result->fetch_assoc()): ?>
+    <div class="notification-box red clearfix">
+        <div class="avatar">
+            <!-- Displaying the book cover inside the avatar -->
+            <img src="<?= htmlspecialchars($row['book_cover']) ?>" alt="Book Cover" style="width: 50px; height: auto; border-radius: 4px;">
+        </div>
+        <div class="notification-time text-danger">
+            <strong><?= date('M d, Y H:i', strtotime($row['updated_at'] ?? 'now')) ?></strong>
+        </div>
+        <div class="notification-content">
+            <span class="status">Rejected</span>
+            <div>Your request to borrow <strong><?= htmlspecialchars($row['book_title']) ?></strong> was rejected.</div>
+            <br>
+            <div><em>Reason: <?= htmlspecialchars($row['reason']) ?></em></div>
+        </div>
+    </div>
+<?php endwhile; ?>
+
 
         <!-- View All -->
         <div class="view-all">

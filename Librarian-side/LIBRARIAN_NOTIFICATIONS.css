@@ -1,15 +1,32 @@
-
 .action-icons {
     display: flex;
-    gap: 10px;
+    flex-direction: column; 
     justify-content: center;
+    align-items: center;
+    gap: 10px;
 }
+
 .action-icons i {
     cursor: pointer;
     font-size: 18px;
 }
 .accept { color: green; }
 .decline { color: red; }
+
+td.action-icons i {
+    background-color: #f0f0f0;
+    padding: 6px 10px;
+    border-radius: 6px;
+    margin-bottom: 5px;
+    transition: 0.2s;
+}
+td.action-icons i.accept:hover {
+    background-color: #c8f7c5;
+}
+td.action-icons i.decline:hover {
+    background-color: #f7c5c5;
+}
+
 
 .notifications-container {
     max-width: 1000px;

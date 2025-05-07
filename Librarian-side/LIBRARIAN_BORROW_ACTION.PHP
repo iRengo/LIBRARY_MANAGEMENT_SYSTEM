@@ -19,17 +19,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $status = $_POST['status'];
         $reason = $_POST['reason'];
 
-        // Get librarian number from session
         $updated_by = $_SESSION['librarian_no'];
 
-        // 1. Insert into rejected_requests
+        // Fetch book_id before deletion
+        $book_id_result = mysqli_query($conn, "SELECT book_id FROM borrowed_books WHERE borrow_id = '$borrow_id'");
+        $book_id_row = mysqli_fetch_assoc($book_id_result);
+        $book_id = $book_id_row['book_id'];
+
+        // Insert into rejected_requests including book_id
         $insert_sql = "INSERT INTO rejected_requests 
-            (borrow_id, updated_by, student_no, email, book_title, contact, preferred_date, status, reason)
+            (borrow_id, book_id, updated_by, student_no, email, book_title, contact, preferred_date, status, reason)
             VALUES 
-            ('$borrow_id', '$updated_by', '$student_no', '$email', '$title', '$contact', '$preferred_date', '$status', '$reason')";
+            ('$borrow_id', '$book_id', '$updated_by', '$student_no', '$email', '$title', '$contact', '$preferred_date', '$status', '$reason')";
         $insert_result = mysqli_query($conn, $insert_sql);
 
-        // 2. If insert was successful, delete from borrowed_books
         if ($insert_result) {
             $delete_sql = "DELETE FROM borrowed_books WHERE borrow_id = '$borrow_id'";
             mysqli_query($conn, $delete_sql);
@@ -39,4 +42,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
-?>
