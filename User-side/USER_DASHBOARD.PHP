@@ -421,7 +421,7 @@
         <div class="recommended-books-container" id="recommendedBooksContainer">
     <div class="recommended-books">
         <?php while ($book = $recommended->fetch_assoc()): ?>
-            <a href="book_details.php?book_id=<?= $book['book_id'] ?>" class="recommended-book-link">
+            <a href="book-details.php?book_id=<?= $book['book_id'] ?>" class="recommended-book-link">
                 <div class="recommended-book">
                     <img src="<?= htmlspecialchars($book['book_cover']) ?>" alt="Book Cover" class="recommended-book-cover">
                     <div class="recommended-book-info">
