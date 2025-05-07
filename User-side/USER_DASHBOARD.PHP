@@ -122,24 +122,28 @@
         $recommended = $stmt->get_result();
 
 
-        // Fetch Top Books Ranking (Most Liked & Borrowed This Week)
+                // Fetch Top Books Ranking (Most Liked, Reserved, & Borrowed This Week)
         $query = "
-        SELECT b.book_id, b.book_title, b.book_author,
-        (
-        COUNT(CASE WHEN l.action = 'like' THEN 1 END) +
-        COUNT(rb.book_id)
-        ) AS total_count
+        SELECT 
+            b.book_id, 
+            b.book_title, 
+            b.book_author,
+            (
+                COUNT(DISTINCT CASE WHEN l.action = 'like' THEN l.id END) +
+                COUNT(DISTINCT rb.book_id) +
+                COUNT(DISTINCT bb.book_id)
+            ) AS total_count
         FROM tbl_books b
         LEFT JOIN book_likes_dislikes l ON b.book_id = l.book_id
         LEFT JOIN reserved_books rb ON b.book_id = rb.book_id
+        LEFT JOIN borrowed_books bb ON b.book_id = bb.book_id
         GROUP BY b.book_id, b.book_author
         HAVING total_count > 0
         ORDER BY total_count DESC
         LIMIT 10";
 
-
         $result = $conn->query($query);
-        ?>
+?>
 
 
         <!DOCTYPE html>
