@@ -3,6 +3,7 @@ session_start();
 include '../homepage/db_connect.php';
 
 $user_id = $_SESSION['acc_no'];
+$book_id = $_GET['book_id'];
 
 if (isset($_SESSION['error'])) {
     echo '<div class="alert alert-danger">' . $_SESSION['error'] . '</div>';
@@ -222,7 +223,7 @@ mysqli_stmt_execute($borrow_check_stmt);
 $borrow_check_result = mysqli_stmt_get_result($borrow_check_stmt);
 
 if ($borrow_check_row = mysqli_fetch_assoc($borrow_check_result)) {
-    $borrow_status = $borrow_check_row['status']; 
+    $borrow_status = $borrow_check_row['status'];
 }
 $book_reserved = false;
 $sql_check = "SELECT * FROM reserved_books WHERE book_id = ? AND student_no = ?";
@@ -231,7 +232,7 @@ $stmt_check->bind_param("ii", $book['book_id'], $student_no);
 $stmt_check->execute();
 $result_check = $stmt_check->get_result();
 if ($result_check->num_rows > 0) {
-    $book_reserved = true; 
+    $book_reserved = true;
 }
 $stmt_check->close();
 
@@ -245,348 +246,346 @@ $stmt_check->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($book['book_title']); ?> - Book Details</title>
     <link rel="stylesheet" href="book-details.css">
+
 </head>
 
 <body>
     <?php include 'HEADER-NAVBAR.PHP' ?>
 
 
-        <div class="container1" style="margin-top: 2%;">
-            <!-- Left Section (Book Cover) -->
-            <div class="book-cover-section">
-                <a href="user_catalog.php" style="position: absolute; top: 10px; left: 10px; text-decoration: none; color: inherit; margin-top:8%;margin-left:1.5%;">
-                    <ion-icon name="arrow-back-outline" style="font-size: 32px;"></ion-icon>
-                </a>
-                <img src="<?php echo htmlspecialchars($book['book_cover']); ?>" alt="Book Cover" class="book-cover">
-                <p class="enlarge-text">Tap to enlarge</p>
+    <div class="container1" style="margin-top: 2%;">
+        <!-- Left Section (Book Cover) -->
+        <div class="book-cover-section">
+            <a href="user_catalog.php" style="position: absolute; top: 10px; left: 10px; text-decoration: none; color: inherit; margin-top:8%;margin-left:1.5%;">
+                <ion-icon name="arrow-back-outline" style="font-size: 32px;"></ion-icon>
+            </a>
+            <img src="<?php echo htmlspecialchars($book['book_cover']); ?>" alt="Book Cover" class="book-cover">
+            <p class="enlarge-text">Tap to enlarge</p>
 
+            <br> <br>
 
+            <?php if ($borrow_status === 'Approved'): ?>
+                <button class="borrow-button borrowed" disabled>
+                    Already Borrowed
+                </button>
 
-                <?php if ($borrow_status === 'Accepted'): ?>
-                    <button class="btn btn-secondary mt-3" style="width: 100%; background-color:#E6E6E6;color:black;border:none;" disabled>
-                        Already Borrowed
-                    </button>
-                <?php elseif ($borrow_status === 'Pending'): ?>
-                    <button class="btn btn-info mt-3" style="width: 100%;" disabled>
-                        Borrowing on Process
-                    </button>
-                <?php elseif ($borrow_status === null && $book['book_stocks'] > 0): ?>
-                    <button class="btn btn-success mt-3" style="width: 100%;background-color:#5897EE;border:none;" id="borrow-btn">
-                        Borrow This
-                    </button>
-                <?php elseif ($borrow_status === null && $book['book_stocks'] == 0): ?>
-                    <?php if (!$book_reserved): ?>
-                        <form method="POST" action="book_reserve.php">
-                            <input type="hidden" name="book_id" value="<?= htmlspecialchars($book['book_id']); ?>">
-                            <input type="hidden" name="book_title" value="<?= htmlspecialchars($book['book_title']); ?>">
-                            <input type="hidden" name="author" value="<?= htmlspecialchars($book['book_author']); ?>">
-                            <input type="hidden" name="ISBN" value="<?= htmlspecialchars($book['ISBN']); ?>">
-                            <input type="hidden" name="acc_no" value="<?= htmlspecialchars($_SESSION['acc_no']); ?>">
-                            <input type="hidden" name="student_no" value="<?= htmlspecialchars($student_no); ?>">
-                            <input type="hidden" name="first_name" value="<?= htmlspecialchars($first_name); ?>">
-                            <input type="hidden" name="last_name" value="<?= htmlspecialchars($last_name); ?>">
-                            <input type="hidden" name="email" value="<?= htmlspecialchars($email); ?>">
+            <?php elseif ($borrow_status === 'Pending'): ?>
+                <button class="borrow-button pending" disabled>
+                    Borrowing in Process
+                </button>
 
-                            <button type="submit" class="btn btn-warning mt-3" style="width: 100%;">
-                                Reserve This
-                            </button>
-                        </form>
-                    <?php else: ?>
-                        <button class="btn btn-secondary mt-3" style="width: 100%;" disabled>
-                            Already Reserved
+            <?php elseif ($borrow_status === null && $book['book_stocks'] > 0): ?>
+                <button class="borrow-button available" id="borrow-btn">
+                    Borrow This
+                </button>
+
+            <?php elseif ($borrow_status === null && $book['book_stocks'] == 0): ?>
+                <?php if (!$book_reserved): ?>
+                    <form method="POST" action="book_reserve.php">
+                        <input type="hidden" name="book_id" value="<?= htmlspecialchars($book['book_id']); ?>">
+                        <input type="hidden" name="book_title" value="<?= htmlspecialchars($book['book_title']); ?>">
+                        <input type="hidden" name="author" value="<?= htmlspecialchars($book['book_author']); ?>">
+                        <input type="hidden" name="ISBN" value="<?= htmlspecialchars($book['ISBN']); ?>">
+                        <input type="hidden" name="acc_no" value="<?= htmlspecialchars($_SESSION['acc_no']); ?>">
+                        <input type="hidden" name="student_no" value="<?= htmlspecialchars($student_no); ?>">
+                        <input type="hidden" name="first_name" value="<?= htmlspecialchars($first_name); ?>">
+                        <input type="hidden" name="last_name" value="<?= htmlspecialchars($last_name); ?>">
+                        <input type="hidden" name="email" value="<?= htmlspecialchars($email); ?>">
+
+                        <button type="submit" class="borrow-button reserve">
+                            Reserve This
                         </button>
-                    <?php endif; ?>
-                <?php endif; ?>
-                <?php if (isset($_GET['success']) && $_GET['success'] == 1): ?>
-                    <script>
-                        // Show the SweetAlert
-                        Swal.fire({
-                            title: 'Successfully Reserved!',
-                            text: 'We will send you an email once the book is available!',
-                            icon: 'success',
-                            confirmButtonText: 'OK'
-                        });
-
-                        // Remove the success=1 from the URL without reloading the page
-                        if (window.history.replaceState) {
-                            const url = new URL(window.location);
-                            url.searchParams.delete('success');
-                            window.history.replaceState({}, document.title, url);
-                        }
-                    </script>
-                <?php endif; ?>
-
-
-
-
-
-
-                <!-- Add to Collection Button -->
-                <form method="POST" action="">
-                    <input type="hidden" name="book_id" value="<?= $book_id; ?>">
-                    <button type="submit" name="add_to_collection" class="btn mt-3" style="width: 100%; background-color:rgb(66, 75, 136); color: white;">
-                        <i class="fas fa-bookmark"></i> Add to Collection
+                    </form>
+                <?php else: ?>
+                    <button class="borrow-button reserved" disabled>
+                        Already Reserved
                     </button>
+                <?php endif; ?>
+            <?php endif; ?>
+
+            <?php if (isset($_GET['success']) && $_GET['success'] == 1): ?>
+                <script>
+                    // Show the SweetAlert
+                    Swal.fire({
+                        title: 'Successfully Reserved!',
+                        text: 'We will send you an email once the book is available!',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    });
+
+                    // Remove the success=1 from the URL without reloading the page
+                    if (window.history.replaceState) {
+                        const url = new URL(window.location);
+                        url.searchParams.delete('success');
+                        window.history.replaceState({}, document.title, url);
+                    }
+                </script>
+            <?php endif; ?>
+
+
+
+
+
+            <br><br>
+            <!-- Add to Collection Button -->
+            <form method="POST" action="">
+                <input type="hidden" name="book_id" value="<?= $book_id; ?>">
+                <button type="submit" name="add_to_collection" class="collection-button">
+                    <i class="fas fa-bookmark"></i> Add to Collection
+                </button>
+            </form>
+
+        </div>
+
+
+        <!-- Book Info and Borrow Form Wrapper -->
+        <div id="content-wrapper">
+            <!-- Middle Section (Book Info) -->
+            <div class="book-info-section" id="book-info">
+                <h1 class="book-title"><?php echo htmlspecialchars($book['book_title']); ?> </h1>
+                <p class="author">by <strong><?php echo htmlspecialchars($book['book_author']); ?></strong></p>
+
+                <form method="POST" action="">
+                    <div class="reaction-buttons">
+                        <!-- Like Button -->
+                        <button type="submit" name="reaction" value="like" class="like-btn <?php echo $like_class; ?>">
+                            <ion-icon name="thumbs-up"></ion-icon>
+                            <span id="like-text"><?php echo $like_text; ?></span>
+                            <span id="like-count"><?php echo $likes; ?></span>
+                        </button>
+                    </div>
+                </form>
+
+                <p class="description">
+                    <?php echo nl2br(htmlspecialchars($book['book_description'])); ?>
+                    <a href="#" class="read-more">Read More</a>
+                </p>
+
+                <table class="book-details-table">
+                    <tr>
+                        <td><strong>Original Title:</strong></td>
+                        <td><?php echo htmlspecialchars($book['book_title']); ?></td>
+                    </tr>
+                    <tr>
+                        <td><strong>ISBN:</strong></td>
+                        <td><?php echo htmlspecialchars($book['ISBN']); ?></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Edition Language:</strong></td>
+                        <td>English</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Publisher:</strong></td>
+                        <td><?php echo htmlspecialchars($book['publisher']); ?></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Publication Date:</strong></td>
+                        <td><?php echo htmlspecialchars($book['publication_date']); ?></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Available Stocks:</strong></td>
+                        <td><?php echo htmlspecialchars($book['book_stocks']); ?></td>
+                    </tr>
+                </table>
+
+
+            </div>
+
+            <div class="borrow-form-section" id="borrow-form">
+                <h1 class="book-title"><?= htmlspecialchars($book['book_title']); ?></h1>
+                <p class="author">by <strong><?= htmlspecialchars($book['book_author']); ?></strong></p>
+                <br> 
+                <b>BORROWING FORM</b>
+                <br> <br>
+                <p>Please ensure that all details are correct</p>
+
+                <form method="POST" action="borrow_book.php">
+                    <input type="hidden" name="book_id" value="<?= htmlspecialchars($book['book_id']); ?>">
+                    <input type="hidden" name="book_title" value="<?= htmlspecialchars($book['book_title']); ?>">
+
+                    <div class="form-group">
+                        <div class="input-container">
+                            <label>ISBN:</label>
+                            <input type="text" name="isbn" value="<?= htmlspecialchars($ISBN); ?>" readonly required>
+                        </div>
+                        <div class="input-container">
+                            <label>Student Number:</label>
+                            <input type="text" name="student_no" value="<?= htmlspecialchars($student_no); ?>" readonly required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-container">
+                            <label>First Name:</label>
+                            <input type="text" name="first_name" value="<?= htmlspecialchars($first_name); ?>" readonly required>
+                        </div>
+                        <div class="input-container">
+                            <label>Last Name:</label>
+                            <input type="text" name="last_name" value="<?= htmlspecialchars($last_name); ?>" readonly required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-container">
+                            <label>Email:</label>
+                            <input type="email" name="email" value="<?= htmlspecialchars($email ?? ''); ?>" readonly required>
+                        </div>
+                        <div class="input-container">
+                            <label>Contact:</label>
+                            <input type="text" name="contact" value="<?= htmlspecialchars($contact ?? ''); ?>" readonly required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-container">
+                            <label for="preferred_date">Preferred Date</label>
+                            <input type="date" id="preferred_date" name="preferred_date" required>
+                        </div>
+                        <div class="input-container">
+                            <label>Borrowing Request ID:</label>
+                            <input type="text" name="borrow_id" value="<?= htmlspecialchars($borrow_id ?? 'N/A'); ?>" readonly>
+                        </div>
+                        <div class="input-container">
+                            <label for="due_date">Estimated Due Date</label>
+                            <input type="date" id="due_date" name="due_date" readonly required>
+                        </div>
+                    </div>
+
+                    <div class="button-row">
+                        <button type="button" id="cancel-borrow">Cancel</button>
+                        <button type="submit" class="submit-button">Submit Request</button>
+                    </div>
                 </form>
             </div>
 
 
-            <!-- Book Info and Borrow Form Wrapper -->
-            <div id="content-wrapper">
-                <!-- Middle Section (Book Info) -->
-                <div class="book-info-section" id="book-info">
-                    <h1 class="book-title"><?php echo htmlspecialchars($book['book_title']); ?> </h1>
-                    <p class="author">by <strong><?php echo htmlspecialchars($book['book_author']); ?></strong></p>
-
-                    <form method="POST" action="">
-                        <div class="reaction-buttons">
-                            <!-- Like Button -->
-                            <button type="submit" name="reaction" value="like" class="like-btn <?php echo $like_class; ?>">
-                                <ion-icon name="thumbs-up"></ion-icon>
-                                <span id="like-text"><?php echo $like_text; ?></span>
-                                <span id="like-count"><?php echo $likes; ?></span>
-                            </button>
-                        </div>
-                    </form>
-
-                    <p class="description">
-                        <?php echo nl2br(htmlspecialchars($book['book_description'])); ?>
-                        <a href="#" class="read-more">Read More</a>
-                    </p>
-
-                    <table class="book-details-table">
-                        <tr>
-                            <td><strong>Original Title:</strong></td>
-                            <td><?php echo htmlspecialchars($book['book_title']); ?></td>
-                        </tr>
-                        <tr>
-                            <td><strong>ISBN:</strong></td>
-                            <td><?php echo htmlspecialchars($book['ISBN']); ?></td>
-                        </tr>
-                        <tr>
-                            <td><strong>Edition Language:</strong></td>
-                            <td>English</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Publisher:</strong></td>
-                            <td><?php echo htmlspecialchars($book['publisher']); ?></td>
-                        </tr>
-                        <tr>
-                            <td><strong>Publication Date:</strong></td>
-                            <td><?php echo htmlspecialchars($book['publication_date']); ?></td>
-                        </tr>
-                        <tr>
-                            <td><strong>Available Stocks:</strong></td>
-                            <td><?php echo htmlspecialchars($book['book_stocks']); ?></td>
-                        </tr>
-                    </table>
-
-
-                </div>
-
-                <!-- Borrow Form (Initially Hidden) -->
-                <div class="borrow-form-section" id="borrow-form" style="display: none;">
-                    <h1 class="book-title"><?php echo htmlspecialchars($book['book_title']); ?> </h1>
-                    <p class="author">by <strong><?php echo htmlspecialchars($book['book_author']); ?></strong></p>
-
-                    <br><br>
-                    <b style="background-color: black;color:white;padding:10px; font-size:20px;"> BORROWING FORM </b> <Br>
-                    <Br>
-                    <p style="color: gray;"> Please ensure that all details are correct </p>
-
-                    <form method="POST" action="borrow_book.php">
-                        <input type="hidden" name="book_id" value="<?= htmlspecialchars($book['book_id']); ?>">
-                        <input type="hidden" name="book_title" value="<?= htmlspecialchars($book['book_title']); ?>">
-
-                        <div class="form-group">
-                            <div class="input-container">
-                                <label>ISBN:</label>
-                                <input type="text" name="isbn" class="form-control underline-input" value="<?= htmlspecialchars($ISBN); ?>" readonly required>
-                            </div>
-                            <div class="input-container">
-                                <label>Student Number:</label>
-                                <input type="text" name="student_no" class="form-control underline-input" value="<?= htmlspecialchars($student_no); ?>" readonly required>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="input-container">
-                                <label>First Name:</label>
-                                <input type="text" name="first_name" class="form-control underline-input" value="<?= htmlspecialchars($first_name); ?>" readonly required>
-                            </div>
-                            <div class="input-container">
-                                <label>Last Name:</label>
-                                <input type="text" name="last_name" class="form-control underline-input" value="<?= htmlspecialchars($last_name); ?>" readonly required>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="input-container">
-                                <label>Email:</label>
-                                <input type="email" name="email" class="form-control underline-input" value="<?= htmlspecialchars($email ?? ''); ?>" readonly required>
-                            </div>
-                            <div class="input-container">
-                                <label>Contact:</label>
-                                <input type="text" name="contact" class="form-control underline-input" value="<?= htmlspecialchars($contact ?? ''); ?>" readonly required>
-                            </div>
-                        </div>
-
-                        <br><br>
-
-                        <div class="form-group" style="justify-content: center;">
-                            <div class="input-container" style="width: 200px;">
-                                <label for="borrow_date">Preferred Date</label>
-                                <input type="date" id="preferred_date" name="preferred_date" class="form-control" required>
-                            </div>
-                            <div class="input-container" style="width: 200px;">
-                                <label>Borrowing Request ID:</label>
-                                <input type="text" name="borrow_id" class="form-control underline-input" value="<?= htmlspecialchars($borrow_id ?? 'N/A'); ?>" readonly>
-                            </div>
-                            <div class="input-container" style="width: 200px;">
-                                <label for="due_date">Estimated Due Date</label>
-                                <input type="date" id="due_date" name="due_date" class="form-control" readonly required>
-                            </div>
-                        </div>
-
-                        <br><br>
-
-                        <div class="d-flex justify-content-end gap-2 mt-3">
-                            <button type="button" class="btn btn-secondary px-4" id="cancel-borrow">Cancel</button>
-                            <button type="submit" class="btn btn-primary px-4">Submit Request</button>
-                        </div>
-                    </form>
-
-
-
-
-                </div>
-
-
-
-
-            </div>
-
-
-            <!-- Right Section (Related Books) -->
-            <div class="related-books-section">
-                <h3 style="padding: 10%;">Related Books</h3>
-                <div class="related-books-container">
-                    <?php while ($related_book = mysqli_fetch_assoc($related_result)) : ?>
-                        <div class="related-book" onclick="redirectToBook(<?php echo $related_book['book_id']; ?>)">
-                            <img src="<?php echo htmlspecialchars($related_book['book_cover']); ?>" alt="Book Cover">
-                            <p>
-                                <?php echo htmlspecialchars($related_book['book_title']); ?><br>
-                                <em><?php echo htmlspecialchars($related_book['book_author']); ?></em>
-                            </p>
-                        </div>
-                    <?php endwhile; ?>
-                </div>
-
-            </div>
 
 
         </div>
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                document.querySelectorAll(".btn-borrow").forEach(button => {
-                    button.addEventListener("click", function() {
-                        let bookTitle = document.getElementById("top-title").innerText;
-                        let bookAuthor = ""; // Set author dynamically if available
-                        let bookISBN = ""; // Set ISBN dynamically if available
 
-                        document.getElementById("bookTitle").value = bookTitle;
-                        document.getElementById("author").value = bookAuthor;
-                        document.getElementById("isbn").value = bookISBN;
-                    });
+
+        <!-- Right Section (Related Books) -->
+        <div class="related-books-section">
+            <h3 style="padding: 10%;">Related Books</h3>
+            <div class="related-books-container">
+                <?php while ($related_book = mysqli_fetch_assoc($related_result)) : ?>
+                    <div class="related-book" onclick="redirectToBook(<?php echo $related_book['book_id']; ?>)">
+                        <img src="<?php echo htmlspecialchars($related_book['book_cover']); ?>" alt="Book Cover">
+                        <p>
+                            <?php echo htmlspecialchars($related_book['book_title']); ?><br>
+                            <em><?php echo htmlspecialchars($related_book['book_author']); ?></em>
+                        </p>
+                    </div>
+                <?php endwhile; ?>
+            </div>
+
+        </div>
+
+
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll(".btn-borrow").forEach(button => {
+                button.addEventListener("click", function() {
+                    let bookTitle = document.getElementById("top-title").innerText;
+                    let bookAuthor = ""; // Set author dynamically if available
+                    let bookISBN = ""; // Set ISBN dynamically if available
+
+                    document.getElementById("bookTitle").value = bookTitle;
+                    document.getElementById("author").value = bookAuthor;
+                    document.getElementById("isbn").value = bookISBN;
                 });
             });
-        </script>
-        <script>
-            // Redirect function to open new book details
-            function redirectToBook(bookId) {
-                window.location.href = 'book-details.php?book_id=' + bookId;
+        });
+    </script>
+    <script>
+        // Redirect function to open new book details
+        function redirectToBook(bookId) {
+            window.location.href = 'book-details.php?book_id=' + bookId;
+        }
+    </script>
+
+    <script>
+        document.getElementById("borrow-btn").addEventListener("click", function() {
+            document.getElementById("book-info").style.display = "none";
+            document.getElementById("borrow-form").style.display = "block";
+        });
+
+        document.getElementById("cancel-borrow").addEventListener("click", function() {
+            document.getElementById("borrow-form").style.display = "none";
+            document.getElementById("book-info").style.display = "block";
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const borrowBtn = document.getElementById("borrow-btn"); // "Borrow This" button
+            const reserveBtn = document.querySelector("[data-bs-target='#reserveModal']"); // "Reserve This" button
+            const addToCollectionBtn = document.querySelector("button[name='add_to_collection']"); // "Add to Collection" button
+            const borrowForm = document.getElementById("borrow-form"); // Borrow form section
+            const cancelBtn = document.getElementById("cancel-borrow"); // Cancel button in borrow form
+
+            if (borrowBtn) {
+                borrowBtn.addEventListener("click", function() {
+                    // Hide the buttons
+                    borrowBtn.style.display = "none";
+                    if (reserveBtn) reserveBtn.style.display = "none";
+                    if (addToCollectionBtn) addToCollectionBtn.style.display = "none";
+
+                    // Show the borrow form
+                    borrowForm.style.display = "block";
+                });
             }
-        </script>
 
-        <script>
-            document.getElementById("borrow-btn").addEventListener("click", function() {
-                document.getElementById("book-info").style.display = "none";
-                document.getElementById("borrow-form").style.display = "block";
-            });
+            if (cancelBtn) {
+                cancelBtn.addEventListener("click", function() {
+                    // Show the buttons again
+                    borrowBtn.style.display = "block";
+                    if (reserveBtn) reserveBtn.style.display = "block";
+                    if (addToCollectionBtn) addToCollectionBtn.style.display = "block";
 
-            document.getElementById("cancel-borrow").addEventListener("click", function() {
-                document.getElementById("borrow-form").style.display = "none";
-                document.getElementById("book-info").style.display = "block";
-            });
-        </script>
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                const borrowBtn = document.getElementById("borrow-btn"); // "Borrow This" button
-                const reserveBtn = document.querySelector("[data-bs-target='#reserveModal']"); // "Reserve This" button
-                const addToCollectionBtn = document.querySelector("button[name='add_to_collection']"); // "Add to Collection" button
-                const borrowForm = document.getElementById("borrow-form"); // Borrow form section
-                const cancelBtn = document.getElementById("cancel-borrow"); // Cancel button in borrow form
+                    // Hide the borrow form
+                    borrowForm.style.display = "none";
+                });
+            }
+        });
+    </script>
+    <script>
+        document.getElementById('preferred_date').addEventListener('change', function() {
+            let preferredDate = new Date(this.value); // Get the selected date
 
-                if (borrowBtn) {
-                    borrowBtn.addEventListener("click", function() {
-                        // Hide the buttons
-                        borrowBtn.style.display = "none";
-                        if (reserveBtn) reserveBtn.style.display = "none";
-                        if (addToCollectionBtn) addToCollectionBtn.style.display = "none";
+            // Check if the selected date is a weekend (Saturday or Sunday)
+            if (preferredDate.getDay() === 6 || preferredDate.getDay() === 0) {
+                Swal.fire({
+                    title: 'Weekend Not Allowed!',
+                    text: 'The library is closed on weekends. Please select a weekday (Monday to Friday).',
+                    icon: 'warning',
+                    confirmButtonText: 'Okay'
+                });
+                this.value = ''; // Clear the selected date
+                return;
+            }
 
-                        // Show the borrow form
-                        borrowForm.style.display = "block";
-                    });
-                }
+            let dueDate = new Date(preferredDate); // Make a copy of the selected date
+            dueDate.setDate(preferredDate.getDate() + 3); // Add 3 days to the preferred date
 
-                if (cancelBtn) {
-                    cancelBtn.addEventListener("click", function() {
-                        // Show the buttons again
-                        borrowBtn.style.display = "block";
-                        if (reserveBtn) reserveBtn.style.display = "block";
-                        if (addToCollectionBtn) addToCollectionBtn.style.display = "block";
+            // Ensure the due date is not a weekend (Saturday or Sunday)
+            if (dueDate.getDay() === 6) {
+                dueDate.setDate(dueDate.getDate() + 2); // If due date falls on Saturday, set to Monday
+            } else if (dueDate.getDay() === 0) {
+                dueDate.setDate(dueDate.getDate() + 1); // If due date falls on Sunday, set to Monday
+            }
 
-                        // Hide the borrow form
-                        borrowForm.style.display = "none";
-                    });
-                }
-            });
-        </script>
-        <script>
-            document.getElementById('preferred_date').addEventListener('change', function() {
-                let preferredDate = new Date(this.value); // Get the selected date
+            // Format the due date in YYYY-MM-DD format
+            let year = dueDate.getFullYear();
+            let month = (dueDate.getMonth() + 1).toString().padStart(2, '0');
+            let day = dueDate.getDate().toString().padStart(2, '0');
 
-                // Check if the selected date is a weekend (Saturday or Sunday)
-                if (preferredDate.getDay() === 6 || preferredDate.getDay() === 0) {
-                    Swal.fire({
-                        title: 'Weekend Not Allowed!',
-                        text: 'The library is closed on weekends. Please select a weekday (Monday to Friday).',
-                        icon: 'warning',
-                        confirmButtonText: 'Okay'
-                    });
-                    this.value = ''; // Clear the selected date
-                    return;
-                }
+            // Set the due date value
+            document.getElementById('due_date').value = `${year}-${month}-${day}`;
+        });
 
-                let dueDate = new Date(preferredDate); // Make a copy of the selected date
-                dueDate.setDate(preferredDate.getDate() + 3); // Add 3 days to the preferred date
-
-                // Ensure the due date is not a weekend (Saturday or Sunday)
-                if (dueDate.getDay() === 6) {
-                    dueDate.setDate(dueDate.getDate() + 2); // If due date falls on Saturday, set to Monday
-                } else if (dueDate.getDay() === 0) {
-                    dueDate.setDate(dueDate.getDate() + 1); // If due date falls on Sunday, set to Monday
-                }
-
-                // Format the due date in YYYY-MM-DD format
-                let year = dueDate.getFullYear();
-                let month = (dueDate.getMonth() + 1).toString().padStart(2, '0');
-                let day = dueDate.getDate().toString().padStart(2, '0');
-
-                // Set the due date value
-                document.getElementById('due_date').value = `${year}-${month}-${day}`;
-            });
-        </script>
+        
+    </script>
 
 
 </body>

@@ -40,26 +40,29 @@ $rejected_result = $rejected_stmt->get_result();
     <h4>Notifications</h4>
 
     <?php while ($row = $approved_result->fetch_assoc()): ?>
-    <div class="notification-item approved">
-        <img src="<?= htmlspecialchars($row['book_cover']) ?>" class="notif-cover" />
-        <div>
-            <strong style="color:green;"> Approved </strong>
-            <br> <br>
-            <div class="notif-title"><strong><?= htmlspecialchars($row['book_title']) ?></strong></div>
-            <small><?= date('M d, Y H:i', strtotime($row['due_date'] ?? 'now')) ?></small>
+        <div class="notification-item approved">
+            <img src="<?= htmlspecialchars($row['book_cover']) ?>" class="notif-cover" />
+            <div>
+                <strong style="color:green;"> Approved </strong>
+                <br> <br>
+                <div class="notif-title"><strong><?= htmlspecialchars($row['book_title']) ?></strong></div>
+                <small><?= date('M d, Y H:i', strtotime($row['due_date'] ?? 'now')) ?></small>
+            </div>
         </div>
-    </div>
     <?php endwhile; ?>
 
     <?php while ($row = $rejected_result->fetch_assoc()): ?>
-    <div class="notification-item rejected">
-        <img src="<?= htmlspecialchars($row['book_cover']) ?>" class="notif-cover" />
-        <div>
-            <strong style="color: red;"> Rejected </strong>
-            <br> <br>
-            <div class="notif-title"><strong><?= htmlspecialchars($row['book_title']) ?></strong></div>
-            <small>Librarian: "<?= htmlspecialchars($row['reason']) ?>"</small>
+        <div class="notification-item rejected">
+            <img src="<?= htmlspecialchars($row['book_cover']) ?>" class="notif-cover" />
+            <div>
+                <strong style="color: red;"> Rejected </strong>
+                <br> <br>
+                <div class="notif-title"><strong><?= htmlspecialchars($row['book_title']) ?></strong></div>
+                <small>Librarian: "<?= htmlspecialchars($row['reason']) ?>"</small>
+                <br><br>
+                <a href="BOOK-DETAILS.php?book_id=<?= urlencode($row['book_id']) ?>" class="resubmit-btn">Resubmit</a>
+            </div>
         </div>
-    </div>
     <?php endwhile; ?>
+
 </div>
