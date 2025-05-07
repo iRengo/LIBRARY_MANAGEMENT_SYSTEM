@@ -31,10 +31,8 @@
                 <li>
                     <div class="admin-gradient">
                         <a href="#">
-                            <span class="icon">
-                                <ion-icon name="person-circle" class="admin-icon"></ion-icon>
-                            </span>
-                            <span class="title1">USER</span>
+
+                            <span class="title1">GIGA NIGGA</span>
                         </a>
                     </div>
                 </li>
@@ -109,20 +107,40 @@
                 <div class="toggle">
                     <ion-icon name="menu-outline"></ion-icon>
                 </div>
+
                 <div class="logo">
                     <img src="../logosample1.png" style="height: 60px; width:60px; padding:4px;">
                 </div>
+
                 <div style="float:left; margin-right:75%; display: flex; align-items: baseline;">
                     <p style="font-family: viga; margin: 0; padding-right:2px;">LIBRA</p>
                     <p style="font-family: zilla slab highlight; letter-spacing: 2px; margin: 0;">SPHERE</p>
                 </div>
-                <div class="logo" title="LOGOUT YOUR ACCOUNT" style="margin-right: 1%; display: flex; align-items: center;">
-                    <a href="#" id="logoutIcon" style="display: flex; align-items: center; text-decoration: none; color: inherit;">
-                        <p style="margin: 0; font-size: 18px; margin-right: 8px;">LOGOUT</p>
-                        <i class='bx bx-log-in-circle' style="font-size:35px; color:#da1b1b;"></i>
-                    </a>
+
+                <!-- Dropdown Menu -->
+                <div class="dropdown">
+                    <button class="dropbtn">
+                        <ion-icon name="person-circle-outline" style="font-size: 32px;"></ion-icon>
+                        <ion-icon name="caret-down-outline" style="margin-left: 5px;margin-bottom:5px;"></ion-icon>
+                    </button>
+                    <div class="dropdown-content">
+                        <a href="#" id="toggleNotifications">
+                            <ion-icon name="notifications-outline"></ion-icon> Notifications
+                        </a>
+                        <a href="#" id="logoutIcon">
+                            <ion-icon name="log-out-outline"></ion-icon> Logout
+                        </a>
+                    </div>
                 </div>
+
+                <!-- Notification Panel -->
+                <div id="notificationPanel" class="notification-panel">
+
+                </div>
+
+
             </div>
+
 
 
 
@@ -143,20 +161,48 @@
                         }
                     });
                 });
+
+
+                document.getElementById('toggleNotifications').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const panel = document.getElementById('notificationPanel');
+
+                    // Toggle visibility
+                    if (panel.style.display === 'block') {
+                        panel.style.display = 'none';
+                        return;
+                    }
+
+                    // Fetch content from PHP
+                    fetch('USER_NOTIFICATION_PANEL.php')
+                        .then(res => res.text())
+                        .then(data => {
+                            panel.innerHTML = data;
+                            panel.style.display = 'block';
+                        });
+                });
+
+                // Hide panel when clicking outside
+                document.addEventListener('click', function(event) {
+                    const panel = document.getElementById('notificationPanel');
+                    const dropdown = document.querySelector('.dropdown');
+                    if (!dropdown.contains(event.target) && !panel.contains(event.target)) {
+                        panel.style.display = 'none';
+                    }
+                });
             </script>
+
 
 
 
             <!-- =========== Scripts =========  -->
             <script src="HEADER-NAVBAR.js"></script>
 
-
-
             <!-- ====== ionicons ======= -->
             <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
             <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-            
+
 
 
 </body>

@@ -508,4 +508,86 @@ body {
 }
 
 
+/* Light-Themed Modal */
+.custom-modal {
+    background: #ffffff;
+    /* Light background */
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.4s ease-in-out;
+    padding: 20px;
+}
 
+/* Modal Header */
+.modal-header {
+    border-bottom: none;
+    text-align: center;
+    position: relative;
+}
+
+/* Borrow Button */
+.borrow-btn {
+    background: linear-gradient(45deg, #ffafbd, #ffc3a0);
+    border: none;
+    color: white;
+    font-weight: bold;
+    padding: 12px 20px;
+    border-radius: 30px;
+    transition: all 0.3s ease-in-out;
+}
+
+.borrow-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(255, 172, 193, 0.8);
+}
+
+/* Custom Submit Button */
+.btn-custom {
+    background: linear-gradient(45deg, rgba(5, 93, 165, 0.45), rgb(5, 93, 165));
+    border: none;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    border-radius: 25px;
+    transition: all 0.3s ease-in-out;
+}
+
+.btn-custom:hover {
+    background: linear-gradient(45deg, rgb(30, 159, 223), rgb(5, 113, 255));
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(132, 250, 176, 0.8);
+}
+
+/* Modal Fade In Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Input Field Styling */
+.form-control {
+    background: #f8f9fa;
+    border: 1px solid #ced4da;
+    color: #495057;
+}
+
+.form-control:focus {
+    background: #ffffff;
+    border-color: #80bdff;
+    box-shadow: 0 0 5px rgba(128, 189, 255, 0.5);
+    color: rgb(22, 22, 22);
+}
+
+/* Labels */
+.form-label {
+    font-weight: 600;
+    color: #333;
+}

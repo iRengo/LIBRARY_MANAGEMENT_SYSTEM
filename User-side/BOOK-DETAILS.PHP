@@ -222,7 +222,7 @@ mysqli_stmt_execute($borrow_check_stmt);
 $borrow_check_result = mysqli_stmt_get_result($borrow_check_stmt);
 
 if ($borrow_check_row = mysqli_fetch_assoc($borrow_check_result)) {
-    $borrow_status = $borrow_check_row['status']; // Assign status if found
+    $borrow_status = $borrow_check_row['status']; 
 }
 $book_reserved = false;
 $sql_check = "SELECT * FROM reserved_books WHERE book_id = ? AND student_no = ?";
@@ -231,7 +231,7 @@ $stmt_check->bind_param("ii", $book['book_id'], $student_no);
 $stmt_check->execute();
 $result_check = $stmt_check->get_result();
 if ($result_check->num_rows > 0) {
-    $book_reserved = true; // The book has already been reserved by the student
+    $book_reserved = true; 
 }
 $stmt_check->close();
 
@@ -245,215 +245,10 @@ $stmt_check->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($book['book_title']); ?> - Book Details</title>
     <link rel="stylesheet" href="book-details.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
-    <script type="module" src="https://cdn.jsdelivr.net/npm/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule src="https://cdn.jsdelivr.net/npm/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-
-    <!-- Custom Modal Styling -->
-    <style>
-        /* Light-Themed Modal */
-        .custom-modal {
-            background: #ffffff;
-            /* Light background */
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            animation: fadeIn 0.4s ease-in-out;
-            padding: 20px;
-        }
-
-        /* Modal Header */
-        .modal-header {
-            border-bottom: none;
-            text-align: center;
-            position: relative;
-        }
-
-        /* Borrow Button */
-        .borrow-btn {
-            background: linear-gradient(45deg, #ffafbd, #ffc3a0);
-            border: none;
-            color: white;
-            font-weight: bold;
-            padding: 12px 20px;
-            border-radius: 30px;
-            transition: all 0.3s ease-in-out;
-        }
-
-        .borrow-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 15px rgba(255, 172, 193, 0.8);
-        }
-
-        /* Custom Submit Button */
-        .btn-custom {
-            background: linear-gradient(45deg, rgba(5, 93, 165, 0.45), rgb(5, 93, 165));
-            border: none;
-            padding: 12px;
-            font-size: 16px;
-            font-weight: bold;
-            color: white;
-            border-radius: 25px;
-            transition: all 0.3s ease-in-out;
-        }
-
-        .btn-custom:hover {
-            background: linear-gradient(45deg, rgb(30, 159, 223), rgb(5, 113, 255));
-            transform: scale(1.05);
-            box-shadow: 0 0 10px rgba(132, 250, 176, 0.8);
-        }
-
-        /* Modal Fade In Animation */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Input Field Styling */
-        .form-control {
-            background: #f8f9fa;
-            border: 1px solid #ced4da;
-            color: #495057;
-        }
-
-        .form-control:focus {
-            background: #ffffff;
-            border-color: #80bdff;
-            box-shadow: 0 0 5px rgba(128, 189, 255, 0.5);
-            color: rgb(22, 22, 22);
-        }
-
-        /* Labels */
-        .form-label {
-            font-weight: 600;
-            color: #333;
-        }
-    </style>
 </head>
 
 <body>
-    <div class="navigation">
-        <ul>
-            <li>
-                <div class="admin-gradient">
-                    <a href="#">
-                        <span class="icon">
-                            <ion-icon name="person-circle" class="admin-icon"></ion-icon>
-                        </span>
-                        <span class="title1">USER</span>
-                    </a>
-                </div>
-            </li>
-
-            <li>
-                <a href="USER_DASHBOARD.PHP">
-                    <span class="icon">
-                        <ion-icon name="home-outline"></ion-icon>
-                    </span>
-                    <span class="title">Dashboard</span>
-                </a>
-            </li>
-
-            <li>
-                <a href="USER_COLLECTION.PHP">
-                    <span class="icon">
-                        <ion-icon name="file-tray-stacked-outline"></ion-icon>
-
-                    </span>
-                    <span class="title">Collection</span>
-                </a>
-            </li>
-
-            <li>
-                <a href="#">
-                    <span class="icon">
-                        <ion-icon name="book-outline"></ion-icon>
-                    </span>
-                    <span class="title">Catalog</span>
-                </a>
-            </li>
-
-            <li>
-                <a href="USER_HISTORY.PHP">
-                    <span class="icon">
-                        <i class='bx bx-history' style="font-size:35px;"></i>
-                    </span>
-                    <span class="title">History</span>
-                </a>
-            </li>
-
-            <li>
-                <a href="USER_HELP&SUPPORT.PHP">
-                    <span class="icon">
-                        <ion-icon name="layers-outline"></ion-icon>
-                    </span>
-                    <span class="title">Help & Support</span>
-                </a>
-            </li>
-
-            <li>
-                <a href="USER_NOTIFICATION.PHP">
-                    <span class="icon">
-                        <ion-icon name="notifications-outline"></ion-icon>
-                    </span>
-                    <span class="title">Notifications</span>
-                </a>
-            </li>
-            <li>
-                <a href="USER_TRENDING.php">
-                    <span class="icon">
-                        <ion-icon name="trending-up-outline"></ion-icon>
-                    </span>
-                    <span class="title">Trending</span>
-                </a>
-            </li>
-            <li>
-                <a href="USER_SETTINGS.php">
-                    <span class="icon">
-                        <ion-icon name="cog-outline"></ion-icon>
-                    </span>
-                    <span class="title">Settings</span>
-                </a>
-            </li>
-            <div class="time-container" style="width: 150%;">
-                <p style="font-size: 10px; color:white;">
-                    <?php echo date("l, F j, Y h:i:s"); // Full date and time format 
-                    ?>
-                </p>
-            </div>
-        </ul>
-
-    </div>
-
-    <!-- ========================= Main ==================== -->
-    <div class="main">
-        <div class="topbar">
-            <div class="toggle">
-                <ion-icon name="menu-outline"></ion-icon>
-            </div>
-            <div class="logo">
-                <img src="../logosample1.png" style="height: 60px; width:60px; padding:4px;">
-            </div>
-            <div style="float:left; margin-right:75%; display: flex; align-items: baseline;">
-                <p style="font-family: viga; margin: 0; padding-right:2px;">LIBRA</p>
-                <p style="font-family: zilla slab highlight; letter-spacing: 2px; margin: 0;">SPHERE</p>
-            </div>
-            <div class="logo" title="LOGOUT YOUR ACCOUNT" style="margin-right: 1%; display: flex; align-items: center;">
-                <a href="#" id="logoutIcon" style="display: flex; align-items: center; text-decoration: none; color: inherit;">
-                    <p style="margin: 0; font-size: 18px; margin-right: 8px;">LOGOUT</p>
-                    <i class='bx bx-log-in-circle' style="font-size:35px; color:#da1b1b;"></i>
-                </a>
-            </div>
-        </div>
+    <?php include 'HEADER-NAVBAR.PHP' ?>
 
 
         <div class="container1" style="margin-top: 2%;">
@@ -692,22 +487,6 @@ $stmt_check->close();
 
         </div>
         <script>
-            document.getElementById('logoutIcon').addEventListener('click', function(event) {
-                event.preventDefault();
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: 'You will be logged out of your account.',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, logout!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = 'LOGOUT.php';
-                    }
-                });
-            });
             document.addEventListener("DOMContentLoaded", function() {
                 document.querySelectorAll(".btn-borrow").forEach(button => {
                     button.addEventListener("click", function() {
@@ -808,13 +587,6 @@ $stmt_check->close();
                 document.getElementById('due_date').value = `${year}-${month}-${day}`;
             });
         </script>
-
-
-        <!-- ====== ionicons ======= -->
-        <script src="HEADER-NAVBAR.js"></script>
-        <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-        <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 
 </body>
