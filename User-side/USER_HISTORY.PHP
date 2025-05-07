@@ -1,187 +1,99 @@
+<?php 
+include '../Homepage/db_connect.php';
+session_start();
+
+$student_no = $_SESSION['student_no'];
+
+$borrowed_query = $conn->prepare("SELECT borrow_id, ISBN, book_title, preferred_date, due_date, status FROM borrowed_books WHERE student_no = ?");
+$borrowed_query->bind_param("s", $student_no);
+$borrowed_query->execute();
+$borrowed_result = $borrowed_query->get_result();
+
+$reserved_query = $conn->prepare("SELECT reserved_id, ISBN, book_title, author, reserved_date FROM reserved_books WHERE student_no = ?");
+$reserved_query->bind_param("s", $student_no);
+$reserved_query->execute();
+$reserved_result = $reserved_query->get_result();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhgj9UU2gEpeHXKuDjc8+aJBBZ/YYz7wkmP5zPpsjLh4RxJMfP5Jxs6t" crossorigin="anonymous">
-    <title> Admin Dashboard</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-
-    <!-- ======= Styles ====== -->
+    <title> USER HISTORY </title>
     <link rel="stylesheet" href="USER_HISTORY.css">
-
-    <!-- ======= Scripts ====== -->
-    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-
-
 </head>
 
 <body>
-    <!-- =============== Navigation ================ -->
-        <div class="navigation">
-            <ul>
-                <li>
-                    <div class="admin-gradient">
-                        <a href="#">
-                            <span class="icon">
-                                <ion-icon name="person-circle" class="admin-icon"></ion-icon>
-                            </span>
-                            <span class="title1">USER</span>
-                        </a>
-                    </div>
-                </li>
-
-                <li>
-                    <a href="USER_DASHBOARD.PHP">
-                        <span class="icon">
-                            <ion-icon name="home-outline"></ion-icon>
-                        </span>
-                        <span class="title">Dashboard</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="USER_COLLECTION.PHP">
-                        <span class="icon">
-                            <ion-icon name="file-tray-stacked-outline"></ion-icon>
-                        </span>
-                        <span class="title">Collection</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="USER_CATALOG.php">
-                        <span class="icon">
-                            <ion-icon name="book-outline"></ion-icon>
-                        </span>
-                        <span class="title">Catalog</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="USER_HISTORY.PHP">
-                        <span class="icon">
-                            <i class='bx bx-history' style="font-size:35px;"></i>
-                        </span>
-                        <span class="title">History</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="USER_NOTIFICATION.PHP">
-                        <span class="icon">
-                            <ion-icon name="notifications-outline"></ion-icon>
-                        </span>
-                        <span class="title">Notifications</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="USER_SETTINGS.php">
-                        <span class="icon">
-                            <ion-icon name="cog-outline"></ion-icon>
-                        </span>
-                        <span class="title">Settings</span>
-                    </a>
-                </li>
-                <div class="time-container" style="width: 150%;">
-                    <p style="font-size: 10px; color:white;">
-                        <?php echo date("l, F j, Y h:i:s"); // Full date and time format ?>
-                    </p>
-                </div>
-            </ul>
+<?php include 'HEADER-NAVBAR.PHP' ?>
+    <div class="account-history">
+        <h2 style="text-align: left; color: var(--blue); margin-bottom: 20px;">Account History</h2>
+        <div class="tabs">
+            <div class="tab active" onclick="showTab('borrowing')">Borrowing</div>
+            <div class="tab" onclick="showTab('reservation')">Reservation</div>
+            <div class="tab">Book Renewal</div>
         </div>
 
-        <!-- ========================= Main ==================== -->
-        <div class="main">
-            <div class="topbar">
-                <div class="toggle">
-                    <ion-icon name="menu-outline"></ion-icon>
-                </div>
-                <div class="logo">
-                    <img src="../logosample1.png" style="height: 60px; width:60px; padding:4px;">
-                </div>
-                <div style="float:left; margin-right:75%; display: flex; align-items: baseline;">
-                    <p style="font-family: viga; margin: 0; padding-right:2px;">LIBRA</p>
-                    <p style="font-family: zilla slab highlight; letter-spacing: 2px; margin: 0;">SPHERE</p>
-                </div>
-                <div class="logo" title="LOGOUT YOUR ACCOUNT" style="margin-right: 1%; display: flex; align-items: center;">
-                    <a href="#" id="logoutIcon" style="display: flex; align-items: center; text-decoration: none; color: inherit;">
-                        <p style="margin: 0; font-size: 18px; margin-right: 8px;">LOGOUT</p>
-                        <i class='bx bx-log-in-circle' style="font-size:35px; color:#da1b1b;"></i>
-                    </a>
-                </div>
-            </div>
-
-            <div class="account-history">
-                <h2 style="text-align: left; color: var(--blue); margin-bottom: 20px;">Account History</h2>
-                <div class="tabs">
-                    <div class="tab active">Borrowing</div>
-                    <div class="tab">Reservation</div>
-                    <div class="tab">Book Renewal</div>
-                </div>
-                <table>
-                    <thead>
+        <!-- Borrowing Table -->
+        <div class="tab-content" id="borrowing" style="display: block;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Borrow ID</th>
+                        <th>ISBN</th>
+                        <th>Title</th>
+                        <th>Borrow Date</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php while ($row = $borrowed_result->fetch_assoc()): ?>
                         <tr>
-                            <th>Book ID</th>
-                            <th>ISBN</th>
-                            <th>Borrow Date</th>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>Student No</th>
-                            <th>Action</th>
+                            <td><?= htmlspecialchars($row['borrow_id']) ?></td>
+                            <td><?= htmlspecialchars($row['ISBN']) ?></td>
+                            <td><?= htmlspecialchars($row['book_title']) ?></td>
+                            <td><?= htmlspecialchars($row['preferred_date']) ?></td>
+                            <td><?= htmlspecialchars($row['due_date']) ?></td>
+                            <td><?= htmlspecialchars($row['status']) ?></td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td colspan="6">
-                                <input type="text" readonly value="Sample Data">
-                            </td>
-                            <td class="action-cell">
-                                <span class="dots">⋯</span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+                    <?php endwhile; ?>
+                </tbody>
+            </table>
         </div>
 
+        <!-- Reservation Table -->
+        <div class="tab-content" id="reservation" style="display: none;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Reservation ID</th>
+                        <th>ISBN</th>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Reservation Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php while ($row = $reserved_result->fetch_assoc()): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($row['reserved_id']) ?></td>
+                            <td><?= htmlspecialchars($row['ISBN']) ?></td>
+                            <td><?= htmlspecialchars($row['book_title']) ?></td>
+                            <td><?= htmlspecialchars($row['author']) ?></td>
+                            <td><?= htmlspecialchars($row['reserved_date']) ?></td>
+                        </tr>
+                    <?php endwhile; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-
-
-        <script>
-            document.getElementById('logoutIcon').addEventListener('click', function(event) {
-                event.preventDefault();
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: 'You will be logged out of your account.',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, logout!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = 'logout.php';
-                    }
-                });
-            });
-        </script>
-
-        <!-- =========== Scripts =========  -->
-        <script src="HEADER-NAVBAR.js"></script>
-
-        <!-- ====== ionicons ======= -->
-        <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-        <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
+<script>
+function showTab(tabName) {
+    document.querySelectorAll(".tab-content").forEach(el => el.style.display = "none");
+    document.getElementById(tabName).style.display = "block";
+    document.querySelectorAll(".tab").forEach(el => el.classList.remove("active"));
+    event.target.classList.add("active");
+}
+</script>
 </body>
-
 </html>

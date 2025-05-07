@@ -34,13 +34,13 @@
                             <span class="icon">
                                 <ion-icon name="person-circle" class="admin-icon"></ion-icon>
                             </span>
-                            <span class="title1">ADMIN</span>
+                            <span class="title1">LIBRARIAN</span>
                         </a>
                     </div>
                 </li>
 
                 <li>
-                    <a href="ADMIN_DASHBOARD.PHP">
+                    <a href="LIBRARIAN_DASHBOARD.PHP">
                         <span class="icon">
                             <ion-icon name="home-outline"></ion-icon>
                         </span>
@@ -49,7 +49,7 @@
                 </li>
 
                 <li>
-                    <a href="ADMIN_CATALOG.PHP">
+                    <a href="LIBRARIAN_CATALOG.PHP">
                         <span class="icon">
                             <ion-icon name="book-outline"></ion-icon>
                         </span>
@@ -58,23 +58,15 @@
                 </li>
 
                 <li>
-                    <a href="ADMIN_USERS.PHP">
+                    <a href="LIBRARIAN_HISTORY.PHP">
                         <span class="icon">
                             <ion-icon name="people-outline"></ion-icon>
                         </span>
-                        <span class="title">Users</span>
+                        <span class="title">History</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#">
-                        <span class="icon">
-                            <ion-icon name="hammer-outline"></ion-icon>
-                        </span>
-                        <span class="title">Staff Tools</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="ADMIN_NOTIFICATIONS.php">
+                    <a href="LIBRARIAN_NOTIFICATIONS.php">
                         <span class="icon">
                             <ion-icon name="notifications-outline"></ion-icon>
                         </span>
@@ -82,7 +74,23 @@
                     </a>
                 </li>
                 <li>
-                    <a href="ADMIN_SETTINGS.php">
+                    <a href="LIBRARIAN_USER_MANAGEMENT.PHP">
+                        <span class="icon">
+                            <ion-icon name="people-outline"></ion-icon>
+                        </span>
+                        <span class="title">User Management</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="LIBRARIAN_REPORTS.php">
+                        <span class="icon">
+                            <ion-icon name="analytics-outline"></ion-icon>
+                        </span>
+                        <span class="title">Reports</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="LIBRARIAN_SETTINGS.php">
                         <span class="icon">
                             <ion-icon name="cog-outline"></ion-icon>
                         </span>
@@ -104,19 +112,19 @@
         <div class="main">
             <div class="topbar">
                 <div class="toggle">
-                    <ion-icon name="menu-outline"></ion-icon>
+                    <ion-icon name="menu-outline" style="font-size:30px;"></ion-icon>
                 </div>
                 <div class="logo">
                     <img src="../logosample1.png" style="height: 60px; width:60px; padding:4px;">
                 </div>
-                <div class="logo-left">
+                <div style="float:left; margin-right:75%; display: flex; align-items: baseline;">
                     <p style="font-family: viga; margin: 0; padding-right:2px;">LIBRA</p>
                     <p style="font-family: zilla slab highlight; letter-spacing: 2px; margin: 0;">SPHERE</p>
                 </div>
-                <div class="logo-right" title="LOGOUT YOUR ACCOUNT">
-                    <a href="#" id="logoutIcon" style="display: flex; text-decoration: none; color: inherit;">
+                <div class="logo" title="LOGOUT YOUR ACCOUNT" style="margin-right: 1%; display: flex; align-items: center;">
+                    <a href="#" id="logoutIcon" style="display: flex; align-items: center; text-decoration: none; color: inherit;">
                         <p style="margin: 0; font-size: 18px; margin-right: 8px;">LOGOUT</p>
-                        <i class='bx bx-log-in-circle' style="font-size:30px; color:#da1b1b;"></i>
+                        <i class='bx bx-log-in-circle' style="font-size:35px; color:#da1b1b;"></i>
                     </a>
                 </div>
             </div>

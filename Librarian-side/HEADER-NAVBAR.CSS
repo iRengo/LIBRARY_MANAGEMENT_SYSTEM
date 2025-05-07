@@ -8,9 +8,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-
 }
-
 
 :root {
     --blue: #1C2E5C;
@@ -25,12 +23,7 @@ body {
     overflow-x: hidden;
 }
 
-.container {
-    position: relative;
-    width: 100%;
-    min-height: 100vh; /* Ensure it fills the viewport height */
-    margin-bottom: 0; /* Ensure no gap at the bottom */
-}
+
 
 /* =============== Navigation ================ */
 .navigation {
@@ -40,7 +33,6 @@ body {
     background: var(--blue);
     transition: 0.5s;
     overflow: hidden;
-    margin-top:-5%;
 }
 
 .navigation.active {
@@ -168,24 +160,9 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 0 10px;
-    position: fixed;
-    top: 0;
-    z-index: 9999;
-    background-color: #ffffff;
     box-shadow: 0 4px 6px rgba(150, 150, 150, 0.2);
-}
-.logo-left {
-    display: flex;
-    align-items: baseline;
-}
-
-.logo-right {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    margin-left: auto; /* Push the logout button to the right side */
-    margin-right: 15%;
-}
+    position: fixed;
+}c
 
 .toggle {
     position: relative;
