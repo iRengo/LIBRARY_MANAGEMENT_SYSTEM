@@ -269,10 +269,12 @@ body h1 {
     color:white;
 }
 .recommended-books-container {
-    width: 92%; 
-    height:400px; /* Increased height */
-    overflow-x: auto; 
-    margin: 20px auto; 
+    width: 92%;
+    height: auto;
+    overflow-x: auto;
+    overflow-y: hidden; /* prevents vertical scroll */
+    white-space: nowrap;
+    margin: 20px auto;
     padding: 20px;
     margin-top: 1%;
     background-color: #fff;
@@ -283,11 +285,13 @@ body h1 {
 
 
 
+
 .recommended-books {
     display: flex;
-    flex-wrap: nowrap; 
-    gap: 20px; /* Increased gap */
+    flex-wrap: nowrap;
+    gap: 20px;
 }
+
 .recommended-header {
     background-color:#343536;
     height: 10%px;
@@ -303,32 +307,31 @@ body h1 {
 }
 
 .recommended-book {
-    min-width: 200px; /* Increased minimum width */
-    height: 330px; /* Increased height */
+    flex: 0 0 auto; /* this is important: prevents shrinking */
+    min-width: 250px; /* adjust based on your preference */
+    max-width: 250px;
+    height: auto;
     border: 1px solid #ddd;
     border-radius: 5px;
-    overflow: hidden; 
+    overflow: hidden;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    display: flex; 
-    flex-direction: column; 
+    display: flex;
+    flex-direction: column;
 }
 
 
 .recommended-book-cover {
     width: 100%;
-    height: 200px; /* Increased height */
+    height: 200px;
     object-fit: cover;
     margin-bottom: 4%;
     margin-top: 5%;
-
 }
 
 .recommended-book-info {
-    padding: 10px; /* Increased padding */
-    text-align: left; 
-    flex-grow: 1; 
+    padding: 10px;
+    text-align: left;
 }
-
 .recommended-book-title {
     font-size: 16px; /* Increased font size */
     font-weight: bold;
@@ -382,6 +385,12 @@ body h1 {
 .recommended-book-genre.adventure {
     background-color: #4CAF50; /* Green - you can change this */
     color:white;
+}
+
+.recommended-book-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
 }
 
 

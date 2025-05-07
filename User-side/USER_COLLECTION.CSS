@@ -233,3 +233,44 @@ img.img-fluid {
 .btn-sneakpeek:hover {
     background-color: darkgreen !important;
 }
+
+.empty-bookshelf {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+    padding: 50px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 100%;
+    height: 300px;
+}
+
+.empty-bookshelf h3 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #6c757d;
+}
+
+.empty-bookshelf p {
+    font-size: 18px;
+    color: #6c757d;
+}
+
+.book-card {
+    cursor: pointer;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin: 10px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.book-card img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
