@@ -18,8 +18,8 @@ foreach ($data['results'] as $book) {
     $author = isset($book['authors'][0]['name']) ? $conn->real_escape_string($book['authors'][0]['name']) : 'Unknown';
     $cover = isset($book['formats']['image/jpeg']) ? $conn->real_escape_string($book['formats']['image/jpeg']) : null;
     $ebook_no = $conn->real_escape_string($book['id']);
-    $publication_date = date('Y-m-d');
-    $status = 'Available';
+    $publication_date = date('Y-m-d', strtotime('-1 day'));
+    $status = 'Upcoming';
     $stocks = 30;
     $publisher_id = 1; // Assuming default publisher
 
@@ -50,7 +50,8 @@ foreach ($data['results'] as $book) {
 
     // Insert into tbl_books
     $sql = "INSERT INTO tbl_books (book_cover, book_title, book_author, book_description, publisher, publication_date, isbn, book_genre, book_stocks, status) 
-            VALUES ('$cover', '$title', '$author', '$description', 'Project Gutenberg', '$publication_date', '$ebook_no', '$book_genre', $stocks, '$status')";
+        VALUES ('$cover', '$title', '$author', '$description', 'Project Gutenberg', '$publication_date', '$ebook_no', '$book_genre', $stocks, '$status')";
+
 
     if ($conn->query($sql) === TRUE) {
         $imported++;

@@ -10,6 +10,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    
 
 
     <!-- ======= Styles ====== -->
@@ -71,15 +74,6 @@
                             <i class='bx bx-history' style="font-size:35px;"></i>
                         </span>
                         <span class="title">History</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="USER_NOTIFICATION.PHP">
-                        <span class="icon">
-                            <ion-icon name="notifications-outline"></ion-icon>
-                        </span>
-                        <span class="title">Notifications</span>
                     </a>
                 </li>
 

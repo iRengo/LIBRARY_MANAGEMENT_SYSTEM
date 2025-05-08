@@ -1,4 +1,5 @@
 <?php
+include '../Admin-side/release_upcoming_books.php';
 session_start();
 
 // Retrieve error message if it exists

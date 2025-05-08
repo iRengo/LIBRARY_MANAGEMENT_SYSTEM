@@ -1,3 +1,5 @@
+
+
 <?php
 session_start();
 include '../homepage/db_connect.php';
@@ -584,8 +586,31 @@ $stmt_check->close();
             document.getElementById('due_date').value = `${year}-${month}-${day}`;
         });
 
-        
+
+
+
+    // Function to refresh book details and status every 2 seconds
+    function refreshBookDetails() {
+        $.ajax({
+            url: 'check_borrow_status.php',  // PHP file that fetches the updated data
+            type: 'GET',
+            data: { book_id: <?php echo $book['book_id']; ?> },  // Pass the book ID to check the status
+            success: function(response) {
+                // Update the book status, buttons, or any other HTML based on the response
+                $('#borrow-form').html(response);  // For example, update the borrow-form section
+            },
+            error: function() {
+                console.log('Error in AJAX request');
+            }
+        });
+    }
+
+    // Call the refresh function every 2 seconds
+    setInterval(refreshBookDetails, 2000);
+
+
     </script>
+
 
 
 </body>

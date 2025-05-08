@@ -316,6 +316,12 @@ body {
     border-radius: 10px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
     z-index: 1000;
+
+    scrollbar-width: none; /* Firefox */
+}
+
+.notification-panel::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Edge */
 }
 
 .notification-scroll h4 {
