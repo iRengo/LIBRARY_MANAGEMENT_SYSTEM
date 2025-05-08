@@ -58,7 +58,7 @@
                 </li>
 
                 <li>
-                    <a href="LIBRARIAN_HISTORY.PHP">
+                    <a href="LIBRARIAN_HISTORY.php">
                         <span class="icon">
                             <ion-icon name="people-outline"></ion-icon>
                         </span>
@@ -82,7 +82,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="LIBRARIAN_REPORTS.php">
+                    <a href="LIBRARIAN_REPORT.PHP">
                         <span class="icon">
                             <ion-icon name="analytics-outline"></ion-icon>
                         </span>
@@ -90,7 +90,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="LIBRARIAN_SETTINGS.php">
+                    <a href="LIBRARIAN_SETTINGS.PHP">
                         <span class="icon">
                             <ion-icon name="cog-outline"></ion-icon>
                         </span>
