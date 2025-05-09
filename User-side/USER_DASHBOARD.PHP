@@ -15,37 +15,46 @@
         $stmt->bind_param("si", $login_time, $acc_no);
         $stmt->execute();
 
-        // Fetch Borrowed Count (Only for logged-in user)
-        $stmt = $conn->prepare("SELECT COUNT(*) FROM borrowed_books WHERE student_no = ? AND status = 'borrowed'");
-        $stmt->bind_param("i", $acc_no);
-        $stmt->execute();
-        $stmt->bind_result($borrowed_count);
-        $stmt->fetch();
-        $stmt->close();
 
-        // Fetch Reserved Count
-        $stmt = $conn->prepare("SELECT COUNT(*) FROM reserved_books WHERE student_no = ?");
-        $stmt->bind_param("i", $acc_no);
-        $stmt->execute();
-        $stmt->bind_result($reserved_count);
-        $stmt->fetch();
-        $stmt->close();
+      // Assuming you have a database connection $conn and a student number $student_no
 
-        // Fetch Overdue Count
-        $stmt = $conn->prepare("SELECT COUNT(*) FROM borrowed_books WHERE student_no = ? AND due_date < NOW() AND status = 'borrowed'");
-        $stmt->bind_param("i", $acc_no);
-        $stmt->execute();
-        $stmt->bind_result($overdue_count);
-        $stmt->fetch();
-        $stmt->close();
+// Query to count borrowed books
+$borrowed_query = "SELECT COUNT(*) FROM borrowed_books WHERE student_no = ?";
+$stmt = $conn->prepare($borrowed_query);
+$stmt->bind_param("i", $student_no);
+$stmt->execute();
+$stmt->bind_result($borrowed_count);
+$stmt->fetch();
+$stmt->close();
 
-        // Fetch Due Books Count
-        $stmt = $conn->prepare("SELECT COUNT(*) FROM borrowed_books WHERE student_no = ? AND due_date = CURDATE() AND status = 'borrowed'");
-        $stmt->bind_param("i", $acc_no);
-        $stmt->execute();
-        $stmt->bind_result($due_count);
-        $stmt->fetch();
-        $stmt->close();
+// Query to count reserved books
+$reserved_query = "SELECT COUNT(*) FROM reserved_books WHERE student_no = ?";
+$stmt = $conn->prepare($reserved_query);
+$stmt->bind_param("i", $student_no);
+$stmt->execute();
+$stmt->bind_result($reserved_count);
+$stmt->fetch();
+$stmt->close();
+
+// Query to count overdue books (books that are borrowed but due before today)
+$overdue_query = "SELECT COUNT(*) FROM borrowed_books WHERE student_no = ? AND due_date < NOW()";
+$stmt = $conn->prepare($overdue_query);
+$stmt->bind_param("i", $student_no);
+$stmt->execute();
+$stmt->bind_result($overdue_count);
+$stmt->fetch();
+$stmt->close();
+
+// Query to count due books (books that are borrowed but not yet due, i.e., due today or in the future)
+$due_query = "SELECT COUNT(*) FROM borrowed_books WHERE student_no = ? AND due_date >= NOW()";
+$stmt = $conn->prepare($due_query);
+$stmt->bind_param("i", $student_no);
+$stmt->execute();
+$stmt->bind_result($due_count);
+$stmt->fetch();
+$stmt->close();
+    
+        
 
         // Get all genres with their counts
         $sql = "
@@ -180,38 +189,44 @@
         <!-- Content Grid with Clickable Sections -->
         <br>
         <div class="content-grid">
-        <div class="content-item" onclick="showBooks('due')">
+    <!-- Due Date -->
+    <div class="content-item">
         <ion-icon name="calendar-outline" style="font-size: 50px; color: #4CAF50;"></ion-icon>
         <div class="content-text">
-        <p>DUE DATE</p>
-        <h1><?= $due_count ?></h1>
+            <p>DUE DATE</p>
+            <h1><?= $due_count ?></h1> <!-- Display due books count -->
         </div>
-        </div>
+    </div>
 
-        <div class="content-item" onclick="showBooks('borrowed')">
+    <!-- Borrowed Books -->
+    <div class="content-item">
         <ion-icon name="book-outline" style="font-size: 50px; color: #2196F3;"></ion-icon>
         <div class="content-text">
-        <p>Borrowed</p>
-        <h1><?= $borrowed_count ?></h1>
+            <p>Borrowed</p>
+            <h1><?= $borrowed_count ?></h1> <!-- Display borrowed books count -->
         </div>
-        </div>
+    </div>
 
-        <div class="content-item" onclick="showBooks('overdue')">
+    <!-- Overdue Books -->
+    <div class="content-item">
         <ion-icon name="alert-circle-outline" style="font-size: 50px; color: #FF5722;"></ion-icon>
         <div class="content-text">
-        <p>Overdue</p>
-        <h1><?= $overdue_count ?></h1>
+            <p>Overdue</p>
+            <h1><?= $overdue_count ?></h1> <!-- Display overdue books count -->
         </div>
-        </div>
+    </div>
 
-        <div class="content-item" onclick="showBooks('reserved')">
+    <!-- Reserved Books -->
+    <div class="content-item">
         <ion-icon name="bookmark-outline" style="font-size: 50px; color: #FFC107;"></ion-icon>
         <div class="content-text">
-        <p>Reserved</p>
-        <h1><?= $reserved_count ?></h1>
+            <p>Reserved</p>
+            <h1><?= $reserved_count ?></h1> <!-- Display reserved books count -->
         </div>
-        </div>
-        </div>
+    </div>
+</div>
+
+
 
         <!-- Bootstrap Modal -->
         <div class="modal fade" id="bookDetailsModal" tabindex="-1" aria-labelledby="bookDetailsLabel" aria-hidden="true">

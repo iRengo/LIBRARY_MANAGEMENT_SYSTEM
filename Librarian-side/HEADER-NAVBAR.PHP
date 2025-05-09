@@ -85,7 +85,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="LIBRARIAN_REPORTS.PHP">
+                    <a href="LIBRARIAN_REPORT.PHP">
                         <span class="icon">
                            <ion-icon name="stats-chart-outline"></ion-icon>
                         </span>
