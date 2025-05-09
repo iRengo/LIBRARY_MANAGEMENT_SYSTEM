@@ -10,6 +10,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    
 
 
     <!-- ======= Styles ====== -->
@@ -31,10 +34,7 @@
                 <li>
                     <div class="admin-gradient">
                         <a href="#">
-                            <span class="icon">
-                                <ion-icon name="person-circle" class="admin-icon"></ion-icon>
-                            </span>
-                            <span class="title1">LIBRARIAN</span>
+                            <span class="title1">LIBRARIAN NIGGA</span>
                         </a>
                     </div>
                 </li>
@@ -52,6 +52,7 @@
                     <a href="LIBRARIAN_CATALOG.PHP">
                         <span class="icon">
                             <ion-icon name="book-outline"></ion-icon>
+
                         </span>
                         <span class="title">Catalog</span>
                     </a>
@@ -60,31 +61,33 @@
                 <li>
                     <a href="LIBRARIAN_HISTORY.php">
                         <span class="icon">
-                            <ion-icon name="people-outline"></ion-icon>
+                          <i class='bx bx-history' style="font-size:35px;"></i>
                         </span>
                         <span class="title">History</span>
                     </a>
                 </li>
+
                 <li>
-                    <a href="LIBRARIAN_NOTIFICATIONS.php">
+                    <a href="LIBRARIAN_NOTIFICATIONS.PHP">
                         <span class="icon">
                             <ion-icon name="notifications-outline"></ion-icon>
                         </span>
                         <span class="title">Notifications</span>
                     </a>
                 </li>
+
                 <li>
                     <a href="LIBRARIAN_USER_MANAGEMENT.PHP">
                         <span class="icon">
-                            <ion-icon name="people-outline"></ion-icon>
+                           <ion-icon name="people-outline"></ion-icon>
                         </span>
                         <span class="title">User Management</span>
                     </a>
                 </li>
                 <li>
-                    <a href="LIBRARIAN_REPORT.PHP">
+                    <a href="LIBRARIAN_REPORTS.PHP">
                         <span class="icon">
-                            <ion-icon name="analytics-outline"></ion-icon>
+                           <ion-icon name="stats-chart-outline"></ion-icon>
                         </span>
                         <span class="title">Reports</span>
                     </a>
@@ -107,28 +110,45 @@
 
         </div>
 
-
         <!-- ========================= Main ==================== -->
         <div class="main">
             <div class="topbar">
                 <div class="toggle">
-                    <ion-icon name="menu-outline" style="font-size:30px;"></ion-icon>
+                    <ion-icon name="menu-outline"></ion-icon>
                 </div>
+
                 <div class="logo">
                     <img src="../logosample1.png" style="height: 60px; width:60px; padding:4px;">
                 </div>
+
                 <div style="float:left; margin-right:75%; display: flex; align-items: baseline;">
                     <p style="font-family: viga; margin: 0; padding-right:2px;">LIBRA</p>
                     <p style="font-family: zilla slab highlight; letter-spacing: 2px; margin: 0;">SPHERE</p>
                 </div>
-                <div class="logo" title="LOGOUT YOUR ACCOUNT" style="margin-right: 1%; display: flex; align-items: center;">
-                    <a href="#" id="logoutIcon" style="display: flex; align-items: center; text-decoration: none; color: inherit;">
-                        <p style="margin: 0; font-size: 18px; margin-right: 8px;">LOGOUT</p>
-                        <i class='bx bx-log-in-circle' style="font-size:35px; color:#da1b1b;"></i>
-                    </a>
-                </div>
-            </div>
 
+                <!-- Dropdown Menu -->
+                <div class="dropdown">
+                    <button class="dropbtn">
+                        <ion-icon name="person-circle-outline" style="font-size: 32px;"></ion-icon>
+                        <ion-icon name="caret-down-outline" style="margin-left: 5px;margin-bottom:5px;"></ion-icon>
+                    </button>
+                    <div class="dropdown-content">
+                        <a href="#" id="toggleNotifications">
+                            <ion-icon name="notifications-outline"></ion-icon> Notifications
+                        </a>
+                        <a href="#" id="logoutIcon">
+                            <ion-icon name="log-out-outline"></ion-icon> Logout
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Notification Panel -->
+                <div id="notificationPanel" class="notification-panel">
+
+                </div>
+
+
+            </div>
 
 
 
@@ -146,7 +166,7 @@
                         confirmButtonText: 'Yes, logout!'
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            window.location.href = 'ADMIN-LOGOUT.php';
+                            window.location.href = 'logout.php';
                         }
                     });
                 });
@@ -154,10 +174,9 @@
 
 
 
+
             <!-- =========== Scripts =========  -->
             <script src="HEADER-NAVBAR.js"></script>
-
-
 
             <!-- ====== ionicons ======= -->
             <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>

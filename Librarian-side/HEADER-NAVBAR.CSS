@@ -4,7 +4,7 @@
 
 /* =============== Globals ============== */
 * {
-    font-family: "Ubuntu", sans-serif;
+    font-family: "Poppins", sans-serif;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -23,7 +23,12 @@ body {
     overflow-x: hidden;
 }
 
-
+.container {
+    position: relative;
+    width: 100%;
+    min-height: 100vh; /* Ensure it fills the viewport height */
+    margin-bottom: 0; /* Ensure no gap at the bottom */
+}
 
 /* =============== Navigation ================ */
 .navigation {
@@ -105,8 +110,8 @@ body {
 
 .navigation ul li a .title1 {
     font-size: 20px;
-    margin-top: 7%;
-    margin-left: 10%;
+    margin-top: 10%;
+    margin-left: 28%;
 }
 
 /* --------- curve outside ---------- */
@@ -143,26 +148,82 @@ body {
     position: absolute;
     width: calc(100% - 300px);
     left: 300px;
-    min-height: 100vh;
+    top: 60px; /* push down to make room for the fixed topbar */
+    min-height: calc(100vh - 60px); /* ensure it doesn't overflow under the topbar */
     background: var(--white);
     transition: 0.5s;
 }
+
 
 .main.active {
     width: calc(100% - 80px);
     left: 80px;
 }
+.dropdown {
+    position: relative;
+    display: inline-block;
+    margin-right: 20px;
+}
+
+.dropbtn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: inherit;
+    font-size: 18px;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: white;
+    min-width: 160px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    z-index: 1;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
 
 .topbar {
-    width: 100%;
-    height: 60px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 10px;
-    box-shadow: 0 4px 6px rgba(150, 150, 150, 0.2);
     position: fixed;
-}c
+    top: 0;
+    left: 300px; 
+    width: calc(100% - 300px); 
+    height: 60px;
+    background-color: var(--white);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    box-sizing: border-box;
+    transition: all 0.5s ease; 
+    z-index: 100; 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
+  }
+  
+  .topbar.active {
+    left: 80px; 
+    width: calc(100% - 80px); 
+  }
+  
+
 
 .toggle {
     position: relative;
@@ -200,7 +261,7 @@ body {
     margin-top: 30%;
 }
 
-/* Time and Date Display Styling */
+
 .time-container {
     position: fixed;
     bottom: 0;
@@ -241,3 +302,4 @@ body {
     font-size: 35px;
     color: #da1b1b;
 }
+

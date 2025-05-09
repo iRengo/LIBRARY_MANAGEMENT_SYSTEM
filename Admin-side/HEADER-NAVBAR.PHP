@@ -10,6 +10,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
 
 
     <!-- ======= Styles ====== -->
@@ -31,10 +34,7 @@
                 <li>
                     <div class="admin-gradient">
                         <a href="#">
-                            <span class="icon">
-                                <ion-icon name="person-circle" class="admin-icon"></ion-icon>
-                            </span>
-                            <span class="title1">ADMIN</span>
+                            <span class="title1">ADMIN NIGGA</span>
                         </a>
                     </div>
                 </li>
@@ -65,16 +65,18 @@
                         <span class="title">Users</span>
                     </a>
                 </li>
+
                 <li>
-                    <a href="#">
+                    <a href="ADMIN_STAFF_TOOLS.PHP">
                         <span class="icon">
-                            <ion-icon name="hammer-outline"></ion-icon>
+                            <ion-icon name="build-outline"></ion-icon>
                         </span>
-                        <span class="title">Staff Tools</span>
+                        <span class="title">Staff tools</span>
                     </a>
                 </li>
+
                 <li>
-                    <a href="ADMIN_NOTIFICATIONS.php">
+                    <a href="ADMIN_NOTIFICATIONS.PHP">
                         <span class="icon">
                             <ion-icon name="notifications-outline"></ion-icon>
                         </span>
@@ -82,7 +84,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="ADMIN_SETTINGS.php">
+                    <a href="ADMIN_SETTINGS.PHP">
                         <span class="icon">
                             <ion-icon name="cog-outline"></ion-icon>
                         </span>
@@ -99,28 +101,45 @@
 
         </div>
 
-
         <!-- ========================= Main ==================== -->
         <div class="main">
             <div class="topbar">
                 <div class="toggle">
                     <ion-icon name="menu-outline"></ion-icon>
                 </div>
+
                 <div class="logo">
                     <img src="../logosample1.png" style="height: 60px; width:60px; padding:4px;">
                 </div>
-                <div class="logo-left">
+
+                <div style="float:left; margin-right:75%; display: flex; align-items: baseline;">
                     <p style="font-family: viga; margin: 0; padding-right:2px;">LIBRA</p>
                     <p style="font-family: zilla slab highlight; letter-spacing: 2px; margin: 0;">SPHERE</p>
                 </div>
-                <div class="logo-right" title="LOGOUT YOUR ACCOUNT">
-                    <a href="#" id="logoutIcon" style="display: flex; text-decoration: none; color: inherit;">
-                        <p style="margin: 0; font-size: 18px; margin-right: 8px;">LOGOUT</p>
-                        <i class='bx bx-log-in-circle' style="font-size:30px; color:#da1b1b;"></i>
-                    </a>
-                </div>
-            </div>
 
+                <!-- Dropdown Menu -->
+                <div class="dropdown">
+                    <button class="dropbtn">
+                        <ion-icon name="person-circle-outline" style="font-size: 32px;"></ion-icon>
+                        <ion-icon name="caret-down-outline" style="margin-left: 5px;margin-bottom:5px;"></ion-icon>
+                    </button>
+                    <div class="dropdown-content">
+                        <a href="#" id="toggleNotifications">
+                            <ion-icon name="notifications-outline"></ion-icon> Notifications
+                        </a>
+                        <a href="#" id="logoutIcon">
+                            <ion-icon name="log-out-outline"></ion-icon> Logout
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Notification Panel -->
+                <div id="notificationPanel" class="notification-panel">
+
+                </div>
+
+
+            </div>
 
 
 
@@ -146,10 +165,9 @@
 
 
 
+
             <!-- =========== Scripts =========  -->
             <script src="HEADER-NAVBAR.js"></script>
-
-
 
             <!-- ====== ionicons ======= -->
             <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>

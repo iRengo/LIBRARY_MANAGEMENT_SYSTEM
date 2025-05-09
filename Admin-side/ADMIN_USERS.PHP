@@ -171,26 +171,9 @@ $users_on_page = array_slice($all_users, $start_index, $users_per_page);
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhgj9UU2gEpeHXKuDjc8+aJBBZ/YYz7wkmP5zPpsjLh4RxJMfP5Jxs6t" crossorigin="anonymous">
-    <title> Admin Dashboard</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Teachers:ital,wght@0,400..800;1,400..800&family=Viga&family=Zilla+Slab+Highlight:wght@400;700&display=swap" rel="stylesheet">
-    <!-- ======= Styles ====== -->
+
     <link rel="stylesheet" href="ADMIN_USERS.CSS">
-    <link rel="stylesheet" href="ADMIN_MODAL.css">
-    <link rel="stylesheet" href="../User-side/USER_STYLE2.CSS">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-
-    <!-- ======= Scripts ====== -->
-
-
-    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <style>
         /* Previous/Next button styling */
         .pagination .page-item.disabled .page-link {
@@ -355,7 +338,7 @@ $users_on_page = array_slice($all_users, $start_index, $users_per_page);
 </head>
 
 <body>
- <Br><Br><br><Br><Br>
+
    <?php include 'HEADER-NAVBAR.PHP'; ?>
 
             <!-- Content HERE -->
@@ -490,9 +473,7 @@ $users_on_page = array_slice($all_users, $start_index, $users_per_page);
 
 
 
-    <!-- =========== Scripts =========  -->
-    <script src="admin.js"></script>
-    <script src="ADMIN_MODAL.js"></script>
+
     <script>
         document.getElementById("viewArchivedBtn").addEventListener("click", function() {
             console.log('View Archived button clicked');
@@ -864,18 +845,6 @@ $users_on_page = array_slice($all_users, $start_index, $users_per_page);
         filterStudent.addEventListener('change', filterUsers);
         filterAdmin.addEventListener('change', filterUsers); // Admin checkbox
     </script>
-
-
-
-
-
-
-
-
-
-    <!-- ====== ionicons ======= -->
-    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 
 </body>
 

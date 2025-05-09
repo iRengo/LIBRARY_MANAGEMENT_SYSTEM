@@ -1,6 +1,4 @@
-body {
-  margin-top: 5%;
-}
+
 .header-container {
   display: flex;
   justify-content: space-between; /* Align left and right sections */
