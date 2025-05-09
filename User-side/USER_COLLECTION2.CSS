@@ -324,3 +324,40 @@ img.img-fluid {
     to { opacity: 1; transform: translateY(0); }
 }
 
+/* Custom Styles */
+.custom-select {
+    border-radius: 5px;  /* Rounded corners */
+    padding: 15px 30px;  /* More padding */
+    border: 1.5px solid #c9cdcf;  /* Green border */
+    transition: all 0.3s ease;  /* Smooth transition */
+    font-size: 1rem;  /* Slightly larger font size */
+}
+
+.custom-select:focus {
+    outline: none;
+}
+
+.custom-select option {
+    font-size: 1rem;  /* Make the option text slightly bigger */
+}
+
+label {
+    font-size: 0.1rem;  /* Larger text for the label */
+    color: #fff;  /* White text color */
+    margin-right: 15px;  /* Space between label and dropdown */
+}
+
+/* Hover effect for the select dropdown */
+.custom-select:hover {
+    background-color: #f1f1f1;  /* Lighter background on hover */
+    border-color: #2196F3;  /* Change border on hover */
+}
+
+/* Add a subtle shadow around the form container */
+form {
+    border-radius: 15px;
+    padding: 10px;
+    background-color: #fff;
+}
+
+

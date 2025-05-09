@@ -55,7 +55,7 @@ $topBook = $result->fetch_assoc();
     <link href="https://fonts.googleapis.com/css2?family=Teachers:ital,wght@0,400..800;1,400..800&family=Viga&family=Zilla+Slab+Highlight:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="USER_STYLE2.CSS">
     <link rel="stylesheet" href="User_css/ADMIN_MODAL.css">
-    <link rel="stylesheet" href="USER_COLLECTION1.CSS">
+    <link rel="stylesheet" href="USER_COLLECTION2.CSS">
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
@@ -68,25 +68,26 @@ $topBook = $result->fetch_assoc();
     </div>
 
     <div class="col-md-6 col-12 text-md-end">
-      <form method="GET" action="" class="d-inline-flex align-items-center">
-        <label for="searchBy" class="me-2 fw-bold">Search By:</label>
-        <select name="month" id="searchBy" class="form-select w-auto" onchange="this.form.submit()">
-          <option value="">Select Month</option>
-          <option value="1" <?= isset($_GET['month']) && $_GET['month'] == 1 ? 'selected' : ''; ?>>January</option>
-          <option value="2" <?= isset($_GET['month']) && $_GET['month'] == 2 ? 'selected' : ''; ?>>February</option>
-          <option value="3" <?= isset($_GET['month']) && $_GET['month'] == 3 ? 'selected' : ''; ?>>March</option>
-          <option value="4" <?= isset($_GET['month']) && $_GET['month'] == 4 ? 'selected' : ''; ?>>April</option>
-          <option value="5" <?= isset($_GET['month']) && $_GET['month'] == 5 ? 'selected' : ''; ?>>May</option>
-          <option value="6" <?= isset($_GET['month']) && $_GET['month'] == 6 ? 'selected' : ''; ?>>June</option>
-          <option value="7" <?= isset($_GET['month']) && $_GET['month'] == 7 ? 'selected' : ''; ?>>July</option>
-          <option value="8" <?= isset($_GET['month']) && $_GET['month'] == 8 ? 'selected' : ''; ?>>August</option>
-          <option value="9" <?= isset($_GET['month']) && $_GET['month'] == 9 ? 'selected' : ''; ?>>September</option>
-          <option value="10" <?= isset($_GET['month']) && $_GET['month'] == 10 ? 'selected' : ''; ?>>October</option>
-          <option value="11" <?= isset($_GET['month']) && $_GET['month'] == 11 ? 'selected' : ''; ?>>November</option>
-          <option value="12" <?= isset($_GET['month']) && $_GET['month'] == 12 ? 'selected' : ''; ?>>December</option>
+    <form method="GET" action="" class="d-inline-flex align-items-center">
+        <label for="searchBy" class="me-3 fw-bold text-light">Search By:</label>
+        <select name="month" id="searchBy" class="form-select w-auto custom-select" onchange="this.form.submit()">
+            <option value="">Select Month</option>
+            <option value="1" <?= isset($_GET['month']) && $_GET['month'] == 1 ? 'selected' : ''; ?>>January</option>
+            <option value="2" <?= isset($_GET['month']) && $_GET['month'] == 2 ? 'selected' : ''; ?>>February</option>
+            <option value="3" <?= isset($_GET['month']) && $_GET['month'] == 3 ? 'selected' : ''; ?>>March</option>
+            <option value="4" <?= isset($_GET['month']) && $_GET['month'] == 4 ? 'selected' : ''; ?>>April</option>
+            <option value="5" <?= isset($_GET['month']) && $_GET['month'] == 5 ? 'selected' : ''; ?>>May</option>
+            <option value="6" <?= isset($_GET['month']) && $_GET['month'] == 6 ? 'selected' : ''; ?>>June</option>
+            <option value="7" <?= isset($_GET['month']) && $_GET['month'] == 7 ? 'selected' : ''; ?>>July</option>
+            <option value="8" <?= isset($_GET['month']) && $_GET['month'] == 8 ? 'selected' : ''; ?>>August</option>
+            <option value="9" <?= isset($_GET['month']) && $_GET['month'] == 9 ? 'selected' : ''; ?>>September</option>
+            <option value="10" <?= isset($_GET['month']) && $_GET['month'] == 10 ? 'selected' : ''; ?>>October</option>
+            <option value="11" <?= isset($_GET['month']) && $_GET['month'] == 11 ? 'selected' : ''; ?>>November</option>
+            <option value="12" <?= isset($_GET['month']) && $_GET['month'] == 12 ? 'selected' : ''; ?>>December</option>
         </select>
-      </form>
-    </div>
+    </form>
+</div>
+
 </div>
 
 
