@@ -213,50 +213,60 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reaction'])) {
     exit();
 }
 
-    // Check if the user has any overdue books
-    $borrow_blocked = false;
-    $today = date('Y-m-d');
-    $check_query = "SELECT * FROM borrowed_books 
-                    WHERE student_no = ? 
-                    AND status = 'Borrowed' 
-                    AND due_date < ?";  // Checking for overdue books
-    $check_stmt = $conn->prepare($check_query);
-    $check_stmt->bind_param("ss", $student_no, $today);
-    $check_stmt->execute();
-    $check_result = $check_stmt->get_result();
-    if ($check_result->num_rows > 0) {
-        $borrow_blocked = true;
-    }
-    $check_stmt->close();
+$borrow_blocked = false;
+$today = date('Y-m-d' , strtotime('-1 day'));
 
-    // Check if the user has already borrowed the book
-    $borrow_status = null;
-    $borrow_check_query = "SELECT status FROM borrowed_books WHERE student_no = ? AND book_id = ? LIMIT 1";
-    $borrow_check_stmt = mysqli_prepare($conn, $borrow_check_query);
-    mysqli_stmt_bind_param($borrow_check_stmt, "si", $student_no, $book_id);
-    mysqli_stmt_execute($borrow_check_stmt);
-    $borrow_check_result = mysqli_stmt_get_result($borrow_check_stmt);
+//dipa ayos to 
+// Check if the user has any overdue books
+$overdue = "SELECT * FROM borrowed_books 
+            WHERE student_no = ? 
+            AND status = 'Borrowed' 
+            AND due_date > ?";
+$check_overdue = $conn->prepare($overdue);
+$check_overdue->bind_param("ss", $student_no, $today);
+$check_overdue->execute();
+$check_overdue_result = $check_overdue->get_result();
 
-    if ($borrow_check_row = mysqli_fetch_assoc($borrow_check_result)) {
-        $borrow_status = $borrow_check_row['status'];
-    }
+if ($check_overdue_result->num_rows > 0) {
+    $borrow_blocked = true; // Set to true if there are overdue books
+}
 
-    // Check if the book is already reserved
-    $book_reserved = false;
-    $sql_check = "SELECT * FROM reserved_books WHERE book_id = ? AND student_no = ?";
-    $stmt_check = $conn->prepare($sql_check);
-    $stmt_check->bind_param("ii", $book['book_id'], $student_no);
-    $stmt_check->execute();
-    $result_check = $stmt_check->get_result();
-    if ($result_check->num_rows > 0) {
-        $book_reserved = true;
-    }
-    $stmt_check->close();
+$check_overdue->close();
 
-    // Determine the button's status
-    $already_borrowed = ($borrow_status === 'Borrowed');
-    $borrow_pending = ($borrow_status === 'Pending');
+
+
+// Check the latest borrow status for the specific book
+$borrow_status = null;
+$borrow_check_query = "SELECT status FROM borrowed_books 
+                       WHERE student_no = ? AND book_id = ? 
+                       ORDER BY borrow_id DESC LIMIT 1";
+$borrow_check_stmt = $conn->prepare($borrow_check_query);
+$borrow_check_stmt->bind_param("ii", $student_no, $book_id);
+$borrow_check_stmt->execute();
+$borrow_check_result = $borrow_check_stmt->get_result();
+
+if ($borrow_check_row = $borrow_check_result->fetch_assoc()) {
+    $borrow_status = $borrow_check_row['status'];
+}
+$borrow_check_stmt->close();
+
+// Check if the book is already reserved
+$book_reserved = false;
+$sql_check = "SELECT * FROM reserved_books WHERE book_id = ? AND student_no = ?";
+$stmt_check = $conn->prepare($sql_check);
+$stmt_check->bind_param("ii", $book['book_id'], $student_no);
+$stmt_check->execute();
+$result_check = $stmt_check->get_result();
+if ($result_check->num_rows > 0) {
+    $book_reserved = true;
+}
+$stmt_check->close();
+
+// Flags for UI logic
+$already_borrowed = ($borrow_status === 'Borrowed');
+$borrow_pending = ($borrow_status === 'Pending');
 ?>
+
 
 
 <!DOCTYPE html>
@@ -286,48 +296,49 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reaction'])) {
             <br> <br>
 
             <?php if ($borrow_status === 'Approved'): ?>
-    <button class="borrow-button borrowed" disabled>
-        Approved, Ready for Pickup
-    </button>
-<?php elseif ($already_borrowed): ?>
-    <button class="borrow-button blocked" disabled>
-        Already Borrowed
-    </button>
-<?php elseif ($borrow_blocked): ?>
-    <button class="borrow-button blocked" disabled>
-        Borrow Blocked (Overdue Book Detected)
-    </button>
-<?php elseif ($borrow_pending): ?>
-    <button class="borrow-button pending" disabled>
-        Borrowing in Process
-    </button>
-<?php elseif ($borrow_status === null && $book['book_stocks'] > 0): ?>
-    <button class="borrow-button available" id="borrow-btn">
-        Borrow This
-    </button>
-<?php elseif ($borrow_status === null && $book['book_stocks'] == 0): ?>
-    <?php if (!$book_reserved): ?>
-        <form method="POST" action="book_reserve.php">
-            <input type="hidden" name="book_id" value="<?= htmlspecialchars($book['book_id']); ?>">
-            <input type="hidden" name="book_title" value="<?= htmlspecialchars($book['book_title']); ?>">
-            <input type="hidden" name="author" value="<?= htmlspecialchars($book['book_author']); ?>">
-            <input type="hidden" name="ISBN" value="<?= htmlspecialchars($book['ISBN']); ?>">
-            <input type="hidden" name="acc_no" value="<?= htmlspecialchars($_SESSION['acc_no']); ?>">
-            <input type="hidden" name="student_no" value="<?= htmlspecialchars($student_no); ?>">
-            <input type="hidden" name="first_name" value="<?= htmlspecialchars($first_name); ?>">
-            <input type="hidden" name="last_name" value="<?= htmlspecialchars($last_name); ?>">
-            <input type="hidden" name="email" value="<?= htmlspecialchars($email); ?>">
+                <button class="borrow-button borrowed" disabled>
+                    Approved, Ready for Pickup
+                </button>
+            <?php elseif ($already_borrowed): ?>
+                <button class="borrow-button blocked" disabled>
+                    Already Borrowed
+                </button>
+            <?php elseif ($borrow_blocked): ?>
+                <button class="borrow-button blocked" disabled>
+                    Borrow Blocked (Overdue Book Detected)
+                </button>
+            <?php elseif ($borrow_pending): ?>
+                <button class="borrow-button pending" disabled>
+                    Borrowing in Process
+                </button>
+            <?php elseif ($borrow_status === null && $book['book_stocks'] > 0): ?>
+                <button class="borrow-button available" id="borrow-btn">
+                    Borrow This
+                </button>
 
-            <button type="submit" class="borrow-button reserve">
-                Reserve This
-            </button>
-        </form>
-    <?php else: ?>
-        <button class="borrow-button reserved" disabled>
-            Already Reserved
-        </button>
-    <?php endif; ?>
-<?php endif; ?>
+            <?php elseif ($borrow_status === null && $book['book_stocks'] == 0): ?>
+                <?php if (!$book_reserved): ?>
+                    <form method="POST" action="book_reserve.php">
+                        <input type="hidden" name="book_id" value="<?= htmlspecialchars($book['book_id']); ?>">
+                        <input type="hidden" name="book_title" value="<?= htmlspecialchars($book['book_title']); ?>">
+                        <input type="hidden" name="author" value="<?= htmlspecialchars($book['book_author']); ?>">
+                        <input type="hidden" name="ISBN" value="<?= htmlspecialchars($book['ISBN']); ?>">
+                        <input type="hidden" name="acc_no" value="<?= htmlspecialchars($_SESSION['acc_no']); ?>">
+                        <input type="hidden" name="student_no" value="<?= htmlspecialchars($student_no); ?>">
+                        <input type="hidden" name="first_name" value="<?= htmlspecialchars($first_name); ?>">
+                        <input type="hidden" name="last_name" value="<?= htmlspecialchars($last_name); ?>">
+                        <input type="hidden" name="email" value="<?= htmlspecialchars($email); ?>">
+
+                        <button type="submit" class="borrow-button reserve">
+                            Reserve This
+                        </button>
+                    </form>
+                <?php else: ?>
+                    <button class="borrow-button reserved" disabled>
+                        Already Reserved
+                    </button>
+                <?php endif; ?>
+            <?php endif; ?>
 
 
             <?php if (isset($_GET['success']) && $_GET['success'] == 1): ?>
@@ -348,19 +359,48 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reaction'])) {
                     }
                 </script>
             <?php endif; ?>
+            <?php if (isset($_GET['cancelled']) && $_GET['cancelled'] == 1): ?>
+                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                <script>
+                    Swal.fire({
+                        title: "Cancelled",
+                        text: "Your borrow request has been cancelled.",
+                        icon: "success",
+                        confirmButtonText: "OK"
+                    });
 
-
-
-
+                    // Remove the cancelled=1 from the URL without reloading
+                    if (window.history.replaceState) {
+                        const url = new URL(window.location);
+                        url.searchParams.delete('cancelled');
+                        window.history.replaceState({}, document.title, url);
+                    }
+                </script>
+            <?php endif; ?>
 
             <br><br>
-            <!-- Add to Collection Button -->
-            <form method="POST" action="">
+            <!-- Cancel Borrow Request (only if borrow is pending) -->
+            <?php if ($borrow_pending): ?>
+                <form method="post" action="cancel_borrow.php" style="display: inline-block; margin-right: 10px;">
+                    <input type="hidden" name="student_no" value="<?= htmlspecialchars($student_no) ?>">
+                    <input type="hidden" name="book_id" value="<?= htmlspecialchars($book_id) ?>">
+                    <button type="submit" class="borrow-button cancel">
+                        Cancel Borrow Request
+                    </button>
+                </form>
+            <?php endif; ?>
+
+
+            <!-- Add to Collection (always visible) -->
+            <form method="POST" action="" style="display: inline-block;">
                 <input type="hidden" name="book_id" value="<?= $book_id; ?>">
                 <button type="submit" name="add_to_collection" class="collection-button">
                     <i class="fas fa-bookmark"></i> Add to Collection
                 </button>
             </form>
+
+
+
 
         </div>
 
@@ -510,7 +550,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reaction'])) {
 
 
     </div>
+
     <script>
+        
         document.addEventListener("DOMContentLoaded", function() {
             document.querySelectorAll(".btn-borrow").forEach(button => {
                 button.addEventListener("click", function() {

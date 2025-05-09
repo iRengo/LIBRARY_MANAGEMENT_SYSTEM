@@ -1,50 +1,48 @@
 <?php
 session_start();
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 include '../homepage/db_connect.php';
 
-if (isset($_POST['book_id']) && isset($_POST['borrowing_id'])) {
-    $book_id = $_POST['book_id'];
-    $borrowing_id = $_POST['borrowing_id'];
-
-    // Delete from borrowed_books
-    $delete_borrowed_query = "DELETE FROM borrowed_books WHERE book_id = ? AND acc_no = ?";
-    $delete_borrowed_stmt = $conn->prepare($delete_borrowed_query);
-    if (!$delete_borrowed_stmt) {
-        die("Error preparing delete query: " . $conn->error);
-    }
-    $delete_borrowed_stmt->bind_param("is", $book_id, $_SESSION['acc_no']);
-    if (!$delete_borrowed_stmt->execute()) {
-        die("Error executing delete query: " . $delete_borrowed_stmt->error);
-    }
-
-    // Delete from borrowing_history
-    $delete_history_query = "DELETE FROM borrowing_history WHERE borrowing_id = ? AND acc_no = ?";
-    $delete_history_stmt = $conn->prepare($delete_history_query);
-    if (!$delete_history_stmt) {
-        die("Error preparing delete query: " . $conn->error);
-    }
-    $delete_history_stmt->bind_param("is", $borrowing_id, $_SESSION['acc_no']);
-    if (!$delete_history_stmt->execute()) {
-        die("Error executing delete query: " . $delete_history_stmt->error);
-    }
-
-    // Restore book stock
-    $update_stock_query = "UPDATE tbl_books SET book_stocks = book_stocks + 1 WHERE book_id = ?";
-    $update_stock_stmt = $conn->prepare($update_stock_query);
-    if (!$update_stock_stmt) {
-        die("Error preparing stock update query: " . $conn->error);
-    }
-    $update_stock_stmt->bind_param("i", $book_id);
-    if (!$update_stock_stmt->execute()) {
-        die("Error executing stock update query: " . $update_stock_stmt->error);
-    }
-
-    $_SESSION['success'] = "Borrow request canceled successfully!";
-    header("Location: user_dashboard.php");
+if (!isset($_SESSION['acc_no'])) {
+    echo '<script>
+        alert("You are not logged in!");
+        window.location.href = "../homepage/homepage.php";
+    </script>';
     exit();
-} else {
-    die("Error: Missing book_id or borrowing_id.");
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $student_no = $_POST['student_no'];
+    $book_id = $_POST['book_id'];
+
+    // Only cancel if the request is still pending
+    $check = $conn->prepare("SELECT * FROM borrowed_books WHERE student_no = ? AND book_id = ? AND status = 'Pending'");
+    $check->bind_param("si", $student_no, $book_id);
+    $check->execute();
+    $result = $check->get_result();
+
+    if ($result->num_rows > 0) {
+        // Delete the pending request
+        $delete = $conn->prepare("DELETE FROM borrowed_books WHERE student_no = ? AND book_id = ? AND status = 'Pending'");
+        $delete->bind_param("si", $student_no, $book_id);
+        if ($delete->execute()) {
+            // Restore the book stock
+            $update = $conn->prepare("UPDATE tbl_books SET book_stocks = book_stocks + 1 WHERE book_id = ?");
+            $update->bind_param("i", $book_id);
+            $update->execute();
+            $update->close();
+
+            // Redirect to book-details.php with a success flag
+            header("Location: book-details.php?book_id=" . urlencode($book_id) . "&cancelled=1");
+            exit();
+        }
+        $delete->close();
+    } else {
+        // Redirect with error flag (optional: can be used to show another alert)
+        header("Location: book-details.php?book_id=" . urlencode($book_id) . "&cancelled=0");
+        exit();
+    }
+
+    $check->close();
+    $conn->close();
 }
 ?>

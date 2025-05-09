@@ -25,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $due_date = $_POST['due_date'] ?? null;
     $status = "Pending";
     $acc_no = $_SESSION['acc_no'];
-    $author = $_POST['author'] ?? 'Unknown'; // Make sure to pass author too
+    $author = $_POST['author'] ?? 'Unknown'; 
 
     // Validate required fields
     if (!$student_no || !$book_id || !$book_title || !$preferred_date) {
