@@ -43,39 +43,62 @@ h2 {
     color: #1C2E5C;
 }
 
-.tabs {
+.tab-container {
+    margin-bottom: 15px;
+}
+
+.tab-list {
     display: flex;
-    border-bottom: 2px solid #ddd;
-    margin-bottom: 20px;
+    flex-wrap: wrap;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-bottom: 2px solid #ffffff;
 }
 
-.tab-button {
-    background-color: white;
-    border: none;
-    border-bottom: 3px solid transparent;
-    padding: 10px 20px;
-    font-weight: bold;
-    color: #1C2E5C;
+.tab-list li {
+    padding: 10px 10px;
     cursor: pointer;
-    transition: border-color 0.3s ease, color 0.3s ease;
+    background-color: #ffffff;
+    margin-right: 5px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border: 1px solid #d0d0d0;
+    border-bottom: none;
+    transition: background-color 0.3s;
 }
 
-.tab-button.active {
-    border-bottom: 3px solid #1C2E5C;
-    color: #1C2E5C;
+.return-btn {
+    background-color: #4CAF50; /* green */
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .return-btn:hover {
+    background-color: #45a049;
+  }
+  
+.tab-list li:hover {
+    background-color: #e0e0e0;
 }
 
-.tab-button:hover {
-    color: #343536;
+.tab-list li.active {
+    background-color: #e0e0e0; /* Example active color */
+    color: rgb(110, 110, 110); /* Optional: change text color */
 }
 
-.tab-content {
-    display: none;
-}
 
-.tab-content.active-tab {
-    display: block;
-}
+/* Custom class to make SweetAlert2 modal wider */
+.wide-modal {
+    width: 800px !important; /* adjust as needed */
+    max-width: 90vw; /* ensures responsiveness */
+  }
+  
 
 table {
     width: 100%;
@@ -105,4 +128,12 @@ td {
 
 tbody tr:hover {
     background-color: #f3f3f3;
+}
+
+.tab-content {
+    display: none;
+}
+
+#borrow {
+    display: block;
 }
