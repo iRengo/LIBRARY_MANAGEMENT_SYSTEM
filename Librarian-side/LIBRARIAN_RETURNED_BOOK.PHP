@@ -20,8 +20,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $student_no = $_POST['student_no'];
     $book_id = $_POST['book_id'];
     $book_condition = $_POST['book_condition'];
-    $damage_description = $_POST['damage_description'];
-    $penalty_amount = $_POST['penalty_amount'];
     $return_date = date('Y-m-d H:i:s');
 
     // Fetch the book title
@@ -35,27 +33,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    $targetDir = "proofs/";
-    $proof_name = basename($_FILES["proof"]["name"]);
-    $targetFilePath = $targetDir . time() . "_" . $proof_name;
+    // Insert into returned_books (only the existing fields)
+    $sql = "INSERT INTO returned_books 
+            (borrow_id, book_id, book_title, student_no, return_date, book_condition, handled_by)
+            VALUES 
+            ('$borrow_id', '$book_id', '$book_title', '$student_no', '$return_date', '$book_condition', '$handled_by')";
 
-    if (move_uploaded_file($_FILES["proof"]["tmp_name"], $targetFilePath)) {
-        // Insert into returned_books including book_title
-        $sql = "INSERT INTO returned_books 
-                (borrow_id, book_id, book_title, student_no, return_date, book_condition, damage_description, penalty_amount, proof, handled_by)
-                VALUES 
-                ('$borrow_id', '$book_id', '$book_title', '$student_no', '$return_date', '$book_condition', '$damage_description', '$penalty_amount', '$targetFilePath', '$handled_by')";
-
-        if (mysqli_query($conn, $sql)) {
-            // Update status in borrowed_books
-            $update_sql = "UPDATE borrowed_books SET status='Returned' WHERE borrow_id='$borrow_id'";
-            mysqli_query($conn, $update_sql);
-            echo json_encode(["success" => true, "message" => "Book return recorded successfully!"]);
-        } else {
-            echo json_encode(["success" => false, "message" => "Database error: " . mysqli_error($conn)]);
-        }
+    if (mysqli_query($conn, $sql)) {
+        // Update status in borrowed_books
+        $update_sql = "UPDATE borrowed_books SET status='Returned' WHERE borrow_id='$borrow_id'";
+        mysqli_query($conn, $update_sql);
+        echo json_encode(["success" => true, "message" => "Book return recorded successfully!"]);
     } else {
-        echo json_encode(["success" => false, "message" => "Failed to upload proof file."]);
+        echo json_encode(["success" => false, "message" => "Database error: " . mysqli_error($conn)]);
     }
 }
 ?>

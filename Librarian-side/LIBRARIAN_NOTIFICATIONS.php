@@ -10,10 +10,12 @@ include '../Homepage/db_connect.php'; // adjust path if needed
 <head>
     <title>Librarian Notifications</title>
     <link rel="stylesheet" href="LIBRARIAN_NOTIFICATIONS.css">
+
 </head>
 
 <body>
     <?php include 'HEADER-NAVBAR.PHP'; ?>
+    
 
     <div class="notifications-container">
         <h2>Librarian Notifications</h2>
@@ -279,103 +281,110 @@ include '../Homepage/db_connect.php'; // adjust path if needed
         </div>
 
 
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".return-btn").forEach(button => {
+        button.addEventListener("click", function () {
+            const borrowId = this.dataset.borrowId;
+            const studentNo = this.dataset.studentNo;
+            const bookId = this.dataset.bookId;
+            const bookTitle = this.dataset.bookTitle;
 
+            Swal.fire({
+                title: 'Return Book',
+                html: `
+                    <p><strong>Book Title:</strong> ${bookTitle}</p>
+                    <p><strong>Student No:</strong> ${studentNo}</p>
+                    <select id="book_condition" class="swal2-select" style="width: 100%; padding: 8px; margin-top: 10px;">
+                        <option value="">Select Book Condition</option>
+                        <option value="Good">Good</option>
+                        <option value="1">Damaged-Low</option>
+                        <option value="2">Damaged-Medium</option>
+                        <option value="3">Damaged-High</option>
+                    </select>
+                `,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Confirm',
+                preConfirm: () => {
+                    const bookCondition = Swal.getPopup().querySelector('#book_condition').value;
+                    if (!bookCondition) {
+                        Swal.showValidationMessage('Please select the book condition.');
+                        return false;
+                    }
 
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const returnButtons = document.querySelectorAll('.return-btn');
+                    return {
+                        borrow_id: borrowId,
+                        student_no: studentNo,
+                        book_id: bookId,
+                        book_condition: bookCondition
+                    };
+                }
+            }).then((result) => {
+                if (result.isConfirmed && result.value) {
+                    const { borrow_id, student_no, book_id, book_condition } = result.value;
 
-                returnButtons.forEach(button => {
-                    button.addEventListener('click', function() {
-                        const borrowId = this.getAttribute('data-borrow-id');
-                        const bookId = this.getAttribute('data-book-id');
-                        const studentNo = this.getAttribute('data-student-no'); // Get student number
-
-                        // Fetch book cover and title from the server
-                        fetch('LIBRARIAN_BOOK_DETAILS.php', {
-                                method: 'POST',
-                                body: JSON.stringify({
-                                    book_id: bookId
+                    if (book_condition === "Good") {
+                        // Process normal return
+                        fetch('librarian_returned_book.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: new URLSearchParams(result.value)
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire('Success', data.message, 'success').then(() => location.reload());
+                            } else {
+                                Swal.fire('Error', data.message, 'error');
+                            }
+                        });
+                    } else {
+                        // Process fine
+                        fetch('librarian_get_fine_amount.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ fine_id: parseInt(book_condition) })
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Send to fine processor
+                                fetch('LIBRARIAN_INSERT_STUDENT_FINE.php', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/x-www-form-urlencoded'
+                                    },
+                                    body: new URLSearchParams({
+                                        fine_id: book_condition,
+                                        student_no: student_no,
+                                        book_id: book_id,
+                                        borrow_id: borrowId
+                                    })
                                 })
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
-                                    const bookCover = data.book_cover;
-                                    const bookTitle = data.book_title;
-
-                                    // Display SweetAlert modal with form
-                                    Swal.fire({
-                                        title: 'Return Book',
-                                        html: `
-                            <p><strong>Book Title:</strong> ${bookTitle}</p>
-                            <img src="${bookCover}" alt="Book Cover" style="width: 60px; height: auto; border-radius: 4px;">
-                            <br><br>
-                            <label for="book_condition">Book Condition:</label>
-                            <select id="book_condition" class="swal2-input">
-                                <option value="Good">Good</option>
-                                <option value="Damaged">Damaged</option>
-                                <option value="Missing">Missing</option>
-                            </select>
-                            <textarea id="damage_description" class="swal2-textarea" placeholder="Damage Description"></textarea>
-                            <input type="number" id="penalty_amount" class="swal2-input" placeholder="Penalty Amount">
-                            <input type="file" id="proof" class="swal2-input" placeholder="Upload Proof">
-                        `,
-                                        customClass: {
-                                            popup: 'wide-modal' 
-                                        },
-                                        showConfirmButton: true,
-                                        focusConfirm: false,
-                                        preConfirm: () => {
-                                            const bookCondition = document.getElementById('book_condition').value;
-                                            const damageDescription = document.getElementById('damage_description').value;
-                                            const penaltyAmount = document.getElementById('penalty_amount').value;
-                                            const proof = document.getElementById('proof').files[0];
-
-                                            // Validate form fields
-                                            if (!bookCondition || !damageDescription || !penaltyAmount || !proof) {
-                                                Swal.showValidationMessage('Please fill in all fields');
-                                                return false;
-                                            }
-
-                                            // Form data for submission
-                                            let formData = new FormData();
-                                            formData.append('borrow_id', borrowId);
-                                            formData.append('student_no', studentNo);
-                                            formData.append('book_id', bookId);
-                                            formData.append('book_condition', bookCondition);
-                                            formData.append('damage_description', damageDescription);
-                                            formData.append('penalty_amount', penaltyAmount);
-                                            formData.append('proof', proof);
-
-                                            // Submit the form using AJAX
-                                            return fetch('LIBRARIAN_RETURNED_BOOK.PHP', {
-                                                    method: 'POST',
-                                                    body: formData
-                                                })
-                                                .then(response => response.json())
-                                                .then(data => {
-                                                    if (data.success) {
-                                                        Swal.fire('Success!', 'Book returned successfully!', 'success');
-                                                    } else {
-                                                        Swal.fire('Error!', 'There was an error while returning the book.', 'error');
-                                                    }
-                                                })
-                                                .catch(error => {
-                                                    Swal.fire('Error!', 'There was an error while returning the book.', 'error');
-                                                });
-                                        }
-                                    });
-                                } else {
-                                    Swal.fire('Error!', 'Failed to fetch book details.', 'error');
-                                }
-                            })
-                            .catch(error => {
-                                Swal.fire('Error!', 'There was an error fetching book details.', 'error');
-                            });
-                    });
-                });
+                                .then(res => res.json())
+                                .then(fineRes => {
+                                    if (fineRes.success) {
+                                        Swal.fire('Fine Issued', fineRes.message, 'warning').then(() => location.reload());
+                                    } else {
+                                        Swal.fire('Error', fineRes.message, 'error');
+                                    }
+                                });
+                            } else {
+                                Swal.fire('Error', data.message, 'error');
+                            }
+                        });
+                    }
+                }
             });
+        });
+    });
+});
+
 
             function filterSection(sectionId) {
                 const sections = ['borrow', 'pickup', 'reserve', 'due', 'overdue', 'returned'];
