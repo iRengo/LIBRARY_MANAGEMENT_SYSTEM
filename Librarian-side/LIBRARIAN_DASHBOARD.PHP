@@ -92,9 +92,36 @@ include '../homepage/db_connect.php'
 
     <div class="pending-returns">
       <h4>Pending Returns</h4>
-      <div>Due Soon</div>
-      <div>Over Due-Date</div>
-      <div>Pending Reserved</div>
+      <table>
+        <thead>
+            <tr>
+                <th>Book Title</th>
+                <th>Borrower</th>
+                <th>Due Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>The Hobbit</td>
+                <td>John Doe</td>
+                <td>2023-10-15</td>
+                <td>Due Soon</td>
+            </tr>
+            <tr>
+                <td>1984</td>
+                <td>Jane Smith</td>
+                <td>2023-10-10</td>
+                <td>Overdue</td>
+            </tr>
+            <tr>
+                <td>Harry Potter</td>
+                <td>Emily Johnson</td>
+                <td>2023-10-20</td>
+                <td>Pending Reserved</td>
+            </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>

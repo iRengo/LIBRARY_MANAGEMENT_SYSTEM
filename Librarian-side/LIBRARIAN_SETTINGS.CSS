@@ -172,3 +172,79 @@ input[type="number"]:focus {
     background-color: #204297; /* your active tab color */
     color: #fff;
 }
+
+.description {
+    font-size: 14px;
+    margin-top: 5px;
+    color: #555;
+}
+
+/* Sub-heading */
+.sub-heading {
+    margin-top: 25px;
+    color: #1a2a53;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* Tabs */
+.tabs {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+
+.tabs button {
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px 4px 0 0;
+    padding: 5px 15px;
+    margin-left: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s ease, color 0.3s ease; /* Smooth hover transition */
+    outline: none; /* Remove default focus outline */
+}
+
+.tabs button.active {
+    background: #234078;
+    color: white;
+}
+
+.tabs button:focus {
+    border-color: #204297; /* Add focus state for accessibility */
+}
+
+/* Table Styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    border: 1px solid #ddd; /* Add border for better structure */
+}
+
+th {
+    background: #234078;
+    color: white;
+    padding: 10px;
+    text-align: left;
+    vertical-align: middle; /* Align content vertically */
+}
+
+td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    vertical-align: middle; /* Align content vertically */
+}
+
+/* Notes Section */
+.notes {
+    margin-top: 20px;
+    font-size: 14px;
+    line-height: 1.5; /* Improve readability */
+}
+
+.notes b {
+    display: inline-block;
+    width: 90px;
+}

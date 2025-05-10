@@ -145,6 +145,32 @@
       border-radius: 5px;
     }
 
+    .pending-returns table {
+      width: 100%;
+      margin-top: 15px;
+      border-collapse: collapse;
+      border: 1px solid #ccc;
+    }
+
+    .pending-returns th, .pending-returns td {
+      padding: 10px;
+      text-align: center;
+      border-bottom: 1px solid #eee;
+    }
+
+    .pending-returns th {
+      background-color: #204297;
+      color: white;
+    }
+
+    .pending-returns td {
+      background-color: #f9f9f9;
+    }
+
+    .pending-returns tr:nth-child(even) td {
+      background-color: #f1f1f1;
+    }
+
     h4 {
       margin-bottom: 10px;
       font-size: 16px;
