@@ -75,14 +75,7 @@
                     </a>
                 </li>
 
-                <li>
-                    <a href="ADMIN_NOTIFICATIONS.PHP">
-                        <span class="icon">
-                            <ion-icon name="notifications-outline"></ion-icon>
-                        </span>
-                        <span class="title">Notifications</span>
-                    </a>
-                </li>
+
                 <li>
                     <a href="ADMIN_SETTINGS.PHP">
                         <span class="icon">

@@ -41,6 +41,7 @@ body {
     margin-left: 8px;
     font-weight: 500;
     cursor: pointer;
+    display: inline-block; /* Ensures the buttons align horizontally */
 }
 
 .settings-buttons .tab:not(.active) {
@@ -153,6 +154,14 @@ input[type="number"]:focus {
     font-weight: 500;
     cursor: pointer;
     transition: background 0.3s ease;
+}
+
+.settings-section {
+    display: none;
+}
+
+.settings-section.active {
+    display: block;
 }
 
 /* When not selected */
