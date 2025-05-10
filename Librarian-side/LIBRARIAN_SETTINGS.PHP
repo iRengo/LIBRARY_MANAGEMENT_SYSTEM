@@ -9,16 +9,27 @@
 
 </head>
 
-<body>
+<body class="account-settings">
     <?php include 'HEADER-NAVBAR.PHP' ?>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabs = document.querySelectorAll('.settings-buttons .tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                });
+            });
+        });
+    </script>
 <!-- Content HERE -->
 <div class="settings-container">
     <div class="settings-box">
         <div class="settings-header">
             <h2>SETTINGS</h2>
         <div class="settings-buttons">
-            <button class="tab active" data-tab="account">Account</button>
-            <button class="tab" data-tab="fines">Fines</button>
+            <button class="tab active" data-tab="account" onclick="window.location.href='LIBRARIAN_SETTINGS.PHP'">Account</button>
+            <button class="tab" data-tab="fines" onclick="window.location.href='LIBRARIAN_SETTINGS_FINE.PHP'">Fines</button>
         </div>
 
         </div>
