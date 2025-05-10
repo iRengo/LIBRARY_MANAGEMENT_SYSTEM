@@ -3,10 +3,30 @@
 include '../homepage/db_connect.php';
 session_start(); // Start session to access logged-in user data
 
-// Ensure user is logged in
-if (!isset($_SESSION['acc_no'])) {
-    die("Access Denied. Please log in.");
-}
+// Check if the admin session exists
+    if (!isset($_SESSION['acc_no'])) {
+        // If not, show a SweetAlert notification and then redirect
+        echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+    window.onload = function() {
+    // Show SweetAlert notification
+    Swal.fire({
+    title: "You are not logged in!",
+    text: "Please log in to access the page.",
+    icon: "error",
+    confirmButtonText: "OK",
+    allowOutsideClick: false,
+    allowEscapeKey: false,
+    willClose: () => {
+    // Redirect to homepage after the notification is closed
+    window.location.href = "../homepage/homepage.php";
+    }
+    });
+    }
+    </script>';
+        exit(); // Stop further execution after showing the notification and redirect script
+    }
+
 
 $acc_no = $_SESSION['acc_no']; // Get logged-in user's acc_no
 

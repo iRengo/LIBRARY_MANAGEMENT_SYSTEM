@@ -1,3 +1,60 @@
+<?php
+
+session_start();
+        include '../homepage/db_connect.php';
+
+        // Check if the admin session exists
+        if (!isset($_SESSION['acc_no'])) {
+            // If not, show a SweetAlert notification and then redirect
+            echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+        window.onload = function() {
+        // Show SweetAlert notification
+        Swal.fire({
+        title: "You are not logged in!",
+        text: "Please log in to access the page.",
+        icon: "error",
+        confirmButtonText: "OK",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        willClose: () => {
+        // Redirect to homepage after the notification is closed
+        window.location.href = "../homepage/homepage.php";
+        }
+        });
+        }
+        </script>';
+            exit(); // Stop further execution after showing the notification and redirect script
+        }
+
+        $acc_no = $_SESSION['acc_no']; // Get logged-in user's account number
+        $login_time = date("Y-m-d H:i:s");
+
+        // Update the last_login column
+        $stmt = $conn->prepare("UPDATE stud_acc SET last_logged_in = ? WHERE student_no = ?");
+        $stmt->bind_param("si", $login_time, $acc_no);
+        $stmt->execute();
+
+// Assuming you've already connected to your database
+
+$query = "SELECT student_no, email, last_name, first_name, contact FROM stud_acc WHERE acc_no = ?";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("i", $acc_no);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($row = $result->fetch_assoc()) {
+    $student_no = $row['student_no'];
+    $email = $row['email'];
+    $last_name = $row['last_name'];
+    $first_name = $row['first_name'];
+    $contact = $row['contact'];
+} else {
+    $student_no = $email = $last_name = $first_name = $contact = "Not available";
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -31,6 +88,53 @@
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     
+    <style>
+        .container_profile {
+    padding: 2rem;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.profile-section {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+.profile-form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.full-width {
+    flex: 100%;
+}
+
+label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+input[readonly] {
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    padding: 0.75rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #333;
+}
+
+    </style>
     
 </head>
 
@@ -57,81 +161,48 @@
 
     <!-- Content Sections -->
 
-            <!-- Accounts Information Start... -->
-<div id="account" class="content content-section">
+    <div id="account" class="content content-section">
     <div class="container_profile">
-        <!-- Profile Section -->
+        <!-- Unified Profile Section -->
         <section class="profile-section">
             <h2 class="user_profile">Profile</h2>
-            <h3 class="user_profile_sub">Set your account details</h3>
-            <div class="profile-form">
+            <h3 class="user_profile_sub">Your account details</h3>
+            
+            <!-- Row 1: Email & Student Number -->
+            <div class="profile-form-row">
                 <div class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" placeholder="Enter username">
-                </div>
-                <div class="form-group">
-                    <label for="user-id">USER ID</label>
-                    <input type="text" id="user-id" placeholder="Enter user ID">
-                </div>
-                <div class="form-group full-width">
                     <label for="email">Email</label>
-                    <input type="email" id="email" placeholder="Enter email">
+                    <input type="text" id="email" value="<?= htmlspecialchars($email) ?>" readonly>
                 </div>
-                <div class="upload-section">
-                    <div class="upload-placeholder">
-                        <img src="https://static.vecteezy.com/system/resources/thumbnails/019/879/198/small_2x/user-icon-on-transparent-background-free-png.png" alt="Profile Icon" style="width: 150px; height: auto; border-radius: 15px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease-in-out;">
-                    </div>
-                    <button class="upload-button">UPLOAD</button>
+                <div class="form-group">
+                    <label for="user-id">Student Number</label>
+                    <input type="text" id="user-id" value="<?= htmlspecialchars($student_no) ?>" readonly>
+                </div>
+            </div>
+
+            <!-- Row 2: Lastname & Firstname -->
+            <div class="profile-form-row">
+                <div class="form-group">
+                    <label for="lastname">Lastname</label>
+                    <input type="text" id="lastname" value="<?= htmlspecialchars($last_name) ?>" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="firstname">Firstname</label>
+                    <input type="text" id="firstname" value="<?= htmlspecialchars($first_name) ?>" readonly>
+                </div>
+            </div>
+
+            <!-- Row 3: Contact (full width) -->
+            <div class="profile-form-row">
+                <div class="form-group full-width">
+                    <label for="contact">Contact</label>
+                    <input type="text" id="contact" value="<?= htmlspecialchars($contact) ?>" readonly>
                 </div>
             </div>
         </section>
-
-
-
-        <!-- Personal Information Section -->
-        <section class="personal-info-section">
-                <h2>Personal Information</h2>
-                <div class="personal-info-form">
-                    <div class="form-group">
-                        <label for="lastname">Lastname</label>
-                        <input type="text" id="lastname" placeholder="Enter lastname">
-                    </div>
-                    <div class="form-group">
-                        <label for="firstname">Firstname</label>
-                        <input type="text" id="firstname" placeholder="Enter firstname">
-                    </div>
-                    <div class="form-group">
-                        <label for="mi">M.I</label>
-                        <input type="text" id="mi" placeholder="M.I">
-                    </div>
-                    <div class="form-group">
-                        <label for="birth-date">Birth Date</label>
-                        <input type="date" id="birth-date">
-                    </div>
-                    <div class="form-group">
-                        <label for="age">Age</label>
-                        <input type="number" id="age" placeholder="Age">
-                    </div>
-                    <div class="form-group full-width">
-                        <label for="address">Address</label>
-                        <input type="text" id="address" placeholder="Enter address">
-                    </div>
-                    <div class="form-group">
-                        <label for="civil-status">Civil Status</label>
-                        <input type="text" id="civil-status" placeholder="Civil status">
-                    </div>
-                    <div class="form-group">
-                        <label for="contact">Contact</label>
-                        <input type="text" id="contact" placeholder="Enter contact">
-                    </div>
-                    <div class="form-group">
-                        <label for="gender">Gender</label>
-                        <input type="text" id="gender" placeholder="Enter gender">
-                    </div>
-                </div>
-            </section>
-        </div>
     </div>
+</div>
+
 
             <!-- Accounts Information End... -->
 
