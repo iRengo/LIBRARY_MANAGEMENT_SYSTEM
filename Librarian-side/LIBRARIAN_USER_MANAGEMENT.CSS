@@ -1,124 +1,110 @@
-/* =========== Google Fonts ============ */
-@import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap");
-
-/* =============== Globals ============== */
-* {
-    font-family: "poppins", sans-serif;
+/* General layout */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f6f8;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
 }
 
-/* ===== Table Styles ===== */
-.table {
-    width: 90%;
-    margin-top: 3%;
-    border-collapse: collapse;
-    font-size: 20px; /* Base font size for table text */
-    margin-left: 3%;
-    margin-right: 3%;
+/* Specific container */
+.librarian-user-management {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 20px;
+
 }
 
-.table th, .table td {
-    padding: 12px;
-    text-align: center;
-    border: 1px solid #ddd;
-}
-
-.table th {
-    background-color: #222B42;
-    color: #ffffff;
-    font-weight: bold;
-}
-
-.table td {
+/* Header styling */
+.management-header {
     background-color: #ffffff;
-    color: #212529;
-
-}
-
-.table td a {
-    text-decoration: none;
-    padding: 5px;
-}
-
-.table td a:hover {
-    opacity: 0.7;
-}
-
-/* ===== Pagination Styles ===== */
-.pagination {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-}
-
-.pagination .page-item {
-    margin: 0 5px;
-}
-
-.pagination .page-link {
-    display: block;
-    padding: 8px 16px;
-    color: #ffffff;
-    background-color: #485462;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    text-decoration: none;
-}
-
-.pagination .page-link:hover {
-    background-color: #007bff;
-    color: #fff;
-}
-
-.pagination .page-item.active .page-link {
-    background-color: #007bff;
-    color: white;
-    border: 1px solid #007bff;
-}
-
-.pagination .page-item.disabled .page-link {
-    color: #ddd;
-    pointer-events: none;
-}
-.pagination li {
-    list-style-type: none;
-}
-
-/* ===== Tab Styles ===== */
-.tab-container {
+    padding: 20px 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     margin-bottom: 20px;
-}
-
-.tabs {
-    display: flex;
-    justify-content: center;
-    list-style-type: none;
-    padding: 0;
-    float: left;
-    margin-left: 3%;
-    margin-top: 3%;
-}
-
-.tab-item {
-    padding: 10px 20px;
-    cursor: pointer;
-    font-weight: bold;
     border: 1px solid #ddd;
-    border-radius: 5px 5px 0 0;
-    margin-right: 10px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    background-color: #f1f1f1;
 }
 
-.tab-item:hover {
-    background-color: #aaaaaa;
-    color: white;
+.management-header h2 {
+    margin: 0;
+    color: #1a2a53;
+    font-size: 24px;
+    font-weight: bold;
 }
 
-.tab-item.active {
-    background-color: #485462;
+.management-header .description {
+    margin-top: 5px;
+    color: #6c757d;
+    font-size: 14px;
+}
+
+/* Box containing the table */
+.user-box {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid #ddd;
+}
+
+/* Table styles */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table thead th {
+    background-color: #234078;
     color: white;
-    border-bottom: none;
+    padding: 12px;
+    text-align: left;
+}
+
+.table tbody td {
+    padding: 12px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.table a {
+    margin-right: 8px;
+    font-size: 18px;
+}
+
+
+
+.icon-button {
+    background-color: #f0f0f0;
+    border: none;
+    padding: 8px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-right: 5px;
+    font-size: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-button:hover {
+    background-color: #dcdcdc;
+}
+
+.icon-button.view {
+    color: #007bff; /* blue */
+}
+
+.icon-button.archive {
+    color: #046e2b; /* red */
+}
+.archive-toggle-btn {
+    padding: 6px 12px;
+    background-color: #5a5a5a;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.archive-toggle-btn:hover {
+    background-color: #444;
 }

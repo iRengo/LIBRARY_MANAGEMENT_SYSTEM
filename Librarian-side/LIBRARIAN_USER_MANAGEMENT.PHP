@@ -1,182 +1,198 @@
+<?php
+session_start();
+include '../homepage/db_connect.php';
+
+
+$sql = "SELECT student_no, first_name, last_name, email, contact, last_logged_in FROM stud_acc";
+$result = mysqli_query($conn, $sql);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <title>Librarian Catalog </title>
-    <link rel="stylesheet" href="LIBRARIAN_USER_MANAGEMENT.CSS">
-
-
-
+    <title>Librarian - User Management</title>
+    <link rel="stylesheet" href="librarian_user_management.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
-    <?php include 'HEADER-NAVBAR.PHP' ?>
+    <?php include 'HEADER-NAVBAR.PHP'; ?>
 
-    <!-- Content HERE -->
-    <div class="container mt-5">
-        <h2 class="text-center mb-4" style="margin-top: 3%; margin-left:2%;">USER MANAGEMENT</h2>
+    <div class="librarian-user-management">
+        <!-- Header Section -->
+        <div class="management-header">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h2>USER MANAGEMENT</h2>
+                    <p class="description">Manage and monitor students</p>
+                </div>
+                <button onclick="toggleView()" class="archive-toggle-btn">View Archived Students</button>
+            </div>
+        </div>
 
-
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>USER ID</th>
-                    <th>USERNAME</th>
-                    <th>EMAIL</th>
-                    <th>ACCOUNT STATUS</th>
-                    <th>ACTION</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Placeholder Records -->
-                <tr>
-                    <td>1213</td>
-                    <td>Username</td>
-                    <td>username@gmail.com</td>
-                    <td>Active</td>
-                    <td>
-                        <ion-icon name="eye-outline"></ion-icon>
-                        <a href="#" class="text-success" title="Edit"><i class="bx bx-edit"></i></a>
-                        <a href="#" class="text-danger" title="Delete"><i class="bx bx-trash"></i></a>
+        <div id="activeStudents" class="user-box">
+            <!-- Table Content -->
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>User ID</th>
+                        <th>First Name </th>
+                        <th>Last Name </th>
+                        <th>Email </th>
+                        <th>Contact Number </th>
+                        <th>Last Logged In </th>
+                        <th>Actions </th>
 
 
-                    </td>
-                </tr>
-                <tr>
-                    <td>1214</td>
-                    <td>Username</td>
-                    <td>username@gmail.com</td>
-                    <td>Active</td>
-                    <td>
-                        <ion-icon name="eye-outline"></ion-icon>
-                        <a href="#" class="text-success" title="Edit"><i class="bx bx-edit"></i></a>
-                        <a href="#" class="text-danger" title="Delete"><i class="bx bx-trash"></i></a>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    if (mysqli_num_rows($result) > 0) {
+                        while ($row = mysqli_fetch_assoc($result)) {
+                            echo "<tr>";
+                            echo "<td>" . htmlspecialchars($row['student_no']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['first_name']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['last_name']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['email']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['contact']) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['last_logged_in']) . "</td>";
+                            echo "<td>
 
-                    </td>
-                </tr>
-                <tr>
-                    <td>1215</td>
-                    <td>Username</td>
-                    <td>username@gmail.com</td>
-                    <td>Active</td>
-                    <td>
-                        <ion-icon name="eye-outline"></ion-icon>
-                        <a href="#" class="text-success" title="Edit"><i class="bx bx-edit"></i></a>
-                        <a href="#" class="text-danger" title="Delete"><i class="bx bx-trash"></i></a>
+  <button class='icon-button archive' title='Archive' onclick=\"promptArchiveStudent('{$row['student_no']}')\">
+    <ion-icon name='archive-outline'></ion-icon>
+</button>
+              </td>";
+                            echo "</tr>";
+                        }
+                    } else {
+                        echo "<tr><td colspan='7'>No student records found.</td></tr>";
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </div>
+        <!-- Archived Students Table -->
+        <div id="archivedStudents" style="display: none;" class="user-box">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Archive ID</th>
+                        <th>Student no</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email</th>
+                        <th>Archived at</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $archivedQuery = mysqli_query($conn, "SELECT * FROM archived_acc WHERE role = 'student'");
+                    if (mysqli_num_rows($archivedQuery) > 0) {
+                        while ($archived = mysqli_fetch_assoc($archivedQuery)) {
+                            echo "<tr>";
+                            echo "<td>" . htmlspecialchars($archived['archived_id']) . "</td>";
+                            echo "<td>" . htmlspecialchars($archived['user_id']) . "</td>";
+                            echo "<td>" . htmlspecialchars($archived['first_name']) . "</td>";
+                            echo "<td>" . htmlspecialchars($archived['last_name']) . "</td>";
+                            echo "<td>" . htmlspecialchars($archived['email']) . "</td>";
+                            echo "<td>" . htmlspecialchars($archived['archived_at']) . "</td>";
+                            echo "<td>
+
+  <button class='icon-button restore' title='Restore' onclick=\"promptRestoreStudent('{$archived['archived_id']}')\">
+        <ion-icon name='refresh-outline'></ion-icon>
+    </button>
+              </td>";
+                            echo "</tr>";
+                        }
+                    } else {
+                        echo "<tr><td colspan='6'>No archived students found.</td></tr>";
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </div>
+        <script>
+            function toggleView() {
+                const active = document.getElementById("activeStudents");
+                const archived = document.getElementById("archivedStudents");
+                const button = document.querySelector(".archive-toggle-btn");
+
+                if (active.style.display === "none") {
+                    active.style.display = "block";
+                    archived.style.display = "none";
+                    button.textContent = "View Archived Students";
+                } else {
+                    active.style.display = "none";
+                    archived.style.display = "block";
+                    button.textContent = "Back to Active Students";
+                }
+            }
+
+function promptArchiveStudent(studentNo) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You want to archive this student?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, archive it!',
+        cancelButtonColor: '#d33',
+        confirmButtonColor: '#3085d6'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: 'LIBRARIAN_ARCHIVE_STUDENT.php',
+                type: 'POST',
+                data: { student_no: studentNo },
+                success: function(response) {
+                    if (response == 'success') {
+                        Swal.fire('Archived!', 'The student has been archived.', 'success').then(() => {
+                            window.location.replace('librarian_user_management.php');
+                        });
+                    } else {
+                        Swal.fire('Error!', 'Failed to archive the student.', 'error');
+                    }
+                }
+            });
+        }
+    });
+}
+
+function promptRestoreStudent(archivedId) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You want to restore this student?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, restore it!',
+        cancelButtonColor: '#d33',
+        confirmButtonColor: '#3085d6'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: 'LIBRARIAN_RESTORE_STUDENT.php',
+                type: 'POST',
+                data: { archived_id: archivedId },
+                success: function(response) {
+                    if (response == 'success') {
+                        Swal.fire('Restored!', 'The student has been restored.', 'success').then(() => {
+                            window.location.replace('librarian_user_management.php');
+                        });
+                    } else {
+                        Swal.fire('Error!', 'Failed to restore the student.', 'error');
+                    }
+                }
+            });
+        }
+    });
+}
 
 
-                    </td>
-                </tr>
-                <tr>
-                    <td>1216</td>
-                    <td>Username</td>
-                    <td>username@gmail.com</td>
-                    <td>Active</td>
-                    <td>
-                        <ion-icon name="eye-outline"></ion-icon>
-                        <a href="#" class="text-success" title="Edit"><i class="bx bx-edit"></i></a>
-                        <a href="#" class="text-danger" title="Delete"><i class="bx bx-trash"></i></a>
+        </script>
 
 
-                    </td>
-                </tr>
-                <tr>
-                    <td>1216</td>
-                    <td>Username</td>
-                    <td>username@gmail.com</td>
-                    <td>Active</td>
-                    <td>
-                        <ion-icon name="eye-outline"></ion-icon>
-                        <a href="#" class="text-success" title="Edit"><i class="bx bx-edit"></i></a>
-                        <a href="#" class="text-danger" title="Delete"><i class="bx bx-trash"></i></a>
-
-
-                    </td>
-                </tr>
-                <tr>
-                    <td>1216</td>
-                    <td>Username</td>
-                    <td>username@gmail.com</td>
-                    <td>Active</td>
-                    <td>
-                        <ion-icon name="eye-outline"></ion-icon>
-                        <a href="#" class="text-success" title="Edit"><i class="bx bx-edit"></i></a>
-                        <a href="#" class="text-danger" title="Delete"><i class="bx bx-trash"></i></a>
-
-
-                    </td>
-                </tr>
-                <tr>
-                    <td>1216</td>
-                    <td>Username</td>
-                    <td>username@gmail.com</td>
-                    <td>Active</td>
-                    <td>
-                        <ion-icon name="eye-outline"></ion-icon>
-                        <a href="#" class="text-success" title="Edit"><i class="bx bx-edit"></i></a>
-                        <a href="#" class="text-danger" title="Delete"><i class="bx bx-trash"></i></a>
-
-
-                    </td>
-                </tr>
-                <tr>
-                    <td>1216</td>
-                    <td>Username</td>
-                    <td>username@gmail.com</td>
-                    <td>Inactive</td>
-                    <td>
-                        <ion-icon name="eye-outline"></ion-icon>
-                        <a href="#" class="text-success" title="Edit"><i class="bx bx-edit"></i></a>
-                        <a href="#" class="text-danger" title="Delete"><i class="bx bx-trash"></i></a>
-
-
-                    </td>
-                </tr>
-                <tr>
-                    <td>1216</td>
-                    <td>Username</td>
-                    <td>username@gmail.com</td>
-                    <td>Inactive</td>
-                    <td>
-                        <ion-icon name="eye-outline"></ion-icon>
-                        <a href="#" class="text-success" title="Edit"><i class="bx bx-edit"></i></a>
-                        <a href="#" class="text-danger" title="Delete"><i class="bx bx-trash"></i></a>
-
-
-                    </td>
-                </tr>
-                <tr>
-                    <td>1216</td>
-                    <td>Username</td>
-                    <td>username@gmail.com</td>
-                    <td>Active</td>
-                    <td>
-                        <ion-icon name="eye-outline"></ion-icon>
-                        <a href="#" class="text-success" title="Edit"><i class="bx bx-edit"></i></a>
-                        <a href="#" class="text-danger" title="Delete"><i class="bx bx-trash"></i></a>
-
-
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-
-        <!-- Pagination -->
-        <nav aria-label="Page navigation">
-            <ul class="pagination justify-content-center">
-                <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item"><a class="page-link" href="#">Next</a></li>
-            </ul>
-        </nav>
-    </div>
-    <!-- Content HERE End -->
-
-
-
-    </div>
 </body>
 
 </html>

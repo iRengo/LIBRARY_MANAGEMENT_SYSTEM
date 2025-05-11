@@ -1,3 +1,36 @@
+<?php
+
+include '../Homepage/db_connect.php';
+
+if (isset($_SESSION['acc_no'])) {
+    $studentNo = $_SESSION['acc_no'];  
+
+
+    $query = "SELECT first_name FROM stud_acc WHERE acc_no = ?";
+    if ($stmt = $conn->prepare($query)) {
+        $stmt->bind_param("s", $studentNo); 
+        $stmt->execute();
+        $stmt->store_result();
+
+        if ($stmt->num_rows > 0) {
+            $stmt->bind_result($studentFirstName); 
+            $stmt->fetch();
+        } else {
+
+            $studentFirstName = "Student";
+        }
+
+        $stmt->close();
+    } else {
+
+        $studentFirstName = "Student";
+    }
+} else {
+
+    $studentFirstName = "Student";
+}
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -35,7 +68,7 @@
                     <div class="admin-gradient">
                         <a href="#">
 
-                            <span class="title1">GIGA NIGGA</span>
+                           <span class="title1"><?php echo htmlspecialchars($studentFirstName); ?></span>
                         </a>
                     </div>
                 </li>

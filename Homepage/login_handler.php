@@ -1,6 +1,5 @@
 <?php
 session_start();
-
 include 'db_connect.php';
 
 // Check connection
@@ -35,7 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // 1️⃣ **Check if the user is an admin**
-    $stmt = $conn->prepare("SELECT admin_no, password FROM admin_acc WHERE admin_no = ?");
+    $stmt = $conn->prepare("SELECT admin_no, password, first_name FROM admin_acc WHERE admin_no = ?");
     if (!$stmt) {
         die("Query Error: " . $conn->error);
     }
@@ -44,25 +43,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->store_result();
 
     if ($stmt->num_rows === 1) {
-        $stmt->bind_result($admin_no, $hashed_password);
+        $stmt->bind_result($admin_no, $hashed_password, $first_name);
         $stmt->fetch();
         $stmt->close();
 
         // Use password_verify for hashed admin passwords
         if (password_verify($password, $hashed_password)) {
             $_SESSION['admin_no'] = $admin_no;
+            $_SESSION['first_name'] = $first_name;  // Store first_name in session
+
+            // ✅ Update last_logged_in
+            $update = $conn->prepare("UPDATE admin_acc SET last_logged_in = NOW() WHERE admin_no = ?");
+            $update->bind_param("s", $admin_no);
+            $update->execute();
+            $update->close();
+
             header("Location: ../admin-side/admin_dashboard.php");
-            exit();
-        } else {
-            $_SESSION['error_message'] = "Invalid password!";
-            header("Location: signin.php");
             exit();
         }
     }
     $stmt->close();
 
     // 2️⃣ **Check if the user is a librarian**
-    $stmt = $conn->prepare("SELECT librarian_no, password FROM librarian_acc WHERE librarian_no = ?");
+    $stmt = $conn->prepare("SELECT librarian_no, password, first_name FROM librarian_acc WHERE librarian_no = ?");
     if (!$stmt) {
         die("Query Error: " . $conn->error);
     }
@@ -71,26 +74,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->store_result();
 
     if ($stmt->num_rows === 1) {
-        $stmt->bind_result($librarian_no, $hashed_password);
+        $stmt->bind_result($librarian_no, $hashed_password, $first_name);
         $stmt->fetch();
         $stmt->close();
 
         // Use password_verify for hashed librarian passwords
         if (password_verify($password, $hashed_password)) {
             $_SESSION['librarian_no'] = $librarian_no;
+            $_SESSION['first_name'] = $first_name;  // Store first_name in session
+
+            // ✅ Update last_logged_in
+            $update = $conn->prepare("UPDATE librarian_acc SET last_logged_in = NOW() WHERE librarian_no = ?");
+            $update->bind_param("s", $librarian_no);
+            $update->execute();
+            $update->close();
+
             header("Location: ../librarian-side/librarian_dashboard.php");
-            exit();
-        } else {
-            $_SESSION['error_message'] = "Invalid password!";
-            header("Location: signin.php");
             exit();
         }
     }
     $stmt->close();
 
     // 3️⃣ **Check if the user is a student**
-    $stmt = $conn->prepare("SELECT acc_no, student_no, password, verified FROM stud_acc WHERE student_no = ?");
-
+    $stmt = $conn->prepare("SELECT acc_no, student_no, password, first_name, verified FROM stud_acc WHERE student_no = ?");
     if (!$stmt) {
         die("Query Error: " . $conn->error);
     }
@@ -99,7 +105,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->store_result();
 
     if ($stmt->num_rows === 1) {
-        $stmt->bind_result($acc_no, $student_no, $hashed_password, $verified);
+        $stmt->bind_result($acc_no, $student_no, $hashed_password, $first_name, $verified);
         $stmt->fetch();
         $stmt->close();
 
@@ -113,11 +119,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (password_verify($password, $hashed_password)) {
             $_SESSION['acc_no'] = $acc_no;
             $_SESSION['student_no'] = $student_no;
+            $_SESSION['first_name'] = $first_name;  // Store first_name in session
+
+            // ✅ Update last_logged_in
+            $update = $conn->prepare("UPDATE stud_acc SET last_logged_in = NOW() WHERE student_no = ?");
+            $update->bind_param("s", $student_no);
+            $update->execute();
+            $update->close();
+
             header("Location: ../user-side/user_dashboard.php");
-            exit();
-        } else {
-            $_SESSION['error_message'] = "Invalid password!";
-            header("Location: signin.php");
             exit();
         }
     }

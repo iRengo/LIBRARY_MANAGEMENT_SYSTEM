@@ -1,3 +1,38 @@
+<?php
+
+include '../Homepage/db_connect.php';
+
+if (isset($_SESSION['librarian_no'])) {
+    $librarianNo = $_SESSION['librarian_no'];  
+
+
+    $query = "SELECT first_name FROM librarian_acc WHERE librarian_no = ?";
+    if ($stmt = $conn->prepare($query)) {
+        $stmt->bind_param("s", $librarianNo); 
+        $stmt->execute();
+        $stmt->store_result();
+
+        if ($stmt->num_rows > 0) {
+            $stmt->bind_result($librarianFirstName); 
+            $stmt->fetch();
+        } else {
+
+            $librarianFirstName = "Librarian";
+        }
+
+        $stmt->close();
+    } else {
+
+        $librarianFirstName = "Librarian";
+    }
+} else {
+
+    $librarianFirstName = "Librarian";
+}
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -34,7 +69,7 @@
                 <li>
                     <div class="admin-gradient">
                         <a href="#">
-                            <span class="title1">LIBRARIAN NIGGA</span>
+                           <span class="title1"><?php echo htmlspecialchars($librarianFirstName); ?></span>
                         </a>
                     </div>
                 </li>

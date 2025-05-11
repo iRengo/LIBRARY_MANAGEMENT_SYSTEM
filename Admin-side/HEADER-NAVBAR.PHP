@@ -1,3 +1,37 @@
+<?php
+
+include '../Homepage/db_connect.php';
+
+if (isset($_SESSION['admin_no'])) {
+    $AdminNo = $_SESSION['admin_no'];  
+
+
+    $query = "SELECT first_name FROM admin_acc WHERE admin_no = ?";
+    if ($stmt = $conn->prepare($query)) {
+        $stmt->bind_param("s", $AdminNo); 
+        $stmt->execute();
+        $stmt->store_result();
+
+        if ($stmt->num_rows > 0) {
+            $stmt->bind_result($adminFirstName); 
+            $stmt->fetch();
+        } else {
+
+            $adminFirstname = "Admin";
+        }
+
+        $stmt->close();
+    } else {
+
+        $AdminFirstName = "Admin";
+    }
+} else {
+
+    $AdminFirstName = "Admin";
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -34,7 +68,7 @@
                 <li>
                     <div class="admin-gradient">
                         <a href="#">
-                            <span class="title1">ADMIN NIGGA</span>
+                                 <span class="title1"><?php echo htmlspecialchars($adminFirstName); ?></span>
                         </a>
                     </div>
                 </li>
