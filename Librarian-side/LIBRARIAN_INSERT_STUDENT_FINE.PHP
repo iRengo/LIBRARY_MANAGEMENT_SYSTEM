@@ -8,15 +8,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $fine_id = $_POST['fine_id'];
     $student_no = $_POST['student_no'];
     $book_id = $_POST['book_id'];
-    $borrow_id = $_POST['borrow_id']; // added this line
+    $borrow_id = $_POST['borrow_id'];
     $date_issued = date('Y-m-d H:i:s');
     $status = 'Unpaid';
 
-    $stmt = $conn->prepare("INSERT INTO student_fines (student_no, book_id, fine_id, date_issued, status) VALUES (?, ?, ?, ?, ?)");
-    $stmt->bind_param("ssiss", $student_no, $book_id, $fine_id, $date_issued, $status);
+    // Handle file upload
+    $upload_dir = 'proofs/';
+    $proof_filename = null;
+
+    if (!empty($_FILES['proof_image']['name'])) {
+        $file_tmp = $_FILES['proof_image']['tmp_name'];
+        $file_name = basename($_FILES['proof_image']['name']);
+        $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+        $allowed_ext = ['jpg', 'jpeg', 'png', 'gif'];
+
+        if (!in_array($file_ext, $allowed_ext)) {
+            echo json_encode(["success" => false, "message" => "Invalid file type. Only JPG, PNG, and GIF allowed."]);
+            exit;
+        }
+
+        $new_filename = uniqid("proof_") . '.' . $file_ext;
+        $target_path = $upload_dir . $new_filename;
+
+        
+        if (!move_uploaded_file($file_tmp, $target_path)) {
+            echo json_encode(["success" => false, "message" => "Failed to upload proof image."]);
+            exit;
+        }
+
+        $proof_filename = $new_filename;
+    }
+
+    // You can also store $proof_filename in the database if your table supports it
+   $stmt = $conn->prepare("INSERT INTO student_fines (student_no, book_id, fine_id, date_issued, status, proof) VALUES (?, ?, ?, ?, ?, ?)");
+$stmt->bind_param("ssisss", $student_no, $book_id, $fine_id, $date_issued, $status, $proof_filename);
+
 
     if ($stmt->execute()) {
-        // Now update the borrowed_books table
+        // Update book status
         $update = $conn->prepare("UPDATE borrowed_books SET status = 'Returned' WHERE borrow_id = ?");
         $update->bind_param("s", $borrow_id);
         if ($update->execute()) {

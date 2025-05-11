@@ -15,7 +15,7 @@ include '../Homepage/db_connect.php'; // adjust path if needed
 
 <body>
     <?php include 'HEADER-NAVBAR.PHP'; ?>
-    
+
 
     <div class="notifications-container">
         <h2>Librarian Notifications</h2>
@@ -28,6 +28,8 @@ include '../Homepage/db_connect.php'; // adjust path if needed
                 <li onclick="filterSection('due')" data-section="due">Due Books</li>
                 <li onclick="filterSection('overdue')" data-section="overdue">Overdue Books</li>
                 <li onclick="filterSection('returned')" data-section="returned">Returned Books</li>
+                <li onclick="filterSection('unpaid')" data-section="unpaid">Unpaid Fines</li>
+
             </ul>
         </div>
         <div id="borrow" class="tab-content active-tab">
@@ -87,7 +89,7 @@ include '../Homepage/db_connect.php'; // adjust path if needed
                 </tbody>
             </table>
         </div>
-        
+
 
         <div id="reserve" class="tab-content">
             <table>
@@ -280,19 +282,72 @@ include '../Homepage/db_connect.php'; // adjust path if needed
             </table>
         </div>
 
+        <div id="unpaid" class="tab-content">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student No</th>
+                        <th>Book Title</th>
+                        <th>Reason</th>
+                        <th>Fine Amount</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $fines_sql = "
+    SELECT 
+        sf.student_no,
+        b.book_title,
+        f.fine_name,
+        f.price AS fine_amount,
+        sf.status,
+        sf.fine_id,
+        sf.proof
+    FROM student_fines sf
+    LEFT JOIN tbl_books b ON sf.book_id = b.book_id
+    LEFT JOIN fines_table f ON sf.fine_id = f.fine_id
+    WHERE sf.status = 'unpaid'
+    ORDER BY sf.fine_id DESC
+";
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-    document.querySelectorAll(".return-btn").forEach(button => {
-        button.addEventListener("click", function () {
-            const borrowId = this.dataset.borrowId;
-            const studentNo = this.dataset.studentNo;
-            const bookId = this.dataset.bookId;
-            const bookTitle = this.dataset.bookTitle;
+                    $fines_result = mysqli_query($conn, $fines_sql);
 
-            Swal.fire({
-                title: 'Return Book',
-                html: `
+                    if ($fines_result && mysqli_num_rows($fines_result) > 0) {
+                        while ($fine = mysqli_fetch_assoc($fines_result)) {
+                            echo "<tr>
+            <td>{$fine['student_no']}</td>
+            <td>{$fine['book_title']}</td>
+            <td>{$fine['fine_name']}</td>
+            <td>₱{$fine['fine_amount']}</td>
+            <td style='color: red; font-weight: bold;'>{$fine['status']}</td>
+            <td>
+            <button onclick=\"markFineAsPaid({$fine['fine_id']})\" style='background: green; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;'>Mark as Paid</button>
+            <button onclick=\"viewProofImage('{$fine['proof']}')\" style='background: #007bff; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-left: 5px;'>View</button>
+            </td>
+        </tr>";
+                        }
+                    } else {
+                        echo "<tr><td colspan='6'>No unpaid fines found.</td></tr>";
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </div>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                document.querySelectorAll(".return-btn").forEach(button => {
+                    button.addEventListener("click", function() {
+                        const borrowId = this.dataset.borrowId;
+                        const studentNo = this.dataset.studentNo;
+                        const bookId = this.dataset.bookId;
+                        const bookTitle = this.dataset.bookTitle;
+
+                        Swal.fire({
+                            title: 'Return Book',
+                            html: `
                     <p><strong>Book Title:</strong> ${bookTitle}</p>
                     <p><strong>Student No:</strong> ${studentNo}</p>
                     <select id="book_condition" class="swal2-select" style="width: 100%; padding: 8px; margin-top: 10px;">
@@ -302,92 +357,101 @@ document.addEventListener("DOMContentLoaded", () => {
                         <option value="2">Damaged-Medium</option>
                         <option value="3">Damaged-High</option>
                     </select>
+                    <div id="proof-section" style="display: none; margin-top: 10px;">
+                        <label for="proof_image">Upload Proof of Damage:</label><br>
+                        <input type="file" id="proof_image" accept="image/*">
+                    </div>
                 `,
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonText: 'Confirm',
-                preConfirm: () => {
-                    const bookCondition = Swal.getPopup().querySelector('#book_condition').value;
-                    if (!bookCondition) {
-                        Swal.showValidationMessage('Please select the book condition.');
-                        return false;
-                    }
+                            didOpen: () => {
+                                const conditionSelect = Swal.getPopup().querySelector('#book_condition');
+                                const proofSection = Swal.getPopup().querySelector('#proof-section');
 
-                    return {
-                        borrow_id: borrowId,
-                        student_no: studentNo,
-                        book_id: bookId,
-                        book_condition: bookCondition
-                    };
-                }
-            }).then((result) => {
-                if (result.isConfirmed && result.value) {
-                    const { borrow_id, student_no, book_id, book_condition } = result.value;
-
-                    if (book_condition === "Good") {
-                        // Process normal return
-                        fetch('librarian_returned_book.php', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded'
-                            },
-                            body: new URLSearchParams(result.value)
-                        })
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.success) {
-                                Swal.fire('Success', data.message, 'success').then(() => location.reload());
-                            } else {
-                                Swal.fire('Error', data.message, 'error');
-                            }
-                        });
-                    } else {
-                        // Process fine
-                        fetch('librarian_get_fine_amount.php', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({ fine_id: parseInt(book_condition) })
-                        })
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.success) {
-                                // Send to fine processor
-                                fetch('LIBRARIAN_INSERT_STUDENT_FINE.php', {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/x-www-form-urlencoded'
-                                    },
-                                    body: new URLSearchParams({
-                                        fine_id: book_condition,
-                                        student_no: student_no,
-                                        book_id: book_id,
-                                        borrow_id: borrowId
-                                    })
-                                })
-                                .then(res => res.json())
-                                .then(fineRes => {
-                                    if (fineRes.success) {
-                                        Swal.fire('Fine Issued', fineRes.message, 'warning').then(() => location.reload());
+                                conditionSelect.addEventListener('change', () => {
+                                    if (conditionSelect.value !== "Good" && conditionSelect.value !== "") {
+                                        proofSection.style.display = 'block';
                                     } else {
-                                        Swal.fire('Error', fineRes.message, 'error');
+                                        proofSection.style.display = 'none';
                                     }
                                 });
-                            } else {
-                                Swal.fire('Error', data.message, 'error');
+                            },
+                            showCancelButton: true,
+                            confirmButtonText: 'Confirm',
+                            preConfirm: () => {
+                                const bookCondition = Swal.getPopup().querySelector('#book_condition').value;
+                                const proofImage = Swal.getPopup().querySelector('#proof_image').files[0];
+
+                                if (!bookCondition) {
+                                    Swal.showValidationMessage('Please select the book condition.');
+                                    return false;
+                                }
+
+                                if (bookCondition !== "Good" && !proofImage) {
+                                    Swal.showValidationMessage('Please upload a proof of damage image.');
+                                    return false;
+                                }
+
+                                return {
+                                    borrow_id: borrowId,
+                                    student_no: studentNo,
+                                    book_id: bookId,
+                                    book_condition: bookCondition,
+                                    proof_image: proofImage || null
+                                };
+                            }
+                        }).then((result) => {
+                            if (result.isConfirmed && result.value) {
+                                const {
+                                    borrow_id,
+                                    student_no,
+                                    book_id,
+                                    book_condition,
+                                    proof_image
+                                } = result.value;
+
+                                if (book_condition === "Good") {
+                                    fetch('librarian_returned_book.php', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/x-www-form-urlencoded'
+                                            },
+                                            body: new URLSearchParams({
+                                                borrow_id,
+                                                student_no,
+                                                book_id,
+                                                book_condition
+                                            })
+                                        })
+                                        .then(res => res.json())
+                                        .then(data => {
+                                            Swal.fire(data.success ? 'Success' : 'Error', data.message, data.success ? 'success' : 'error')
+                                                .then(() => data.success && location.reload());
+                                        });
+                                } else {
+                                    const formData = new FormData();
+                                    formData.append("fine_id", book_condition);
+                                    formData.append("student_no", student_no);
+                                    formData.append("book_id", book_id);
+                                    formData.append("borrow_id", borrow_id);
+                                    formData.append("proof_image", proof_image);
+                                    fetch('LIBRARIAN_INSERT_STUDENT_FINE.php', {
+                                            method: 'POST',
+                                            body: formData
+                                        })
+                                        .then(res => res.json())
+                                        .then(fineRes => {
+                                            Swal.fire(fineRes.success ? 'Fine Issued' : 'Error', fineRes.message, fineRes.success ? 'warning' : 'error')
+                                                .then(() => fineRes.success && location.reload());
+                                        });
+                                }
                             }
                         });
-                    }
-                }
+                    });
+                });
             });
-        });
-    });
-});
 
 
             function filterSection(sectionId) {
-                const sections = ['borrow', 'pickup', 'reserve', 'due', 'overdue', 'returned'];
+                const sections = ['borrow', 'pickup', 'reserve', 'due', 'overdue', 'returned', 'unpaid'];
 
                 // Show/Hide content
                 sections.forEach(id => {
@@ -437,6 +501,27 @@ document.addEventListener("DOMContentLoaded", () => {
                     });
             }
 
+            function viewProofImage(imageFile) {
+                if (imageFile) {
+                    Swal.fire({
+                        title: 'Proof Image',
+                        imageUrl: 'proofs/' + imageFile, // Change path as needed
+                        imageAlt: 'Proof Image',
+                        width: 600,
+                        imageWidth: 500,
+                        imageHeight: 400,
+                        confirmButtonText: 'Close'
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'No proof available',
+                        text: 'There is no proof image uploaded for this fine.'
+                    });
+                }
+            }
+
+
             function declineRequest(borrow_id, student_no, email, title, contact, preferred_date) {
                 Swal.fire({
                     title: 'Reason for Decline',
@@ -471,6 +556,39 @@ document.addEventListener("DOMContentLoaded", () => {
                             .then(data => {
                                 Swal.fire('Declined', 'Request declined and logged.', 'info').then(() => location.reload());
                             });
+                    }
+                });
+            }
+
+            function markFineAsPaid(fineId) {
+                Swal.fire({
+                    title: "Confirm Payment?",
+                    text: "Are you sure this fine has been paid?",
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Yes, mark as paid"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        var formData = new FormData();
+                        formData.append('fine_id', fineId); // FIXED: now using fine_id
+
+                        var xhr = new XMLHttpRequest();
+                        xhr.open('POST', 'LIBRARIAN_MARK_PAID.PHP', true);
+                        xhr.onreadystatechange = function() {
+                            if (xhr.readyState === 4 && xhr.status === 200) {
+                                console.log(xhr.responseText);
+                                if (xhr.responseText.includes("Fine marked as paid")) {
+                                    Swal.fire("Updated!", "Fine has been marked as paid.", "success").then(() => {
+                                        location.reload();
+                                    });
+                                } else {
+                                    Swal.fire("Error!", xhr.responseText, "error");
+                                }
+                            }
+                        };
+                        xhr.send(formData);
                     }
                 });
             }
