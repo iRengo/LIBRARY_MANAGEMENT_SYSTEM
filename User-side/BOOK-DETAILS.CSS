@@ -812,3 +812,16 @@ form .form-group {
 .submit-button:hover {
     background-color: #3f7edc;
 }
+.borrow-button.again {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    margin-top: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.borrow-button.again:hover {
+    background-color: #218838;
+}

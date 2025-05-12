@@ -213,25 +213,41 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reaction'])) {
     exit();
 }
 
-$borrow_blocked = false;
-$today = date('Y-m-d' , strtotime('-1 day'));
 
-//dipa ayos to 
+
+/* 
+$borrow_blocked = false;
+$today = date('Y-m-d', strtotime('18 ' . date('F Y')));  // Set to the 18th of the current month
+
+// Set the grace period to 3 days
+$grace_period = 3;
+
 // Check if the user has any overdue books
 $overdue = "SELECT * FROM borrowed_books 
             WHERE student_no = ? 
             AND status = 'Borrowed' 
-            AND due_date > ?";
+            AND DATEDIFF(CURRENT_DATE, due_date) < ?";
+
+// Prepare the SQL statement
 $check_overdue = $conn->prepare($overdue);
-$check_overdue->bind_param("ss", $student_no, $today);
+
+// Bind parameters: student number and grace period (grace period is an integer)
+$check_overdue->bind_param("si", $student_no, $grace_period); 
+
+// Execute the query
 $check_overdue->execute();
+
+// Get the result of the query
 $check_overdue_result = $check_overdue->get_result();
 
+// If there are any overdue books, set $borrow_blocked to true
 if ($check_overdue_result->num_rows > 0) {
     $borrow_blocked = true; // Set to true if there are overdue books
 }
 
+// Close the prepared statement to free resources
 $check_overdue->close();
+*/
 
 
 
@@ -265,6 +281,21 @@ $stmt_check->close();
 // Flags for UI logic
 $already_borrowed = ($borrow_status === 'Borrowed');
 $borrow_pending = ($borrow_status === 'Pending');
+
+
+
+$can_borrow_again = false;
+if ($borrow_status === 'Returned') {
+    $check_return_query = $conn->prepare("SELECT * FROM borrowed_books WHERE student_no = ? AND book_id = ? AND status = 'Returned' LIMIT 1");
+    $check_return_query->bind_param("si", $student_no, $book_id);
+    $check_return_query->execute();
+    $return_result = $check_return_query->get_result();
+
+    if ($return_result->num_rows > 0) {
+        $can_borrow_again = true;
+    }
+    $check_return_query->close();
+}
 ?>
 
 
@@ -276,6 +307,11 @@ $borrow_pending = ($borrow_status === 'Pending');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($book['book_title']); ?> - Book Details</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+
     <link rel="stylesheet" href="book-details.css">
 
 </head>
@@ -303,10 +339,12 @@ $borrow_pending = ($borrow_status === 'Pending');
                 <button class="borrow-button blocked" disabled>
                     Already Borrowed
                 </button>
-            <?php elseif ($borrow_blocked): ?>
+
+          <?php elseif ($borrow_blocked): ?> 
                 <button class="borrow-button blocked" disabled>
                     Borrow Blocked (Overdue Book Detected)
-                </button>
+                </button> 
+
             <?php elseif ($borrow_pending): ?>
                 <button class="borrow-button pending" disabled>
                     Borrowing in Process
@@ -315,9 +353,9 @@ $borrow_pending = ($borrow_status === 'Pending');
                 <button class="borrow-button available" id="borrow-btn">
                     Borrow This
                 </button>
-
             <?php elseif ($borrow_status === null && $book['book_stocks'] == 0): ?>
                 <?php if (!$book_reserved): ?>
+
                     <form method="POST" action="book_reserve.php">
                         <input type="hidden" name="book_id" value="<?= htmlspecialchars($book['book_id']); ?>">
                         <input type="hidden" name="book_title" value="<?= htmlspecialchars($book['book_title']); ?>">
@@ -328,7 +366,6 @@ $borrow_pending = ($borrow_status === 'Pending');
                         <input type="hidden" name="first_name" value="<?= htmlspecialchars($first_name); ?>">
                         <input type="hidden" name="last_name" value="<?= htmlspecialchars($last_name); ?>">
                         <input type="hidden" name="email" value="<?= htmlspecialchars($email); ?>">
-
                         <button type="submit" class="borrow-button reserve">
                             Reserve This
                         </button>
@@ -339,6 +376,16 @@ $borrow_pending = ($borrow_status === 'Pending');
                     </button>
                 <?php endif; ?>
             <?php endif; ?>
+
+            <?php
+            // Only show the "Borrow Again" button if the book has been returned before
+            if ($can_borrow_again): ?>
+                <button type="button" class="borrow-button again" id="borrow-again-btn">
+                    Borrow Again!
+                </button>
+            <?php endif; ?>
+
+
 
 
             <?php if (isset($_GET['success']) && $_GET['success'] == 1): ?>
@@ -506,7 +553,8 @@ $borrow_pending = ($borrow_status === 'Pending');
                     <div class="form-group">
                         <div class="input-container">
                             <label for="preferred_date">Preferred Date</label>
-                            <input type="date" id="preferred_date" name="preferred_date" required>
+                            <input type="date" id="preferred_date" name="preferred_date">
+
                         </div>
                         <div class="input-container">
                             <label>Borrowing Request ID:</label>
@@ -552,20 +600,19 @@ $borrow_pending = ($borrow_status === 'Pending');
     </div>
 
     <script>
-        
-        document.addEventListener("DOMContentLoaded", function() {
-            document.querySelectorAll(".btn-borrow").forEach(button => {
-                button.addEventListener("click", function() {
-                    let bookTitle = document.getElementById("top-title").innerText;
-                    let bookAuthor = ""; // Set author dynamically if available
-                    let bookISBN = ""; // Set ISBN dynamically if available
+        // document.addEventListener("DOMContentLoaded", function() {
+        //     document.querySelectorAll(".btn-borrow").forEach(button => {
+        //         button.addEventListener("click", function() {
+        //          let bookTitle = document.getElementById("top-title").innerText;
+        //            let bookAuthor = ""; // Set author dynamically if available
+        //          let bookISBN = ""; // Set ISBN dynamically if available
 
-                    document.getElementById("bookTitle").value = bookTitle;
-                    document.getElementById("author").value = bookAuthor;
-                    document.getElementById("isbn").value = bookISBN;
-                });
-            });
-        });
+        //          document.getElementById("bookTitle").value = bookTitle;
+        //        document.getElementById("author").value = bookAuthor;
+        //          document.getElementById("isbn").value = bookISBN;
+        //      });
+        //      });
+        //     });
     </script>
     <script>
         // Redirect function to open new book details
@@ -573,56 +620,100 @@ $borrow_pending = ($borrow_status === 'Pending');
             window.location.href = 'book-details.php?book_id=' + bookId;
         }
     </script>
-
-    <script>
-        document.getElementById("borrow-btn").addEventListener("click", function() {
-            document.getElementById("book-info").style.display = "none";
-            document.getElementById("borrow-form").style.display = "block";
-        });
-
-        document.getElementById("cancel-borrow").addEventListener("click", function() {
-            document.getElementById("borrow-form").style.display = "none";
-            document.getElementById("book-info").style.display = "block";
-        });
-    </script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const borrowBtn = document.getElementById("borrow-btn"); // "Borrow This" button
-            const reserveBtn = document.querySelector("[data-bs-target='#reserveModal']"); // "Reserve This" button
-            const addToCollectionBtn = document.querySelector("button[name='add_to_collection']"); // "Add to Collection" button
-            const borrowForm = document.getElementById("borrow-form"); // Borrow form section
-            const cancelBtn = document.getElementById("cancel-borrow"); // Cancel button in borrow form
+            // Reusable function to show the borrow form
+            function showBorrowForm() {
+                const bookInfo = document.getElementById("book-info");
+                const borrowForm = document.getElementById("borrow-form");
+                const borrowBtn = document.getElementById("borrow-btn");
+                const borrowAgainBtn = document.getElementById("borrow-again-btn");
+                const reserveBtn = document.querySelector("[data-bs-target='#reserveModal']");
+                const addToCollectionBtn = document.querySelector("button[name='add_to_collection']");
 
-            if (borrowBtn) {
-                borrowBtn.addEventListener("click", function() {
-                    // Hide the buttons
-                    borrowBtn.style.display = "none";
-                    if (reserveBtn) reserveBtn.style.display = "none";
-                    if (addToCollectionBtn) addToCollectionBtn.style.display = "none";
+                // Hide book info and buttons
+                if (bookInfo) bookInfo.style.display = "none";
+                if (borrowBtn) borrowBtn.style.display = "none";
+                if (borrowAgainBtn) borrowAgainBtn.style.display = "none";
+                if (reserveBtn) reserveBtn.style.display = "none";
+                if (addToCollectionBtn) addToCollectionBtn.style.display = "none";
 
-                    // Show the borrow form
-                    borrowForm.style.display = "block";
-                });
+                // Show borrow form
+                borrowForm.style.display = "block";
             }
 
-            if (cancelBtn) {
-                cancelBtn.addEventListener("click", function() {
-                    // Show the buttons again
-                    borrowBtn.style.display = "block";
-                    if (reserveBtn) reserveBtn.style.display = "block";
-                    if (addToCollectionBtn) addToCollectionBtn.style.display = "block";
+            // Reusable function to hide the borrow form and show the book info with buttons
+            function hideBorrowForm() {
+                const bookInfo = document.getElementById("book-info");
+                const borrowForm = document.getElementById("borrow-form");
+                const borrowBtn = document.getElementById("borrow-btn");
+                const borrowAgainBtn = document.getElementById("borrow-again-btn");
+                const reserveBtn = document.querySelector("[data-bs-target='#reserveModal']");
+                const addToCollectionBtn = document.querySelector("button[name='add_to_collection']");
 
-                    // Hide the borrow form
-                    borrowForm.style.display = "none";
-                });
+                // Hide borrow form
+                borrowForm.style.display = "none";
+
+                // Show book info and restore the buttons
+                if (bookInfo) bookInfo.style.display = "block";
+                if (borrowBtn) borrowBtn.style.display = "block";
+                if (borrowAgainBtn) borrowAgainBtn.style.display = "block";
+                if (reserveBtn) reserveBtn.style.display = "block";
+                if (addToCollectionBtn) addToCollectionBtn.style.display = "block";
+            }
+
+            // Event listeners for borrow and borrow-again buttons
+            const borrowBtn = document.getElementById("borrow-btn");
+            const borrowAgainBtn = document.getElementById("borrow-again-btn");
+
+            if (borrowBtn) {
+                borrowBtn.addEventListener("click", showBorrowForm);
+            }
+
+            if (borrowAgainBtn) {
+                borrowAgainBtn.addEventListener("click", showBorrowForm);
+            }
+
+            // Event listener for cancel button inside borrow form
+            const cancelBtn = document.getElementById("cancel-borrow");
+            if (cancelBtn) {
+                cancelBtn.addEventListener("click", hideBorrowForm);
             }
         });
     </script>
     <script>
-        document.getElementById('preferred_date').addEventListener('change', function() {
-            let preferredDate = new Date(this.value); // Get the selected date
+        function formatDate(date) {
+            let year = date.getFullYear();
+            let month = (date.getMonth() + 1).toString().padStart(2, '0');
+            let day = date.getDate().toString().padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
 
-            // Check if the selected date is a weekend (Saturday or Sunday)
+        window.onload = function() {
+            let today = new Date();
+            let formattedDate = formatDate(today);
+            let input = document.getElementById('preferred_date');
+            input.setAttribute('min', formattedDate);
+
+
+            input.addEventListener('input', function() {
+                let selectedDate = new Date(this.value);
+                let dayOfWeek = selectedDate.getDay();
+                if (dayOfWeek === 6 || dayOfWeek === 0) {
+                    Swal.fire({
+                        title: 'Weekend Not Allowed!',
+                        text: 'The library is closed on weekends. Please select a weekday (Monday to Friday).',
+                        icon: 'warning',
+                        confirmButtonText: 'Okay'
+                    });
+                    this.value = '';
+                }
+            });
+        };
+
+        document.getElementById('preferred_date').addEventListener('change', function() {
+            let preferredDate = new Date(this.value);
+
             if (preferredDate.getDay() === 6 || preferredDate.getDay() === 0) {
                 Swal.fire({
                     title: 'Weekend Not Allowed!',
@@ -630,53 +721,31 @@ $borrow_pending = ($borrow_status === 'Pending');
                     icon: 'warning',
                     confirmButtonText: 'Okay'
                 });
-                this.value = ''; // Clear the selected date
+                this.value = '';
                 return;
             }
 
-            let dueDate = new Date(preferredDate); // Make a copy of the selected date
-            dueDate.setDate(preferredDate.getDate() + 3); // Add 3 days to the preferred date
+            let dueDate = new Date(preferredDate);
+            dueDate.setDate(preferredDate.getDate() + 3);
 
-            // Ensure the due date is not a weekend (Saturday or Sunday)
+
             if (dueDate.getDay() === 6) {
-                dueDate.setDate(dueDate.getDate() + 2); // If due date falls on Saturday, set to Monday
+                dueDate.setDate(dueDate.getDate() + 2);
             } else if (dueDate.getDay() === 0) {
-                dueDate.setDate(dueDate.getDate() + 1); // If due date falls on Sunday, set to Monday
+                dueDate.setDate(dueDate.getDate() + 1);
             }
 
-            // Format the due date in YYYY-MM-DD format
             let year = dueDate.getFullYear();
             let month = (dueDate.getMonth() + 1).toString().padStart(2, '0');
             let day = dueDate.getDate().toString().padStart(2, '0');
 
-            // Set the due date value
+
             document.getElementById('due_date').value = `${year}-${month}-${day}`;
         });
-
-
-
-
-        // Function to refresh book details and status every 2 seconds
-        function refreshBookDetails() {
-            $.ajax({
-                url: 'check_borrow_status.php', // PHP file that fetches the updated data
-                type: 'GET',
-                data: {
-                    book_id: <?php echo $book['book_id']; ?>
-                }, // Pass the book ID to check the status
-                success: function(response) {
-                    // Update the book status, buttons, or any other HTML based on the response
-                    $('#borrow-form').html(response); // For example, update the borrow-form section
-                },
-                error: function() {
-                    console.log('Error in AJAX request');
-                }
-            });
-        }
-
-        // Call the refresh function every 2 seconds
-        setInterval(refreshBookDetails, 2000);
     </script>
+
+
+
 
 
 
