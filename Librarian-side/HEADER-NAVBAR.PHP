@@ -3,17 +3,17 @@
 include '../Homepage/db_connect.php';
 
 if (isset($_SESSION['librarian_no'])) {
-    $librarianNo = $_SESSION['librarian_no'];  
+    $librarianNo = $_SESSION['librarian_no'];
 
 
     $query = "SELECT first_name FROM librarian_acc WHERE librarian_no = ?";
     if ($stmt = $conn->prepare($query)) {
-        $stmt->bind_param("s", $librarianNo); 
+        $stmt->bind_param("s", $librarianNo);
         $stmt->execute();
         $stmt->store_result();
 
         if ($stmt->num_rows > 0) {
-            $stmt->bind_result($librarianFirstName); 
+            $stmt->bind_result($librarianFirstName);
             $stmt->fetch();
         } else {
 
@@ -46,8 +46,8 @@ if (isset($_SESSION['librarian_no'])) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
-    
+
+
 
 
     <!-- ======= Styles ====== -->
@@ -69,7 +69,7 @@ if (isset($_SESSION['librarian_no'])) {
                 <li>
                     <div class="admin-gradient">
                         <a href="#">
-                           <span class="title1"><?php echo htmlspecialchars($librarianFirstName); ?></span>
+                            <span class="title1"><?php echo htmlspecialchars($librarianFirstName); ?></span>
                         </a>
                     </div>
                 </li>
@@ -96,25 +96,39 @@ if (isset($_SESSION['librarian_no'])) {
                 <li>
                     <a href="LIBRARIAN_HISTORY.php">
                         <span class="icon">
-                          <i class='bx bx-history' style="font-size:35px;"></i>
+                            <i class='bx bx-history' style="font-size:35px;"></i>
                         </span>
                         <span class="title">History</span>
                     </a>
                 </li>
 
-                <li>
-                    <a href="LIBRARIAN_NOTIFICATIONS.PHP">
+                <li class="has-dropdown">
+                    <a href=" ">
                         <span class="icon">
                             <ion-icon name="notifications-outline"></ion-icon>
                         </span>
                         <span class="title">Notifications</span>
                     </a>
+                    <ul class="sidebar-dropdown push-inside">
+                        <li></li>
+                        <li><a href="BORROW_REQUEST.PHP">Borrow Requests</a></li>
+                        <li><a href="READY_PICKUP.PHP">Ready to Pickup</a></li>
+                        <li><a href="RESERVED_BOOKS.PHP">Reserved Books</a></li>
+                        <li><a href="DUE_BOOKS.PHP">Due Books</a></li>
+                        <li><a href="OVERDUE_BOOKS.PHP">Overdue Books</a></li>
+                        <li><a href="RETURNED_BOOKS.PHP">Returned Books</a></li>
+                        <li><a href="UNPAID_FINES.PHP">Unpaid Fines</a></li>
+                    </ul>
                 </li>
+
+
+
+
 
                 <li>
                     <a href="LIBRARIAN_USER_MANAGEMENT.PHP">
                         <span class="icon">
-                           <ion-icon name="people-outline"></ion-icon>
+                            <ion-icon name="people-outline"></ion-icon>
                         </span>
                         <span class="title">User Management</span>
                     </a>
@@ -122,7 +136,7 @@ if (isset($_SESSION['librarian_no'])) {
                 <li>
                     <a href="LIBRARIAN_REPORT.PHP">
                         <span class="icon">
-                           <ion-icon name="stats-chart-outline"></ion-icon>
+                            <ion-icon name="stats-chart-outline"></ion-icon>
                         </span>
                         <span class="title">Reports</span>
                     </a>
@@ -181,14 +195,19 @@ if (isset($_SESSION['librarian_no'])) {
                 <div id="notificationPanel" class="notification-panel">
 
                 </div>
-
-
             </div>
 
 
 
 
             <script>
+                function toggleNotificationDropdown(event) {
+                    event.preventDefault(); // Prevent default link behavior
+
+                    const dropdown = document.getElementById("notificationDropdown");
+                    dropdown.style.display = (dropdown.style.display === "block") ? "none" : "block";
+                }
+
                 document.getElementById('logoutIcon').addEventListener('click', function(event) {
                     event.preventDefault();
                     Swal.fire({

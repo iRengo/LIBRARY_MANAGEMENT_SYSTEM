@@ -215,39 +215,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reaction'])) {
 
 
 
-/* 
+
 $borrow_blocked = false;
-$today = date('Y-m-d', strtotime('18 ' . date('F Y')));  // Set to the 18th of the current month
 
-// Set the grace period to 3 days
-$grace_period = 3;
-
-// Check if the user has any overdue books
 $overdue = "SELECT * FROM borrowed_books 
             WHERE student_no = ? 
             AND status = 'Borrowed' 
-            AND DATEDIFF(CURRENT_DATE, due_date) < ?";
+            AND DATEDIFF(CURRENT_DATE, due_date) > 0";
 
-// Prepare the SQL statement
 $check_overdue = $conn->prepare($overdue);
 
-// Bind parameters: student number and grace period (grace period is an integer)
-$check_overdue->bind_param("si", $student_no, $grace_period); 
 
-// Execute the query
+$check_overdue->bind_param("s", $student_no);
+
+
 $check_overdue->execute();
 
-// Get the result of the query
+
 $check_overdue_result = $check_overdue->get_result();
 
-// If there are any overdue books, set $borrow_blocked to true
 if ($check_overdue_result->num_rows > 0) {
-    $borrow_blocked = true; // Set to true if there are overdue books
+    $borrow_blocked = true;
 }
 
-// Close the prepared statement to free resources
 $check_overdue->close();
-*/
+
 
 
 
@@ -340,10 +332,11 @@ if ($borrow_status === 'Returned') {
                     Already Borrowed
                 </button>
 
-          <?php elseif ($borrow_blocked): ?> 
+            <?php elseif ($borrow_blocked): ?>
                 <button class="borrow-button blocked" disabled>
                     Borrow Blocked (Overdue Book Detected)
-                </button> 
+                </button>
+
 
             <?php elseif ($borrow_pending): ?>
                 <button class="borrow-button pending" disabled>

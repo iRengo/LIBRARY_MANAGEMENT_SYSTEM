@@ -1,7 +1,90 @@
-<?php 
+<?php
 session_start();
-include '../homepage/db_connect.php' 
+include '../homepage/db_connect.php';
+
+// Overdue books (borrowed, due date has passed)
+$overdue_query = "SELECT COUNT(*) AS total FROM borrowed_books WHERE status = 'Borrowed' AND DATEDIFF(CURRENT_DATE, due_date) > 0";
+$overdue_result = $conn->query($overdue_query);
+$overdue_count = $overdue_result->fetch_assoc()['total'] ?? 0;
+
+// Reserved books
+$reserved_query = "SELECT COUNT(*) AS total FROM reserved_books";
+$reserved_result = $conn->query($reserved_query);
+$reserved_count = $reserved_result->fetch_assoc()['total'] ?? 0;
+
+// Returned books
+$returned_query = "SELECT COUNT(*) AS total FROM returned_books";
+$returned_result = $conn->query($returned_query);
+$returned_count = $returned_result->fetch_assoc()['total'] ?? 0;
+
+// Available books
+$available_query = "SELECT COUNT(*) AS total FROM tbl_books WHERE status = 'Available'";
+$available_result = $conn->query($available_query);
+$available_count = $available_result->fetch_assoc()['total'] ?? 0;
+
+
+$books_query = "SELECT book_title, book_author, book_genre, book_stocks FROM tbl_books";
+$books_result = $conn->query($books_query);
+
+// Borrowed Requests (status = 'Pending')
+$borrowed_requests_query = "SELECT COUNT(*) AS total FROM borrowed_books WHERE status = 'Pending'";
+$borrowed_requests_result = $conn->query($borrowed_requests_query);
+$borrowed_requests_count = $borrowed_requests_result->fetch_assoc()['total'] ?? 0;
+
+// Ready to Pickup (status = 'Approved')
+$ready_to_pickup_query = "SELECT COUNT(*) AS total FROM borrowed_books WHERE status = 'Approved'";
+$ready_to_pickup_result = $conn->query($ready_to_pickup_query);
+$ready_to_pickup_count = $ready_to_pickup_result->fetch_assoc()['total'] ?? 0;
+
+// Unpaid Fines (assuming a table student_fines with a 'paid' column)
+$unpaid_fines_query = "SELECT COUNT(*) AS total FROM student_fines where status = 'unpaid' ";
+$unpaid_fines_result = $conn->query($unpaid_fines_query);
+$unpaid_fines_count = $unpaid_fines_result->fetch_assoc()['total'] ?? 0;
+
+// Upcoming Books (status = 'Upcoming')
+$upcoming_books_query = "SELECT COUNT(*) AS total FROM tbl_books WHERE status = 'Upcoming'";
+$upcoming_books_result = $conn->query($upcoming_books_query);
+$upcoming_books_count = $upcoming_books_result->fetch_assoc()['total'] ?? 0;
+
+
+$fines_query = "
+SELECT 
+    DATE_FORMAT(sf.date_issued, '%b') AS month_short,  -- Jan, Feb, etc.
+    SUM(ft.price) AS total_fines
+FROM student_fines sf
+JOIN fines_table ft ON sf.fine_id = ft.fine_id
+WHERE sf.status = 'Paid'
+GROUP BY month_short
+ORDER BY MONTH(sf.date_issued)
+";
+
+$fines_result = $conn->query($fines_query);
+
+$months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+$fines_data_assoc = [];
+while ($row = $fines_result->fetch_assoc()) {
+    $fines_data_assoc[$row['month_short']] = (float)$row['total_fines'];
+}
+$fines_data = [];
+foreach ($months as $month) {
+    $fines_data[] = $fines_data_assoc[$month] ?? 0;
+}
+
+$top_books_query = "
+    SELECT 
+        b.book_id, 
+        b.book_cover, 
+        b.book_title, 
+        COUNT(bb.book_id) AS total_borrowed 
+    FROM borrowed_books bb
+    JOIN tbl_books b ON bb.book_id = b.book_id
+    GROUP BY bb.book_id 
+    ORDER BY total_borrowed DESC 
+    LIMIT 5
+";
+$top_books_result = $conn->query($top_books_query);
 ?>
+
 
 
 <!DOCTYPE html>
@@ -17,195 +100,227 @@ include '../homepage/db_connect.php'
 <body>
     <?php include 'HEADER-NAVBAR.PHP' ?>
 
-
-    <!-- Content HERE -->
-     <div class="dashboard">
-  <!-- Top Stats -->
-  <div class="top-cards">
-    <div class="card overdue">
-        <i class="fas fa-exclamation-circle"></i>
-        <div>
-            <h3>Overdue</h3>
-            <p>30</p>
+    <div class="dashboard">
+        <div class="top-cards">
+            <div class="card overdue">
+                <i class="fas fa-clock"></i>
+                <div>
+                    <h3>Borrow Request</h3>
+                    <p><?= $borrowed_requests_count ?></p>
+                </div>
+            </div>
+            <div class="card reserved">
+                <i class="fas fa-box-open"></i>
+                <div>
+                    <h3>Ready to Pickup</h3>
+                    <p><?= $ready_to_pickup_count ?></p>
+                </div>
+            </div>
+            <div class="card returned">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div>
+                    <h3>Unpaid Fines</h3>
+                    <p><?= $unpaid_fines_count ?></p>
+                </div>
+            </div>
+            <div class="card available">
+                <i class="fas fa-calendar-alt"></i>
+                <div>
+                    <h3>Upcoming Books</h3>
+                    <p><?= $upcoming_books_count ?></p>
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="card reserved">
-        <i class="fas fa-bookmark"></i>
-        <div>
-            <h3>Reserved</h3>
-            <p>50</p>
+
+
+        <div class="middle-section">
+            <div class="chart">
+
+                <canvas id="bookAvailabilityChart" style="width: 50px; height: 50px;"></canvas>
+            </div>
+            <div class="trend">
+                <h4>Total Fines Collected Per Month</h4>
+                <canvas id="monthlyTrendsChart" style="width: 50%;"></canvas>
+
+                <h4>Top Borrowed Books</h4>
+                <div class="top-borrowed-list">
+                    <?php while ($row = $top_books_result->fetch_assoc()): ?>
+                        <div class="top-book-item">
+                            <img src="<?= $row['book_cover'] ?>" alt="<?= $row['book_title'] ?>" />
+                            <div>
+                                <p class="title"><?= $row['book_title'] ?></p>
+                                <p class="count">Borrowed <?= $row['total_borrowed'] ?> times</p>
+                            </div>
+                        </div>
+                    <?php endwhile; ?>
+                </div>
+
+
+            </div>
         </div>
-    </div>
-    <div class="card returned">
-        <i class="fas fa-undo-alt"></i>
-        <div>
-            <h3>Returned</h3>
-            <p>50</p>
+
+        <!-- Bottom Section -->
+        <div class="bottom-section">
+            <div class="managed-books">
+                <h4>Managed Books</h4>
+                <input type="text" id="searchInput" placeholder="Search by title, author, or genre" onkeyup="filterTable()" style="width: 80%; margin-bottom:3%;">
+                <button>Search</button>
+
+                <div class="table-scroll">
+                    <table id="booksTable">
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>Title</th>
+                                <th>Authors</th>
+                                <th>Genre</th>
+                                <th>Stocks</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <?php if ($books_result->num_rows > 0): ?>
+                                <?php while ($book = $books_result->fetch_assoc()): ?>
+                                    <?php
+                                    $stocks = (int)$book['book_stocks'];
+                                    if ($stocks <= 10) {
+                                        $circleColor = 'red';
+                                    } elseif ($stocks <= 20) {
+                                        $circleColor = 'yellow';
+                                    } else {
+                                        $circleColor = 'green';
+                                    }
+                                    ?>
+                                    <tr>
+                                        <td><span class="status-circle" style="background-color: <?= $circleColor ?>;"></span></td>
+                                        <td><?= htmlspecialchars($book['book_title']) ?></td>
+                                        <td><?= htmlspecialchars($book['book_author']) ?></td>
+                                        <td><?= htmlspecialchars($book['book_genre']) ?></td>
+                                        <td><?= $stocks ?></td>
+                                    </tr>
+                                <?php endwhile; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="5">No books found.</td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+            </table>
         </div>
-    </div>
-    <div class="card available">
-        <i class="fas fa-book"></i>
-        <div>
-            <h3>Available Books</h3>
-            <p>50</p>
-        </div>
-    </div>
-  </div>
 
-  <!-- Middle Charts -->
-  <div class="middle-section">
-    <div class="chart">
-      <h4>Book Availability</h4>
-          <canvas id="bookAvailabilityChart" style="width: 80px; height: 80px;"></canvas>
-    </div>
-    <div class="trend">
-      <h4>Monthly Book Borrowed Trends</h4>
-      <canvas id="monthlyTrendsChart" style="width: 100%;"></canvas>
-    </div>
-  </div>
 
-  <!-- Bottom Section -->
-  <div class="bottom-section">
-    <div class="managed-books">
-      <h4>Managed Books</h4>
-      <input type="text" id="searchInput" placeholder="Search by title, author, or genre" onkeyup="filterTable()">
-      <button>Search</button>
-      <table id="booksTable">
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Authors</th>
-            <th>Genre</th>
-            <th>Available</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>Two Towers</td><td>J.J Redick</td><td>Romance</td><td>50</td></tr>
-          <tr><td>Two Towers</td><td>J.J Redick</td><td>Anime</td><td>50</td></tr>
-          <tr><td>Two Towers</td><td>J.J Redick</td><td>Sci-Fi</td><td>50</td></tr>
-          <tr><td>Two Towers</td><td>J.J Redick</td><td>Romance</td><td>50</td></tr>
-          <tr><td>Two Towers</td><td>J.J Redick</td><td>Anime</td><td>50</td></tr>
-          <tr><td>Two Towers</td><td>J.J Redick</td><td>Sci-Fi</td><td>50</td></tr>
-        </tbody>
-      </table>
-    </div>
 
-    <div class="pending-returns">
-      <h4>Pending Returns</h4>
-      <table>
-        <thead>
-            <tr>
-                <th>Book Title</th>
-                <th>Borrower</th>
-                <th>Due Date</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>The Hobbit</td>
-                <td>John Doe</td>
-                <td>2023-10-15</td>
-                <td>Due Soon</td>
-            </tr>
-            <tr>
-                <td>1984</td>
-                <td>Jane Smith</td>
-                <td>2023-10-10</td>
-                <td>Overdue</td>
-            </tr>
-            <tr>
-                <td>Harry Potter</td>
-                <td>Emily Johnson</td>
-                <td>2023-10-20</td>
-                <td>Pending Reserved</td>
-            </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<script>
-    // Book Availability Chart
-    const bookAvailabilityCtx = document.getElementById('bookAvailabilityChart').getContext('2d');
-    new Chart(bookAvailabilityCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Available', 'Borrowed', 'Reserved', 'Overdue'],
-            datasets: [{
-                data: [50, 30, 20, 10],
-                backgroundColor: ['#3a0ca3', '#6c5b7b', '#14213d', '#00b4d8']
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'top'
-                }
-            }
-        }
-    });
-
-    // Monthly Book Borrowed Trends Chart
-    const monthlyTrendsCtx = document.getElementById('monthlyTrendsChart').getContext('2d');
-    new Chart(monthlyTrendsCtx, {
-        type: 'bar',
-        data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-            datasets: [{
-                label: 'Books Borrowed',
-                data: [30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140],
-                backgroundColor: '#204297'
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
-            scales: {
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Months'
-                    }
+        <script>
+            const totalAvailable = <?= $available_count ?>;
+            const totalReserved = <?= $reserved_count ?>;
+            const totalOverdue = <?= $overdue_count ?>;
+            const totalReturned = <?= $returned_count ?>;
+            // Book Availability Chart
+            const bookAvailabilityCtx = document.getElementById('bookAvailabilityChart').getContext('2d');
+            new Chart(bookAvailabilityCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Available', 'Reserved', 'Overdue', 'Returned'],
+                    datasets: [{
+                        data: [totalAvailable, totalReserved, totalOverdue, totalReturned],
+                        backgroundColor: ['#3a0ca3', '#14213d', '#00b4d8', '#6c5b7b']
+                    }]
                 },
-                y: {
-                    title: {
-                        display: true,
-                        text: 'Books Borrowed'
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Library Book Distribution',
+                            font: {
+                                size: 16
+                            }
+                        },
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: '#333',
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.label}: ${context.raw}`;
+                                }
+                            }
+                        }
                     }
                 }
-            }
-        }
-    });
+            });
 
-    // Live Search Functionality
-    function filterTable() {
-        const input = document.getElementById('searchInput');
-        const filter = input.value.toLowerCase();
-        const table = document.getElementById('booksTable');
-        const rows = table.getElementsByTagName('tr');
 
-        for (let i = 1; i < rows.length; i++) { // Start from 1 to skip the header row
-            const cells = rows[i].getElementsByTagName('td');
-            let match = false;
+            const monthlyTrendsCtx = document.getElementById('monthlyTrendsChart').getContext('2d');
+            new Chart(monthlyTrendsCtx, {
+                type: 'bar',
+                data: {
+                    labels: <?= json_encode($months) ?>,
+                    datasets: [{
+                        label: 'Fines Collected',
+                        data: <?= json_encode($fines_data) ?>,
+                        backgroundColor: '#dc3545' // red for fines
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: true
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Months'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Total Fines Collected (₱)'
+                            },
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
 
-            for (let j = 0; j < cells.length; j++) {
-                if (cells[j].textContent.toLowerCase().includes(filter)) {
-                    match = true;
-                    break;
+
+            // Live Search Functionality
+            function filterTable() {
+                const input = document.getElementById('searchInput');
+                const filter = input.value.toLowerCase();
+                const table = document.getElementById('booksTable');
+                const rows = table.getElementsByTagName('tr');
+
+                for (let i = 1; i < rows.length; i++) { // Start from 1 to skip the header row
+                    const cells = rows[i].getElementsByTagName('td');
+                    let match = false;
+
+                    for (let j = 0; j < cells.length; j++) {
+                        if (cells[j].textContent.toLowerCase().includes(filter)) {
+                            match = true;
+                            break;
+                        }
+                    }
+
+                    rows[i].style.display = match ? '' : 'none';
                 }
             }
-
-            rows[i].style.display = match ? '' : 'none';
-        }
-    }
-</script>
+        </script>
 
 </body>
 
