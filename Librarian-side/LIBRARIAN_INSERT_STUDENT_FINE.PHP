@@ -2,6 +2,8 @@
 include '../homepage/db_connect.php';
 session_start();
 
+$loggedInUser = $_SESSION['librarian_no'];
+
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -38,10 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $proof_filename = $new_filename;
     }
-
-    // You can also store $proof_filename in the database if your table supports it
-   $stmt = $conn->prepare("INSERT INTO student_fines (student_no, book_id, fine_id, date_issued, status, proof) VALUES (?, ?, ?, ?, ?, ?)");
-$stmt->bind_param("ssisss", $student_no, $book_id, $fine_id, $date_issued, $status, $proof_filename);
+  $stmt = $conn->prepare("INSERT INTO student_fines (student_no, book_id, fine_id, date_issued, status, proof, updated_by) VALUES (?, ?, ?, ?, ?, ?, ?)");
+$stmt->bind_param("ssisssi", $student_no, $book_id, $fine_id, $date_issued, $status, $proof_filename, $loggedInUser);
 
 
     if ($stmt->execute()) {

@@ -1,6 +1,9 @@
 <?php 
 session_start();
 include '../Homepage/db_connect.php';
+
+$loggedInUser = $_SESSION['librarian_no'];
+
 $fines_sql = "
     SELECT 
         sf.student_no,

@@ -1,5 +1,8 @@
 <?php
+session_start();
 include '../homepage/db_connect.php';
+
+$loggedInUser = $_SESSION['librarian_no'];
 
 if (isset($_POST['fine_id'])) {
     $fine_id = $_POST['fine_id'];
@@ -18,11 +21,11 @@ if (isset($_POST['fine_id'])) {
             mysqli_stmt_close($stmt);
 
             // Now update the fine status
-            $update_sql = "UPDATE student_fines SET status = 'paid' WHERE violation_id = ?";
+            $update_sql = "UPDATE student_fines SET status = 'paid', updated_by = ? WHERE violation_id = ?";
             $update_stmt = mysqli_prepare($conn, $update_sql);
 
             if ($update_stmt) {
-                mysqli_stmt_bind_param($update_stmt, 'i', $violation_id);
+                mysqli_stmt_bind_param($update_stmt, 'ii', $loggedInUser, $violation_id);
                 mysqli_stmt_execute($update_stmt);
                 mysqli_stmt_close($update_stmt);
                 echo "Fine marked as paid.";
@@ -39,4 +42,3 @@ if (isset($_POST['fine_id'])) {
 } else {
     echo "Invalid request.";
 }
-?>

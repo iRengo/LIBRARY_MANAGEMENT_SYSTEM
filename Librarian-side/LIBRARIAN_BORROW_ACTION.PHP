@@ -7,9 +7,14 @@ date_default_timezone_set('Asia/Manila'); // Make sure the timezone is consisten
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'];
     $borrow_id = $_POST['borrow_id'];
+    $approved_by = $_SESSION['librarian_no'];
 
     if ($action === 'accept') {
-        $update_sql = "UPDATE borrowed_books SET status = 'Approved', update_datetime = NOW() WHERE borrow_id = '$borrow_id'";
+        $update_sql = "UPDATE borrowed_books 
+                   SET status = 'Approved', 
+                       update_datetime = NOW(), 
+                       updated_by = '$approved_by' 
+                   WHERE borrow_id = '$borrow_id'";
         mysqli_query($conn, $update_sql);
         echo "Success";
     } elseif ($action === 'decline') {

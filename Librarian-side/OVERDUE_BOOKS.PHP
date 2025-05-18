@@ -1,5 +1,8 @@
 <?php
 session_start();
+
+$loggedInUser = $_SESSION['librarian_no'];
+
 include '../Homepage/db_connect.php';
 $today = date('Y-m-d');
 $overdue_sql = "SELECT bb.*, b.book_cover 
