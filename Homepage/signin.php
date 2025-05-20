@@ -1,5 +1,5 @@
 <?php
-include '../Admin-side/release_upcoming_books.php';
+include 'release_upcoming_books.php';
 include 'due_overdue_checkr.php';
 
 // Retrieve error message if it exists

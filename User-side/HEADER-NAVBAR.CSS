@@ -341,14 +341,6 @@ body {
     align-items: flex-start;
 }
 
-.notification-item.approved {
-    border-left: 5px solid #28a745;
-}
-
-.notification-item.rejected {
-    border-left: 5px solid #dc3545;
-}
-
 .notif-cover {
     width: 50px;
     height: 60px;
@@ -444,26 +436,58 @@ body {
     text-align: center;
 }
 
-/* Status color variants */
+.notification-item.approved {
+    border-left: 5px solid #2ecc71; 
+}
+
+.notification-item.rejected {
+    border-left: 5px solid #e74c3c; 
+}
+
+.notification-item.due-today {
+    border-left: 5px solid #f1c40f; 
+}
+
+.notification-item.overdue {
+    border-left: 5px solid #e67e22; 
+}
+
+.notification-item.pending-fine {
+    border-left: 5px solid #211711;
+}
+
+.notification-item.other-type {
+    border-left: 5px solid #3498db; 
+}
+
 .status-approved {
-    color: #28a745; 
+    color: #2ecc71; 
 }
+
 .status-rejected {
-    color: #dc3545; /
+    color: #e74c3c; 
 }
+
 .status-due {
-    color: #fff25d; 
+    color: #f1c40f; 
 }
+
 .status-overdue {
-    color: #f27b45; 
+    color: #e67e22; 
 }
 
 .status-fine_issued {
-    color: #fd7e14; 
+    color: #d35400; 
 }
+
+.status-pending-fine {
+    color: #211711;
+}
+
 .status-other {
-    color: #007bff; 
+    color: #3498db; 
 }
+
 
 
 .swal-time {
@@ -487,5 +511,18 @@ body {
 }
 
 .resubmit-btn:hover {
+    background-color: #0056b3;
+}
+.view-proof-btn {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 6px 12px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.view-proof-btn:hover {
     background-color: #0056b3;
 }
