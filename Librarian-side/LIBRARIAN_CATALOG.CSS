@@ -1,103 +1,250 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+body {
+  font-family: 'Poppins', sans-serif;
+}
+
+.titles-container {
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  margin-top: 100px;
+  margin-left: 3%;
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 90%;
+  max-width: 1200px;
+  margin-bottom: 30px;
+}
+
+.titles {
+  font-size: 26px;
+  font-weight: 600;
+  color: #333;
+  background-color: #f5f5f5;
+  padding: 10px 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  
+}
+
+/* Search Bar */
 .search-bar {
-    display: relative !important;
-    justify-content: center !important;
-    align-items: center !important;
-    margin: 20px 0 !important;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.search-bar input {
+  width: 100%;
+  max-width: 350px;
+  padding: 12px 40px 12px 45px;
+  font-size: 15px;
+  border: 1.5px solid #ccc;
+  border-radius: 30px;
+  background: #fff url('https://cdn-icons-png.flaticon.com/512/622/622669.png') no-repeat 15px center;
+  background-size: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: 0.3s ease;
+
+}
+
+.search-bar input::placeholder {
+  color: #aaa;
+}
+
+.search-bar input:focus {
+  border-color: #ff7a7a;
+  box-shadow: 0 0 8px rgba(255, 122, 122, 0.3);
+  outline: none;
+}
+
+.book-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 30px;
+  padding: 20px 50px;
+  max-width: 1800px;
+  /* Increased from 1500px */
+  margin: 0 auto 80px;
+}
+
+/* Book Item */
+.book-main-container {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.book-main-container:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.book-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.book-container {
+  position: relative;
+  height: 250px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #fefefe;
+  overflow: hidden;
+}
+
+.book-container img.book-cover {
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+
+.book-details {
+  padding: 12px 15px;
+  text-align: left;
+  white-space: nowrap;
+  /* Prevent text wrap */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* Show ... if text is too long */
+}
+
+.book-details h5,
+.book-details p {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Responsive */
+@media screen and (max-width: 600px) {
+  .header-container {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
   }
-  
-  .search-bar input {
-    width: 300% !important;
-    max-width: 400px !important; /* Set a max width for better responsiveness */
-    padding: 15px 50px !important;
-    font-size: 16px !important;
-    border: 2px solid #ddd !important;
-    border-radius: 25px !important;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
-    transition: all 0.3s ease !important;
-    outline: none !important;
-    background: #fff url('https://cdn-icons-png.flaticon.com/512/622/622669.png') no-repeat 15px center !important; /* Add a search icon */
-    background-size: 18px !important;
-    padding-left: 40px !important; /* Add space for the icon */
-    position: relative;
-    left: 900px;
-  }
-  
-  .search-bar input::placeholder {
-    color: #999 !important;
-    font-size: 14px !important;
-  }
-  
-  .search-bar input:focus {
-    border-color: #ff7a7a !important;
-    box-shadow: 0 6px 12px rgba(255, 77, 77, 0.2) !important;
-  }
-  
-  .search-bar input:hover {
-    border-color: #ff4d4d !important;
-  }
-  
-  
-  .titles {
-    width: 400px;
-    display: flex;
+
+  .search-bar {
+    width: 100%;
     justify-content: center;
-    align-items: center;
-    text-align: center;
-    margin-top: 50px;
-    background-color: #0f0f0f; /* Light background for better readability */
-    border-radius: 10px; /* Rounded corners */
-    padding: 10px 40px; /* Space inside the container */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    margin-left: 50px;
   }
-  
-  .available {
-    font-size: 24px; /* Large and readable */
-    font-weight: 500; /* Bold for emphasis */
-    color: #ffffff; /* Dark gray for readability */
-    margin: 0; /* Remove default margins */
-    width: 5000px;
-    padding-left: 50px;
+
+  .search-bar input {
+    width: 100%;
   }
-  
-   .pics {
-    display: flex;
-    justify-content: start;
-    padding-left: 50px;
-   }
-  
-  .texts{
-    display: flex;
-    justify-content: flex-start;
-    padding-left: 80px;
-    padding-top: 50px;
-    font-size: 20px;
-    font-weight: 500;
+}
+
+/* Overlay on hover */
+.book-container::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: rgba(0, 0, 0, 0);
+  /* Start transparent */
+  transition: background 0.3s ease;
+}
+
+.book-container:hover::after {
+  background: rgba(0, 0, 0, 0.4);
+  /* Black overlay on hover */
+}
+
+.book-container:hover img.book-cover {
+  transform: scale(1.05);
+}
+.book-details h5 {
+  font-size: 18px;          /* Slightly larger */
+  font-weight: 700;         /* Bold */
+  color: #222;
+  margin: 10px 0 5px;
+}
+
+.book-details p {
+  font-size: 14px;
+  font-weight: 300;         /* Thin */
+  color: #777;              /* Gray */
+  margin: 0 0 10px;
+}
+
+/* Borrow count style */
+.borrow-count {
+  display: inline-block;
+  background-color: #444;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+/* Stock badge */
+.stock-badge {
+  display: inline-block;
+  color: white;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 14px;
+  margin-left: 10px;
+  min-width: 50px;
+  text-align: center;
+}
+
+/* Stock colors */
+.stock-high {
+  background-color: #4CAF50; /* Green */
+}
+
+.stock-medium {
+  background-color: #FF9800; /* Orange */
+}
+
+.stock-low {
+  background-color: #F44336; /* Red */
+}
+ /* Button styling */
+  #toggleAvailableBooks {
+    display: block;
+    margin: 15px auto;
+    padding: 10px 25px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    background-color: #007bff; /* Bootstrap blue */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 123, 255, 0.4);
   }
-  
-  .textss{
-    display: flex;
-    justify-content: flex-start;
-    padding-left: 80px;
-    padding-top: 30px;
-    font-size: 20px;
-    font-weight: 500;
+
+  #toggleAvailableBooks:hover {
+    background-color: #0056b3;
   }
-  
-  .pics img {
-    height: 260px;
-    width: 200px;
-    border-radius: 10px;
-    margin: 5px;
-    padding: 10px;
-    box-shadow: 1px 1px 0px rgba(215, 215, 218, 0.89); /* Adds a shadow effect */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover animation */
+
+  /* Fade transition for book list */
+  #available-book-list {
+    opacity: 1;
+    transition: opacity 0.5s ease;
   }
-  
-  .pics img:hover {
-    transform: scale(1.05); /* Slightly enlarges the image on hover */
-    box-shadow: 0 12px 20px rgba(100, 59, 59, 0.4); /* Enhances shadow on hover */
+
+  /* Hidden state for fade out */
+  #available-book-list.fade-out {
+    opacity: 0;
   }
-  
-  
-   
