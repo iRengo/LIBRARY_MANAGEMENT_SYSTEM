@@ -1,6 +1,6 @@
 <?php
 include '../Admin-side/release_upcoming_books.php';
-session_start();
+include 'due_overdue_checkr.php';
 
 // Retrieve error message if it exists
 $error_message = isset($_SESSION['error_message']) ? $_SESSION['error_message'] : "";

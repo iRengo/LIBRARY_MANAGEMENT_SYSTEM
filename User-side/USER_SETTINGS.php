@@ -101,6 +101,38 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["save_password"])) {
     }
 }
 
+$fines_query = "
+    SELECT 
+        sf.violation_id,
+        b.book_title,
+        bb.preferred_date,
+        rb.return_date,
+        ft.fine_name,
+        ft.price,
+        sf.proof,
+        sf.date_issued,
+        sf.status,
+        sf.updated_by
+    FROM student_fines sf
+    JOIN fines_table ft ON sf.fine_id = ft.fine_id
+    JOIN tbl_books b ON sf.book_id = b.book_id
+    LEFT JOIN borrowed_books bb ON sf.book_id = bb.book_id AND sf.student_no = bb.student_no
+    LEFT JOIN returned_books rb ON sf.book_id = rb.book_id AND sf.student_no = rb.student_no
+    WHERE sf.student_no = ?
+";
+
+$fine_stmt = $conn->prepare($fines_query);
+$fine_stmt->bind_param("s", $student_no);  // Use 's' if student_no is string
+$fine_stmt->execute();
+$fine_result = $fine_stmt->get_result();
+
+$fines_data = [];
+while ($fine_row = $fine_result->fetch_assoc()) {
+    $fines_data[] = $fine_row;
+}
+
+
+
 
 ?>
 
@@ -241,21 +273,58 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["save_password"])) {
                     <tr>
                         <th>Book Title</th>
                         <th>Borrow Date</th>
-                        <th>Returned Date</th>
                         <th>Remark</th>
-                        <th>FINES</th>
+                        <th>Fine Amount</th>
+                        <th>Proof</th>
+                        <th>Date Issued</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>Filtered Life</td>
-                        <td>April 08, 1992</td>
-                        <td>April 08, 1992</td>
-                        <td>Damaged</td>
-                        <td>$3.00</td>
-                    </tr>
+                    <?php if (empty($fines_data)): ?>
+                        <tr>
+                            <td colspan="8">No fines found.</td>
+                        </tr>
+                    <?php else: ?>
+                        <?php foreach ($fines_data as $fine): ?>
+                            <tr>
+                                <td><?= htmlspecialchars($fine['book_title']) ?></td>
+                                <td><?= htmlspecialchars(date("F d, Y", strtotime($fine['preferred_date']))) ?></td>
+                                <td><?= htmlspecialchars($fine['fine_name']) ?></td>
+                                <td>$<?= number_format($fine['price'], 2) ?></td>
+                                <td>
+                                    <?php if (!empty($fine['proof'])): ?>
+                                        <button class="view-proof-btn" data-img-src="../public/proofs/<?= htmlspecialchars($fine['proof']) ?>">
+                                            View
+                                        </button>
+                                    <?php else: ?>
+                                        N/A
+                                    <?php endif; ?>
+                                </td>
+
+
+
+                                <td><?= htmlspecialchars(date("F d, Y", strtotime($fine['date_issued']))) ?></td>
+                                <?php
+                                $status = strtolower($fine['status']);
+                                $class = '';
+                                if ($status === 'paid') {
+                                    $class = 'status-paid';
+                                } else if ($status === 'unpaid' || $status === 'pending' || $status === 'due') {
+                                    $class = 'status-unpaid';
+                                }
+                                ?>
+                                <td class="<?= $class ?>">
+                                    <?= htmlspecialchars(ucfirst($status)) ?>
+                                </td>
+
+
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </tbody>
             </table>
+
         </div>
 
     </div>
@@ -316,6 +385,24 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["save_password"])) {
                     confirmButtonColor: '#d33'
                 });
             }
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const proofButtons = document.querySelectorAll('.view-proof-btn');
+
+            proofButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const imgSrc = this.getAttribute('data-img-src');
+
+                    Swal.fire({
+                        title: 'Proof of Fine',
+                        imageUrl: imgSrc,
+                        imageAlt: 'Proof image',
+                        imageWidth: 500,
+                        imageHeight: 'auto',
+                        confirmButtonText: 'Close'
+                    });
+                });
+            });
         });
     </script>
 

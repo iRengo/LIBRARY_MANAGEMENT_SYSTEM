@@ -197,7 +197,7 @@ $overdue_result = mysqli_query($conn, $overdue_sql);
                 if (imageFile) {
                     Swal.fire({
                         title: 'Proof Image',
-                        imageUrl: 'proofs/' + imageFile, // Change path as needed
+                        imageUrl: 'proofs/' + imageFile, 
                         imageAlt: 'Proof Image',
                         width: 600,
                         imageWidth: 500,

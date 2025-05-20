@@ -115,7 +115,7 @@ $fines_result = mysqli_query($conn, $fines_sql);
                 if (imageFile) {
                     Swal.fire({
                         title: 'Proof Image',
-                        imageUrl: 'proofs/' + imageFile,
+                        imageUrl: '../public/proofs/' + imageFile,
                         imageAlt: 'Proof Image',
                         width: 600,
                         imageWidth: 500,

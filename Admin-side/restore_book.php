@@ -39,7 +39,9 @@ if (isset($_GET['book_id'])) {
         $stmt_delete->bind_param("i", $book_id);
         $stmt_delete->execute();
 
-        header("Location: admin_catalog.php?success=Book restored successfully");
+        session_start();
+        $_SESSION['archive_success'] = "Book restored successfully.";
+        header("Location: admin_catalog.php");
         exit();
     } else {
         echo "Book not found in archive.";
@@ -47,4 +49,3 @@ if (isset($_GET['book_id'])) {
 } else {
     echo "Invalid request.";
 }
-?>

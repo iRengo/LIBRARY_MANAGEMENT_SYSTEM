@@ -17,7 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Handle Book Cover Upload
     if (isset($_FILES['bookCover']) && $_FILES['bookCover']['error'] == 0) {
-        $targetDir = "book_covers/";
+        $targetDir = "../public/book_covers/";
         $fileName = basename($_FILES["bookCover"]["name"]);
         $targetFilePath = $targetDir . $fileName;
 

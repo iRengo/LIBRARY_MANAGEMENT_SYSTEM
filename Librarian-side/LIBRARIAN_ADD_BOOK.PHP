@@ -15,7 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $status = $_POST['status'];
 
     if (isset($_FILES['bookCover']) && $_FILES['bookCover']['error'] == 0) {
-        $targetDir = "../Admin-side/book_covers/";
+        $targetDir = "../public/book_covers/";
 
         // Make sure the directory exists or create it
         if (!is_dir($targetDir)) {

@@ -338,6 +338,7 @@ body {
     padding: 8px;
     border-radius: 6px;
     background-color: #f9f9f9;
+    align-items: flex-start;
 }
 
 .notification-item.approved {
@@ -353,12 +354,49 @@ body {
     height: 60px;
     object-fit: cover;
     border-radius: 4px;
+    flex-shrink: 0;
 }
 
-.notif-title {
-    font-size: 14px;
-    color: #333;
+.notif-text {
+    flex: 1;
+    overflow: hidden;
+    
 }
+
+.notif-status {
+    font-weight: bold;
+    white-space: nowrap;
+    font-size: 14px;
+    margin-bottom: 4px;
+    color: inherit;
+    
+}
+
+
+.notif-title {
+    font-size: 16px; /* slightly larger */
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 6px;
+    white-space: nowrap;
+}
+
+.notif-message {
+    font-size: 13px;
+    color: #666;
+    font-weight: normal;
+    white-space: nowrap;    
+    overflow: hidden;     
+    text-overflow: ellipsis;   
+    max-width: 100%;           
+}
+
+
+.notif-time {
+    color: gray;
+    font-size: 11px;
+}
+
 .resubmit-btn {
     display: inline-block;
     margin-top: 5px;
@@ -369,6 +407,85 @@ body {
     border-radius: 4px;
     font-size: 0.9em;
 }
+
+.resubmit-btn:hover {
+    background-color: #0056b3;
+}
+/* notifications.css */
+.swal-book-cover {
+    width: 120px;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    margin: 0 auto 15px;
+    display: block;
+}
+
+.swal-book-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #333;
+    text-align: center;
+}
+
+.swal-message {
+    font-size: 1rem;
+    margin-bottom: 15px;
+    color: #555;
+    white-space: pre-wrap;
+    text-align: center;
+}
+
+.swal-status {
+    font-weight: 600;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+/* Status color variants */
+.status-approved {
+    color: #28a745; 
+}
+.status-rejected {
+    color: #dc3545; /
+}
+.status-due {
+    color: #fff25d; 
+}
+.status-overdue {
+    color: #f27b45; 
+}
+
+.status-fine_issued {
+    color: #fd7e14; 
+}
+.status-other {
+    color: #007bff; 
+}
+
+
+.swal-time {
+    font-size: 0.85rem;
+    color: #999;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.resubmit-btn {
+    display: inline-block;
+    background-color: #007bff;
+    color: white !important;
+    padding: 8px 18px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+    text-align: center;
+    cursor: pointer;
+}
+
 .resubmit-btn:hover {
     background-color: #0056b3;
 }

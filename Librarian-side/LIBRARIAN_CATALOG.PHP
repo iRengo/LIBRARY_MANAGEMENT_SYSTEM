@@ -15,14 +15,14 @@ include '../Homepage/db_connect.php';
     <?php include 'HEADER-NAVBAR.PHP'; ?>
 
 
-<!-- Available Books Section -->
-<div class="titles-container">
-    <div class="header-container">
-        <div class="titles" style="display: flex; align-items: center; gap: 20px;">
-            <div class="available" style="font-size: 1.5rem; font-weight: bold;">Available Books</div>
+    <!-- Available Books Section -->
+    <div class="titles-container">
+        <div class="header-container">
+            <div class="titles" style="display: flex; align-items: center; gap: 20px;">
+                <div class="available" style="font-size: 1.5rem; font-weight: bold;">Available Books</div>
 
-            <!-- Add Book Button -->
-            <button onclick="openAddBookForm()" style="
+                <!-- Add Book Button -->
+                <button onclick="openAddBookForm()" style="
                 background-color: #4CAF50;
                 color: white;
                 padding: 8px 16px;
@@ -31,23 +31,23 @@ include '../Homepage/db_connect.php';
                 cursor: pointer;
                 font-size: 0.9rem;
             ">
-                + Add Book
-            </button>
-        </div>
+                    + Add Book
+                </button>
+            </div>
 
-        <!-- Search Bar -->
-        <div class="search-bar">
-            <input type="text" class="form-control" placeholder="Search available books..." id="searchAvailableInput">
+            <!-- Search Bar -->
+            <div class="search-bar">
+                <input type="text" class="form-control" placeholder="Search available books..." id="searchAvailableInput">
+            </div>
         </div>
     </div>
-</div>
 
 
-<!-- Available Book List -->
-<div class="book-list" id="available-book-list">
-    <?php
-    $limit = 14;
-    $query_available = "
+    <!-- Available Book List -->
+    <div class="book-list" id="available-book-list">
+        <?php
+        $limit = 14;
+        $query_available = "
         SELECT 
             b.book_id, 
             b.book_cover, 
@@ -63,70 +63,70 @@ include '../Homepage/db_connect.php';
         LIMIT $limit
     ";
 
-    $result = mysqli_query($conn, $query_available);
+        $result = mysqli_query($conn, $query_available);
 
-    if (mysqli_num_rows($result) > 0) {
-        while ($row = mysqli_fetch_assoc($result)) {
-            $book_id = $row['book_id'];
-            $book_cover = $row['book_cover'];
-            $book_title = $row['book_title'];
-            $author = $row['book_author'];
-            $borrow_count = $row['borrow_count'];
-            $book_stocks = (int)$row['book_stocks'];
+        if (mysqli_num_rows($result) > 0) {
+            while ($row = mysqli_fetch_assoc($result)) {
+                $book_id = $row['book_id'];
+                $book_cover = $row['book_cover'];
+                $book_title = $row['book_title'];
+                $author = $row['book_author'];
+                $borrow_count = $row['borrow_count'];
+                $book_stocks = (int)$row['book_stocks'];
 
-            if ($book_stocks >= 21 && $book_stocks <= 30) {
-                $stock_class = 'stock-high';
-            } elseif ($book_stocks >= 11 && $book_stocks <= 20) {
-                $stock_class = 'stock-medium';
-            } else {
-                $stock_class = 'stock-low';
-            }
-    ?>
-            <div class="book-main-container" data-book-id="<?php echo $book_id; ?>">
-                <a href="BOOK-DETAILS.PHP?book_id=<?php echo urlencode($book_id); ?>" class="book-link">
-                    <div class="book-container">
-                        <img src="<?php echo htmlspecialchars($book_cover); ?>" class="book-cover" alt="Book Cover">
-                    </div>
-                    <div class="book-details">
-                        <div>
-                            <span class="borrow-count"><?php echo $borrow_count; ?> borrows</span>
-                            <span class="stock-badge <?php echo $stock_class; ?>"><?php echo $book_stocks; ?> left</span>
+                if ($book_stocks >= 21 && $book_stocks <= 30) {
+                    $stock_class = 'stock-high';
+                } elseif ($book_stocks >= 11 && $book_stocks <= 20) {
+                    $stock_class = 'stock-medium';
+                } else {
+                    $stock_class = 'stock-low';
+                }
+        ?>
+                <div class="book-main-container" data-book-id="<?php echo $book_id; ?>">
+                    <a href="BOOK-DETAILS.PHP?book_id=<?php echo urlencode($book_id); ?>" class="book-link">
+                        <div class="book-container">
+                            <img src="<?php echo htmlspecialchars($book_cover); ?>" class="book-cover" alt="Book Cover">
                         </div>
-                        <h5><?php echo htmlspecialchars($book_title); ?></h5>
-                        <p><?php echo htmlspecialchars($author); ?></p>
-                    </div>
-                </a>
-            </div>
-    <?php
+                        <div class="book-details">
+                            <div>
+                                <span class="borrow-count"><?php echo $borrow_count; ?> borrows</span>
+                                <span class="stock-badge <?php echo $stock_class; ?>"><?php echo $book_stocks; ?> left</span>
+                            </div>
+                            <h5><?php echo htmlspecialchars($book_title); ?></h5>
+                            <p><?php echo htmlspecialchars($author); ?></p>
+                        </div>
+                    </a>
+                </div>
+        <?php
+            }
+        } else {
+            echo "<p>No available books found.</p>";
         }
-    } else {
-        echo "<p>No available books found.</p>";
-    }
-    ?>
-</div>
+        ?>
+    </div>
 
-<button id="toggleAvailableBooks">Show More</button>
+    <button id="toggleAvailableBooks">Show More</button>
 
-<script>
-  const limit = <?php echo $limit; ?>;
-  const toggleBtn = document.getElementById('toggleAvailableBooks');
-  const bookList = document.getElementById('available-book-list');
-  let showingAll = false;
-  let allBooks = [];
+    <script>
+        const limit = <?php echo $limit; ?>;
+        const toggleBtn = document.getElementById('toggleAvailableBooks');
+        const bookList = document.getElementById('available-book-list');
+        let showingAll = false;
+        let allBooks = [];
 
-  // Helper function to render books
-  function renderBooks(booksToRender) {
-    bookList.innerHTML = '';
-    booksToRender.forEach(book => {
-      let stockClass = 'stock-low';
-      if (book.book_stocks >= 21 && book.book_stocks <= 30) stockClass = 'stock-high';
-      else if (book.book_stocks >= 11 && book.book_stocks <= 20) stockClass = 'stock-medium';
+        // Helper function to render books
+        function renderBooks(booksToRender) {
+            bookList.innerHTML = '';
+            booksToRender.forEach(book => {
+                let stockClass = 'stock-low';
+                if (book.book_stocks >= 21 && book.book_stocks <= 30) stockClass = 'stock-high';
+                else if (book.book_stocks >= 11 && book.book_stocks <= 20) stockClass = 'stock-medium';
 
-      const div = document.createElement('div');
-      div.classList.add('book-main-container');
-      div.setAttribute('data-book-id', book.book_id);
+                const div = document.createElement('div');
+                div.classList.add('book-main-container');
+                div.setAttribute('data-book-id', book.book_id);
 
-      div.innerHTML = `
+                div.innerHTML = `
 <a href="BOOK-DETAILS.PHP?book_id=${encodeURIComponent(book.book_id)}" class="book-link">
   <div class="book-container">
     <img src="${book.book_cover}" class="book-cover" alt="Book Cover">
@@ -142,41 +142,41 @@ include '../Homepage/db_connect.php';
 </a>
       `;
 
-      bookList.appendChild(div);
-    });
-  }
+                bookList.appendChild(div);
+            });
+        }
 
-  toggleBtn.addEventListener('click', () => {
-    // Add fade-out class to trigger opacity transition
-    bookList.classList.add('fade-out');
+        toggleBtn.addEventListener('click', () => {
+            // Add fade-out class to trigger opacity transition
+            bookList.classList.add('fade-out');
 
-    setTimeout(() => {
-      if (!showingAll) {
-        // Fetch all books
-        fetch(`fetch_more_books.php?all=true`)
-          .then(res => res.json())
-          .then(data => {
-            allBooks = data;
-            renderBooks(data);
-            toggleBtn.textContent = 'Show Less';
-            showingAll = true;
-            bookList.classList.remove('fade-out'); // fade-in
-          })
-          .catch(err => {
-            console.error('Error fetching all books:', err);
-            bookList.classList.remove('fade-out'); // fade-in even if error
-          });
-      } else {
-        // Show limited books from cached allBooks or fallback to limit
-        const limitedBooks = allBooks.length > 0 ? allBooks.slice(0, limit) : [];
-        renderBooks(limitedBooks);
-        toggleBtn.textContent = 'Show More';
-        showingAll = false;
-        bookList.classList.remove('fade-out'); // fade-in
-      }
-    }, 500); // match CSS transition duration (0.5s)
-  });
-</script>
+            setTimeout(() => {
+                if (!showingAll) {
+                    // Fetch all books
+                    fetch(`fetch_more_books.php?all=true`)
+                        .then(res => res.json())
+                        .then(data => {
+                            allBooks = data;
+                            renderBooks(data);
+                            toggleBtn.textContent = 'Show Less';
+                            showingAll = true;
+                            bookList.classList.remove('fade-out'); // fade-in
+                        })
+                        .catch(err => {
+                            console.error('Error fetching all books:', err);
+                            bookList.classList.remove('fade-out'); // fade-in even if error
+                        });
+                } else {
+                    // Show limited books from cached allBooks or fallback to limit
+                    const limitedBooks = allBooks.length > 0 ? allBooks.slice(0, limit) : [];
+                    renderBooks(limitedBooks);
+                    toggleBtn.textContent = 'Show More';
+                    showingAll = false;
+                    bookList.classList.remove('fade-out'); // fade-in
+                }
+            }, 500); // match CSS transition duration (0.5s)
+        });
+    </script>
 
 
     <!-- Upcoming Books Section -->
@@ -254,41 +254,41 @@ include '../Homepage/db_connect.php';
 
     <!-- JavaScript Search -->
     <script>
-       const searchInput = document.getElementById('searchAvailableInput');
-  const bookList1 = document.getElementById('available-book-list');
+        const searchInput = document.getElementById('searchAvailableInput');
+        const bookList1 = document.getElementById('available-book-list');
 
-  // Updated search event for Available Books
-  searchInput.addEventListener('input', function () {
-    const query = this.value.trim();
+        // Updated search event for Available Books
+        searchInput.addEventListener('input', function() {
+            const query = this.value.trim();
 
-    if (query.length === 0) {
-      // If empty, revert view
-      if (showingAll && allBooks.length > 0) {
-        renderBooks(allBooks);
-      } else {
-        fetch('fetch_more_books.php?all=true')
-          .then(res => res.json())
-          .then(data => {
-            renderBooks(data.slice(0, limit));
-          })
-          .catch(err => console.error('Error restoring limited books:', err));
-      }
-      return;
-    }
+            if (query.length === 0) {
+                // If empty, revert view
+                if (showingAll && allBooks.length > 0) {
+                    renderBooks(allBooks);
+                } else {
+                    fetch('fetch_more_books.php?all=true')
+                        .then(res => res.json())
+                        .then(data => {
+                            renderBooks(data.slice(0, limit));
+                        })
+                        .catch(err => console.error('Error restoring limited books:', err));
+                }
+                return;
+            }
 
-    fetch(`librarian_catalog_search.php?query=${encodeURIComponent(query)}`)
-      .then(res => res.json())
-      .then(data => {
-        bookList1.innerHTML = '';
+            fetch(`librarian_catalog_search.php?query=${encodeURIComponent(query)}`)
+                .then(res => res.json())
+                .then(data => {
+                    bookList1.innerHTML = '';
 
-        if (data.length > 0) {
-          renderBooks(data);
-        } else {
-          bookList1.innerHTML = '<p>No available books found matching your search.</p>';
-        }
-      })
-      .catch(err => console.error('Search error:', err));
-  });
+                    if (data.length > 0) {
+                        renderBooks(data);
+                    } else {
+                        bookList1.innerHTML = '<p>No available books found matching your search.</p>';
+                    }
+                })
+                .catch(err => console.error('Search error:', err));
+        });
 
         // Search for Upcoming Books
         document.getElementById('searchUpcomingInput').addEventListener('input', function() {
@@ -383,11 +383,11 @@ include '../Homepage/db_connect.php';
         });
     </script>
     <script>
-function openAddBookForm() {
-    Swal.fire({
-        title: 'Add New Book',
-        width: '60vw',
-        html: `
+        function openAddBookForm() {
+            Swal.fire({
+                title: 'Add New Book',
+                width: '60vw',
+                html: `
             <form id="addBookForm" enctype="multipart/form-data" style="display: flex; flex-wrap: wrap; gap: 15px;">
                 <div style="flex: 1 1 48%;">
                     <label>Book Title:</label>
@@ -434,36 +434,36 @@ function openAddBookForm() {
                 </div>
             </form>
         `,
-        confirmButtonText: 'Add Book',
-        showCancelButton: true,
-        focusConfirm: false,
-        preConfirm: () => {
-            const form = document.getElementById('addBookForm');
-            const formData = new FormData(form);
+                confirmButtonText: 'Add Book',
+                showCancelButton: true,
+                focusConfirm: false,
+                preConfirm: () => {
+                    const form = document.getElementById('addBookForm');
+                    const formData = new FormData(form);
 
-            return fetch('librarian_add_book.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (!data.success) {
-                    throw new Error(data.message || 'Failed to add book');
+                    return fetch('librarian_add_book.php', {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (!data.success) {
+                                throw new Error(data.message || 'Failed to add book');
+                            }
+                            return data;
+                        })
+                        .catch(error => {
+                            Swal.showValidationMessage(`Error: ${error.message}`);
+                        });
                 }
-                return data;
-            })
-            .catch(error => {
-                Swal.showValidationMessage(`Error: ${error.message}`);
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire('Success!', 'Book added successfully.', 'success')
+                        .then(() => location.reload());
+                }
             });
         }
-    }).then((result) => {
-        if (result.isConfirmed) {
-            Swal.fire('Success!', 'Book added successfully.', 'success')
-                .then(() => location.reload());
-        }
-    });
-}
-</script>
+    </script>
 </body>
 
 </html>

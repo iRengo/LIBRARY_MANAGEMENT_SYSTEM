@@ -30,6 +30,26 @@ if (isset($_SESSION['librarian_no'])) {
     $librarianFirstName = "Librarian";
 }
 
+// Borrow Requests
+$borrowRequestsCount = $conn->query("SELECT COUNT(*) AS total FROM borrowed_books WHERE status = 'Pending'")->fetch_assoc()['total'];
+
+// Ready to Pickup
+$readyPickupCount = $conn->query("SELECT COUNT(*) AS total FROM borrowed_books WHERE status = 'Approved'")->fetch_assoc()['total'];
+
+// Reserved Books
+$reservedBooksCount = $conn->query("SELECT COUNT(*) AS total FROM reserved_books")->fetch_assoc()['total'];
+
+// Due Books: due today
+$dueBooksCount = $conn->query("SELECT COUNT(*) AS total FROM borrowed_books WHERE status = 'Borrowed' AND due_date = CURDATE()")->fetch_assoc()['total'];
+
+// Overdue Books: past due
+$overdueBooksCount = $conn->query("SELECT COUNT(*) AS total FROM borrowed_books WHERE status = 'Borrowed' AND due_date < CURDATE()")->fetch_assoc()['total'];
+
+// Returned Books
+$returnedBooksCount = $conn->query("SELECT COUNT(*) AS total FROM returned_books")->fetch_assoc()['total'];
+
+// Unpaid Fines
+$unpaidFinesCount = $conn->query("SELECT COUNT(*) AS total FROM student_fines WHERE status = 'Unpaid'")->fetch_assoc()['total'];
 ?>
 
 
@@ -111,13 +131,13 @@ if (isset($_SESSION['librarian_no'])) {
                     </a>
                     <ul class="sidebar-dropdown push-inside">
                         <li></li>
-                        <li><a href="BORROW_REQUEST.PHP">Borrow Requests</a></li>
-                        <li><a href="READY_PICKUP.PHP">Ready to Pickup</a></li>
-                        <li><a href="RESERVED_BOOKS.PHP">Reserved Books</a></li>
-                        <li><a href="DUE_BOOKS.PHP">Due Books</a></li>
-                        <li><a href="OVERDUE_BOOKS.PHP">Overdue Books</a></li>
-                        <li><a href="RETURNED_BOOKS.PHP">Returned Books</a></li>
-                        <li><a href="UNPAID_FINES.PHP">Unpaid Fines</a></li>
+                        <li><a href="BORROW_REQUEST.PHP">Borrow Requests <span class="badge"><?php echo $borrowRequestsCount; ?></span></a></li>
+                        <li><a href="READY_PICKUP.PHP">Ready to Pickup <span class="badge"><?php echo $readyPickupCount; ?></span></a></li>
+                        <li><a href="RESERVED_BOOKS.PHP">Reserved Books <span class="badge"><?php echo $reservedBooksCount; ?></span></a></li>
+                        <li><a href="DUE_BOOKS.PHP">Due Books <span class="badge"><?php echo $dueBooksCount; ?></span></a></li>
+                        <li><a href="OVERDUE_BOOKS.PHP">Overdue Books <span class="badge"><?php echo $overdueBooksCount; ?></span></a></li>
+                        <li><a href="RETURNED_BOOKS.PHP">Returned Books <span class="badge"><?php echo $returnedBooksCount; ?></span></a></li>
+                        <li><a href="UNPAID_FINES.PHP">Unpaid Fines <span class="badge"><?php echo $unpaidFinesCount; ?></span></a></li>
                     </ul>
                 </li>
 

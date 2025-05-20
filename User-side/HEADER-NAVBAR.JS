@@ -63,3 +63,46 @@ document.getElementById('toggleNotifications').addEventListener('click', functio
           });
       });
 });
+document.getElementById('notificationPanel').addEventListener('click', function(e) {
+    let notificationItem = e.target.closest('.notification-item');
+    if (!notificationItem) return;
+
+    const bookCover = notificationItem.getAttribute('data-book-cover');
+    const bookTitle = notificationItem.getAttribute('data-book-title') || 'No Title';
+    const message = notificationItem.getAttribute('data-message') || '';
+    const createdAt = notificationItem.getAttribute('data-created-at') || '';
+    const bookId = notificationItem.getAttribute('data-book-id');
+    const type = notificationItem.getAttribute('data-type');
+
+    const dateStr = new Date(createdAt).toLocaleString();
+
+    // Determine status class for styling in SweetAlert
+    let statusClass = 'status-other';
+    if (type === 'approved') statusClass = 'status-approved';
+    else if (type === 'rejected') statusClass = 'status-rejected';
+    else if (type === 'overdue') statusClass = 'status-overdue';
+    else if (type === 'due_today') statusClass = 'status-due-today';
+
+    let htmlContent = `
+        ${bookCover ? `<img src="${bookCover}" alt="Book Cover" class="swal-book-cover" />` : ''}
+        <div class="swal-book-title">${bookTitle}</div>
+        <div class="swal-status ${statusClass}">${type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</div>
+        <div class="swal-message">${message}</div>
+        <div class="swal-time">Sent on: ${dateStr}</div>
+    `;
+
+    if (type === 'rejected' && bookId) {
+        htmlContent += `<a href="BOOK-DETAILS.php?book_id=${encodeURIComponent(bookId)}" class="resubmit-btn">Resubmit</a>`;
+    }
+
+    Swal.fire({
+        title: 'Notification Details',
+        html: htmlContent,
+        icon: (type === 'approved' ? 'success' : (type === 'rejected' ? 'error' : 'info')),
+        showCloseButton: true,
+        showConfirmButton: false,
+        focusConfirm: false,
+        width: '400px',
+        allowOutsideClick: true,
+    });
+});

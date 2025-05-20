@@ -1,6 +1,7 @@
-<?php 
-include '../Homepage/db_connect.php';
+<?php
 session_start();
+include '../Homepage/db_connect.php';
+
 
 $student_no = $_SESSION['student_no'];
 
@@ -17,23 +18,28 @@ $reserved_result = $reserved_query->get_result();
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <title> USER HISTORY </title>
     <link rel="stylesheet" href="USER_HISTORY.css">
 </head>
 
 <body>
-<?php include 'HEADER-NAVBAR.PHP' ?>
-    <div class="account-history">
-        <h2 style="text-align: left; color: var(--blue); margin-bottom: 20px;">Account History</h2>
-        <div class="tabs">
-            <div class="tab active" onclick="showTab('borrowing')">Borrowing</div>
-            <div class="tab" onclick="showTab('reservation')">Reservation</div>
-            <div class="tab">Book Renewal</div>
+    <?php include 'HEADER-NAVBAR.PHP' ?>
+
+    <div class="user-history-container">
+        <!-- Header Section -->
+        <div class="user-history-header">
+            <h2>User Account History</h2>
+            <div class="user-history-tabs">
+                <button class="tab active" onclick="showTab('borrowing')">Borrowing</button>
+                <button class="tab" onclick="showTab('reservation')">Reservation</button>
+            </div>
         </div>
 
-        <!-- Borrowing Table -->
-        <div class="tab-content" id="borrowing" style="display: block;">
+        <!-- Borrowing Section -->
+        <div class="user-history-section active" id="borrowing">
+            <h3 class="sub-heading" style="color: #234078;">Borrowing History</h3>
             <table>
                 <thead>
                     <tr>
@@ -53,15 +59,35 @@ $reserved_result = $reserved_query->get_result();
                             <td><?= htmlspecialchars($row['book_title']) ?></td>
                             <td><?= htmlspecialchars($row['preferred_date']) ?></td>
                             <td><?= htmlspecialchars($row['due_date']) ?></td>
-                            <td><?= htmlspecialchars($row['status']) ?></td>
+                            <?php
+                            $status = htmlspecialchars($row['status']);
+                            $class = '';
+                            switch (strtolower($status)) {
+                                case 'returned':
+                                    $class = 'status-returned';
+                                    break;
+                                case 'borrowed':
+                                    $class = 'status-borrowed';
+                                    break;
+                                case 'approved':
+                                    $class = 'status-approved';
+                                    break;
+                                case 'pending':
+                                    $class = 'status-pending';
+                                    break;
+                            }
+                            ?>
+                            <td class="<?= $class ?>"><?= $status ?></td>
+
                         </tr>
                     <?php endwhile; ?>
                 </tbody>
             </table>
         </div>
 
-        <!-- Reservation Table -->
-        <div class="tab-content" id="reservation" style="display: none;">
+        <!-- Reservation Section -->
+        <div class="user-history-section" id="reservation">
+            <h3 class="sub-heading" style="color: #234078;">Reservation History</h3>
             <table>
                 <thead>
                     <tr>
@@ -87,13 +113,14 @@ $reserved_result = $reserved_query->get_result();
         </div>
     </div>
 
-<script>
-function showTab(tabName) {
-    document.querySelectorAll(".tab-content").forEach(el => el.style.display = "none");
-    document.getElementById(tabName).style.display = "block";
-    document.querySelectorAll(".tab").forEach(el => el.classList.remove("active"));
-    event.target.classList.add("active");
-}
-</script>
+    <script>
+        function showTab(tabId) {
+            document.querySelectorAll(".user-history-section").forEach(el => el.classList.remove("active"));
+            document.querySelectorAll(".tab").forEach(el => el.classList.remove("active"));
+            document.getElementById(tabId).classList.add("active");
+            event.target.classList.add("active");
+        }
+    </script>
 </body>
+
 </html>

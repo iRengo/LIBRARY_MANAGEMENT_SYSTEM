@@ -2,11 +2,10 @@
 session_start();
 include '../homepage/db_connect.php';
 
-
 $successMessage = '';
 if (isset($_SESSION['archive_success'])) {
     $successMessage = $_SESSION['archive_success'];
-    unset($_SESSION['archive_success']); // Prevent it from showing again
+    unset($_SESSION['archive_success']); // Prevent repeat display
 }
 ?>
 
