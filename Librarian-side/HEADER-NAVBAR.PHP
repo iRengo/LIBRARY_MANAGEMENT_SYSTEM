@@ -50,6 +50,10 @@ $returnedBooksCount = $conn->query("SELECT COUNT(*) AS total FROM returned_books
 
 // Unpaid Fines
 $unpaidFinesCount = $conn->query("SELECT COUNT(*) AS total FROM student_fines WHERE status = 'Unpaid'")->fetch_assoc()['total'];
+
+// Borrowed Books
+$borrowedBooksCount = $conn->query("SELECT COUNT(*) AS total FROM borrowed_books WHERE status = 'Borrowed'")->fetch_assoc()['total'];
+
 ?>
 
 
@@ -131,6 +135,7 @@ $unpaidFinesCount = $conn->query("SELECT COUNT(*) AS total FROM student_fines WH
                     </a>
                     <ul class="sidebar-dropdown push-inside">
                         <li></li>
+                        <li><a href="BORROWED_BOOKS.PHP">Borrowed Books <span class="badge"><?php echo $borrowedBooksCount; ?></span></a></li>
                         <li><a href="BORROW_REQUEST.PHP">Borrow Requests <span class="badge"><?php echo $borrowRequestsCount; ?></span></a></li>
                         <li><a href="READY_PICKUP.PHP">Ready to Pickup <span class="badge"><?php echo $readyPickupCount; ?></span></a></li>
                         <li><a href="RESERVED_BOOKS.PHP">Reserved Books <span class="badge"><?php echo $reservedBooksCount; ?></span></a></li>
@@ -138,6 +143,7 @@ $unpaidFinesCount = $conn->query("SELECT COUNT(*) AS total FROM student_fines WH
                         <li><a href="OVERDUE_BOOKS.PHP">Overdue Books <span class="badge"><?php echo $overdueBooksCount; ?></span></a></li>
                         <li><a href="RETURNED_BOOKS.PHP">Returned Books <span class="badge"><?php echo $returnedBooksCount; ?></span></a></li>
                         <li><a href="UNPAID_FINES.PHP">Unpaid Fines <span class="badge"><?php echo $unpaidFinesCount; ?></span></a></li>
+
                     </ul>
                 </li>
 

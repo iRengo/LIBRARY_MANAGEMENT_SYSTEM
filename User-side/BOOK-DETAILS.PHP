@@ -213,37 +213,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reaction'])) {
     exit();
 }
 
-
-
-
+// 1. Check overdue books for blocking borrowing
 $borrow_blocked = false;
-
-$overdue = "SELECT * FROM borrowed_books 
+$overdue = "SELECT 1 FROM borrowed_books 
             WHERE student_no = ? 
             AND status = 'Borrowed' 
-            AND DATEDIFF(CURRENT_DATE, due_date) > 0";
+            AND due_date < CURRENT_DATE
+            LIMIT 1";
 
 $check_overdue = $conn->prepare($overdue);
-
-
 $check_overdue->bind_param("s", $student_no);
-
-
 $check_overdue->execute();
-
-
 $check_overdue_result = $check_overdue->get_result();
 
 if ($check_overdue_result->num_rows > 0) {
     $borrow_blocked = true;
 }
-
 $check_overdue->close();
 
 
-
-
-// Check the latest borrow status for the specific book
+// 2. Get latest borrow status for the book and student
 $borrow_status = null;
 $borrow_check_query = "SELECT status FROM borrowed_books 
                        WHERE student_no = ? AND book_id = ? 
@@ -258,36 +247,38 @@ if ($borrow_check_row = $borrow_check_result->fetch_assoc()) {
 }
 $borrow_check_stmt->close();
 
-// Check if the book is already reserved
+
+// 3. Check if book is already reserved by the user
 $book_reserved = false;
-$sql_check = "SELECT * FROM reserved_books WHERE book_id = ? AND student_no = ?";
+$sql_check = "SELECT 1 FROM reserved_books WHERE book_id = ? AND student_no = ? LIMIT 1";
 $stmt_check = $conn->prepare($sql_check);
 $stmt_check->bind_param("ii", $book['book_id'], $student_no);
 $stmt_check->execute();
 $result_check = $stmt_check->get_result();
+
 if ($result_check->num_rows > 0) {
     $book_reserved = true;
 }
 $stmt_check->close();
 
+
+// 4. Check if user can borrow again (previous returned record)
+$can_borrow_again = false;
+$check_return_query = $conn->prepare("SELECT 1 FROM borrowed_books WHERE student_no = ? AND book_id = ? AND status = 'Returned' LIMIT 1");
+$check_return_query->bind_param("ii", $student_no, $book_id);
+$check_return_query->execute();
+$return_result = $check_return_query->get_result();
+
+if ($return_result->num_rows > 0 && $borrow_status !== 'Borrowed' && $borrow_status !== 'Pending' && !$book_reserved) {
+    $can_borrow_again = true;
+}
+$check_return_query->close();
+
+
+
 // Flags for UI logic
 $already_borrowed = ($borrow_status === 'Borrowed');
 $borrow_pending = ($borrow_status === 'Pending');
-
-
-
-$can_borrow_again = false;
-if ($borrow_status === 'Returned') {
-    $check_return_query = $conn->prepare("SELECT * FROM borrowed_books WHERE student_no = ? AND book_id = ? AND status = 'Returned' LIMIT 1");
-    $check_return_query->bind_param("si", $student_no, $book_id);
-    $check_return_query->execute();
-    $return_result = $check_return_query->get_result();
-
-    if ($return_result->num_rows > 0) {
-        $can_borrow_again = true;
-    }
-    $check_return_query->close();
-}
 ?>
 
 
@@ -323,60 +314,60 @@ if ($borrow_status === 'Returned') {
 
             <br> <br>
 
-            <?php if ($borrow_status === 'Approved'): ?>
-                <button class="borrow-button borrowed" disabled>
-                    Approved, Ready for Pickup
-                </button>
-            <?php elseif ($already_borrowed): ?>
-                <button class="borrow-button blocked" disabled>
-                    Already Borrowed
-                </button>
-
-            <?php elseif ($borrow_blocked): ?>
+            <?php if ($borrow_blocked): ?>
                 <button class="borrow-button blocked" disabled>
                     Borrow Blocked (Overdue Book Detected)
                 </button>
 
+            <?php elseif ($borrow_status === 'Approved'): ?>
+                <button class="borrow-button borrowed" disabled>
+                    Approved, Ready for Pickup
+                </button>
 
-            <?php elseif ($borrow_pending): ?>
+            <?php elseif ($borrow_status === 'Borrowed'): ?>
+                <button class="borrow-button blocked" disabled>
+                    Already Borrowed
+                </button>
+
+            <?php elseif ($borrow_status === 'Pending'): ?>
                 <button class="borrow-button pending" disabled>
                     Borrowing in Process
                 </button>
-            <?php elseif ($borrow_status === null && $book['book_stocks'] > 0): ?>
-                <button class="borrow-button available" id="borrow-btn">
-                    Borrow This
+
+            <?php elseif (($book['status'] === 'Upcoming' || $book['book_stocks'] == 0) && $book_reserved): ?>
+                <button class="borrow-button reserved" disabled>
+                    Already Reserved
                 </button>
-            <?php elseif ($borrow_status === null && $book['book_stocks'] == 0): ?>
-                <?php if (!$book_reserved): ?>
 
-                    <form method="POST" action="book_reserve.php">
-                        <input type="hidden" name="book_id" value="<?= htmlspecialchars($book['book_id']); ?>">
-                        <input type="hidden" name="book_title" value="<?= htmlspecialchars($book['book_title']); ?>">
-                        <input type="hidden" name="author" value="<?= htmlspecialchars($book['book_author']); ?>">
-                        <input type="hidden" name="ISBN" value="<?= htmlspecialchars($book['ISBN']); ?>">
-                        <input type="hidden" name="acc_no" value="<?= htmlspecialchars($_SESSION['acc_no']); ?>">
-                        <input type="hidden" name="student_no" value="<?= htmlspecialchars($student_no); ?>">
-                        <input type="hidden" name="first_name" value="<?= htmlspecialchars($first_name); ?>">
-                        <input type="hidden" name="last_name" value="<?= htmlspecialchars($last_name); ?>">
-                        <input type="hidden" name="email" value="<?= htmlspecialchars($email); ?>">
-                        <button type="submit" class="borrow-button reserve">
-                            Reserve This
-                        </button>
-                    </form>
-                <?php else: ?>
-                    <button class="borrow-button reserved" disabled>
-                        Already Reserved
+            <?php elseif ($book['status'] === 'Upcoming' || $book['book_stocks'] == 0): ?>
+                <form method="POST" action="book_reserve.php">
+                    <input type="hidden" name="book_id" value="<?= htmlspecialchars($book['book_id']); ?>">
+                    <input type="hidden" name="book_title" value="<?= htmlspecialchars($book['book_title']); ?>">
+                    <input type="hidden" name="author" value="<?= htmlspecialchars($book['book_author']); ?>">
+                    <input type="hidden" name="ISBN" value="<?= htmlspecialchars($book['ISBN']); ?>">
+                    <input type="hidden" name="acc_no" value="<?= htmlspecialchars($_SESSION['acc_no']); ?>">
+                    <input type="hidden" name="student_no" value="<?= htmlspecialchars($student_no); ?>">
+                    <input type="hidden" name="first_name" value="<?= htmlspecialchars($first_name); ?>">
+                    <input type="hidden" name="last_name" value="<?= htmlspecialchars($last_name); ?>">
+                    <input type="hidden" name="email" value="<?= htmlspecialchars($email); ?>">
+                    <button type="submit" class="borrow-button reserve">
+                        Reserve This
                     </button>
-                <?php endif; ?>
-            <?php endif; ?>
+                </form>
 
-            <?php
-            // Only show the "Borrow Again" button if the book has been returned before
-            if ($can_borrow_again): ?>
+            <?php elseif ($can_borrow_again && $book['book_stocks'] > 0): ?>
                 <button type="button" class="borrow-button again" id="borrow-again-btn">
                     Borrow Again!
                 </button>
+
+            <?php elseif ($book['status'] === 'Available' && $book['book_stocks'] > 0): ?>
+                <button class="borrow-button available" id="borrow-btn">
+                    Borrow This
+                </button>
             <?php endif; ?>
+
+
+
 
 
 

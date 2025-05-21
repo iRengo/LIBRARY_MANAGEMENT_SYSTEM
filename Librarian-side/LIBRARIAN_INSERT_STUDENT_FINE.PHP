@@ -49,10 +49,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Insert into tbl_user_notifications
         $notif_type = 'pending_fine';
         $notif_message = "You have been issued a fine for a returned book due to damage or other issues.";
-        $notif_created_at = date('Y-m-d H:i:s');
 
-        $notif_stmt = $conn->prepare("INSERT INTO tbl_user_notifications (student_no, book_id, type, message, created_at) VALUES (?, ?, ?, ?, ?)");
-        $notif_stmt->bind_param("sssss", $student_no, $book_id, $notif_type, $notif_message, $notif_created_at);
+        $notif_stmt = $conn->prepare("INSERT INTO tbl_user_notifications (student_no, book_id, type, message, created_at) VALUES (?, ?, ?, ?, NOW())");
+        $notif_stmt->bind_param("ssss", $student_no, $book_id, $notif_type, $notif_message);
         $notif_stmt->execute();
         $notif_stmt->close();
         // Update book status

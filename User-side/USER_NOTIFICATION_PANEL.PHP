@@ -10,14 +10,20 @@ if (!$student_no) {
 }
 
 $sql = "
-    SELECT n.*, b.book_cover, b.book_title, sf.proof, sf.fine_id, f.fine_name, f.price
-    FROM tbl_user_notifications n
-    LEFT JOIN tbl_books b ON n.book_id = b.book_id
-    LEFT JOIN student_fines sf ON n.book_id = sf.book_id AND n.student_no = sf.student_no
-    LEFT JOIN fines_table f ON sf.fine_id = f.fine_id
-    WHERE n.student_no = ?
-    ORDER BY n.created_at DESC
+   SELECT n.*, b.book_cover, b.book_title,
+       f.fine_name,
+       f.price,
+       sf.proof
+FROM tbl_user_notifications n
+LEFT JOIN tbl_books b ON n.book_id = b.book_id
+LEFT JOIN student_fines sf ON n.book_id = sf.book_id AND n.student_no = sf.student_no
+LEFT JOIN fines_table f ON sf.fine_id = f.fine_id
+WHERE n.student_no = ?
+GROUP BY n.notif_id
+ORDER BY n.created_at DESC
 ";
+
+
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $student_no);

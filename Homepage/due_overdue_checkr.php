@@ -1,6 +1,5 @@
 <?php
 date_default_timezone_set('Asia/Manila');
-session_start();
 include '../Homepage/db_connect.php';
 
 $student_no = $_SESSION['student_no'] ?? null;

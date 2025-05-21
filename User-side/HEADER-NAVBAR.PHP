@@ -1,6 +1,8 @@
 <?php
 
 include '../Homepage/db_connect.php';
+include '../Homepage/due_overdue_checkr.php';
+include '../Homepage/archiver.php';
 
 if (isset($_SESSION['acc_no'])) {
     $studentNo = $_SESSION['acc_no'];  

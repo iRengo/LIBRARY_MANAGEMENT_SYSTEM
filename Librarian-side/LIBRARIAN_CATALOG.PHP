@@ -420,8 +420,8 @@ include '../Homepage/db_connect.php';
                 <div style="flex: 1 1 48%;">
                     <label>Status:</label>
                     <select name="status" class="swal2-select" required>
-                        <option value="available">Available</option>
-                        <option value="archived">Archived</option>
+                        <option value="Available">Available</option>
+                        <option value="Upcoming">Upcoming</option>
                     </select>
                 </div>
                 <div style="flex: 1 1 100%;">

@@ -89,5 +89,90 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             echo "Failed to log rejection";
         }
+    } elseif ($action === 'mark_borrowed') {
+        $update_sql = "UPDATE borrowed_books 
+                   SET status = 'Borrowed', 
+                       update_datetime = NOW(), 
+                       updated_by = ? 
+                   WHERE borrow_id = ?";
+        $update_stmt = $conn->prepare($update_sql);
+        $update_stmt->bind_param("si", $approved_by, $borrow_id);
+        $update_stmt->execute();
+
+        if ($update_stmt->affected_rows > 0) {
+            // Send notification
+            $message = "You have successfully borrowed '{$title}'. Due date: Check your account.";
+            $type = "borrowed";
+
+            $notif_sql = "INSERT INTO tbl_user_notifications (student_no, book_id, message, type, created_at, is_read) 
+                      VALUES (?, ?, ?, ?, NOW(), 0)";
+            $notif_stmt = $conn->prepare($notif_sql);
+            $notif_stmt->bind_param("siss", $student_no, $book_id, $message, $type);
+            $notif_stmt->execute();
+
+            echo "Success";
+        } else {
+            echo "Failed to update status";
+        }
+        exit;
+    } elseif ($action === 'return_book') {
+        $borrow_id = $_POST['borrow_id'];
+        $student_no = $_POST['student_no'];
+        $book_id = $_POST['book_id'];
+        $handled_by = $_SESSION['librarian_no'];
+        $book_condition = 'Good'; // Because this action is only for 'Good' condition
+
+        // Fetch book title from borrowed_books
+        $fetch_sql = "SELECT book_title FROM borrowed_books WHERE borrow_id = ?";
+        $fetch_stmt = $conn->prepare($fetch_sql);
+        $fetch_stmt->bind_param("i", $borrow_id);
+        $fetch_stmt->execute();
+        $result = $fetch_stmt->get_result();
+
+        if ($result->num_rows === 0) {
+            echo "Book record not found.";
+            exit;
+        }
+
+        $row = $result->fetch_assoc();
+        $book_title = $row['book_title'];
+        $return_date = date("Y-m-d H:i:s");
+
+        // 1. Update borrowed_books status
+        $update_sql = "UPDATE borrowed_books 
+                   SET status = 'Returned', 
+                       update_datetime = NOW(), 
+                       updated_by = ? 
+                   WHERE borrow_id = ?";
+        $update_stmt = $conn->prepare($update_sql);
+        $update_stmt->bind_param("si", $handled_by, $borrow_id);
+        $update_stmt->execute();
+
+        if ($update_stmt->affected_rows > 0) {
+            // 2. Insert into returned_books
+            $insert_sql = "INSERT INTO returned_books 
+                       (borrow_id, book_id, book_title, student_no, return_date, book_condition, handled_by)
+                       VALUES (?, ?, ?, ?, ?, ?, ?)";
+            $insert_stmt = $conn->prepare($insert_sql);
+            $insert_stmt->bind_param("iisssss", $borrow_id, $book_id, $book_title, $student_no, $return_date, $book_condition, $handled_by);
+            $insert_stmt->execute();
+
+            // 3. Send notification
+            $message = "Thank you for returning '{$book_title}'. It has been marked as returned.";
+            $type = "returned";
+
+            $notif_sql = "INSERT INTO tbl_user_notifications 
+                      (student_no, book_id, message, type, created_at, is_read) 
+                      VALUES (?, ?, ?, ?, NOW(), 0)";
+            $notif_stmt = $conn->prepare($notif_sql);
+            $notif_stmt->bind_param("siss", $student_no, $book_id, $message, $type);
+            $notif_stmt->execute();
+
+            echo "Book marked as returned and logged in returned_books.";
+        } else {
+            echo "Failed to update return status.";
+        }
+
+        exit;
     }
 }

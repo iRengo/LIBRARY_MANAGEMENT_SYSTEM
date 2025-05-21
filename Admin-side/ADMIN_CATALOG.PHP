@@ -234,8 +234,8 @@ if (isset($_SESSION['archive_success'])) {
                 <div style="flex: 1; min-width: 48%; display: flex; flex-direction: column;">
                     <label for="status">Status:</label>
                     <select id="status" name="status" class="swal2-select" required>
-                        <option value="available">Available</option>
-                        <option value="archived">Archived</option>
+                        <option value="Available">Available</option>
+                        <option value="Upcoming">Upcoming</option>
                     </select>
                 </div>
 
