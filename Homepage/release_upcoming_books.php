@@ -20,6 +20,7 @@ if ($result->num_rows > 0) {
         $publication_date = $book['publication_date'];
         $isbn = $book['ISBN'];
         $book_genre = $book['book_genre'];
+        $book_category = $book['book_category'];
         $book_stocks = $book['book_stocks'];
         $status = 'Available';  
 

@@ -36,15 +36,16 @@ $ready_to_pickup_query = "SELECT COUNT(*) AS total FROM borrowed_books WHERE sta
 $ready_to_pickup_result = $conn->query($ready_to_pickup_query);
 $ready_to_pickup_count = $ready_to_pickup_result->fetch_assoc()['total'] ?? 0;
 
-// Unpaid Fines (assuming a table student_fines with a 'paid' column)
+// Unpaid Fines 
 $unpaid_fines_query = "SELECT COUNT(*) AS total FROM student_fines where status = 'unpaid' ";
 $unpaid_fines_result = $conn->query($unpaid_fines_query);
 $unpaid_fines_count = $unpaid_fines_result->fetch_assoc()['total'] ?? 0;
 
 // Upcoming Books (status = 'Upcoming')
-$upcoming_books_query = "SELECT COUNT(*) AS total FROM tbl_books WHERE status = 'Upcoming'";
-$upcoming_books_result = $conn->query($upcoming_books_query);
-$upcoming_books_count = $upcoming_books_result->fetch_assoc()['total'] ?? 0;
+$borrowed_books_query = "SELECT COUNT(*) AS total FROM borrowed_books WHERE status = 'borrowed'";
+$borrowed_books_result = $conn->query($borrowed_books_query);
+$borrowed_books_count = $borrowed_books_result->fetch_assoc()['total'] ?? 0;
+
 
 
 $fines_query = "
@@ -124,10 +125,10 @@ $top_books_result = $conn->query($top_books_query);
                 </div>
             </div>
             <div class="card available">
-                <i class="fas fa-calendar-alt"></i>
+               <i class="fas fa-book-open"></i>
                 <div>
-                    <h3>Upcoming Books</h3>
-                    <p><?= $upcoming_books_count ?></p>
+                    <h3>Borrowed Books</h3>
+                    <p><?= $borrowed_books_count ?></p>
                 </div>
             </div>
         </div>

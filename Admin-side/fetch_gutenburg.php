@@ -12,8 +12,21 @@ if (!$data || !isset($data['results'])) {
 
 $imported = 0;
 
+// Function to map subjects to general category
+function mapCategory($subjects) {
+    $subjectsStr = strtolower(implode(', ', $subjects));
+
+    if (str_contains($subjectsStr, 'fiction')) return 'Fiction';
+    if (str_contains($subjectsStr, 'fantasy')) return 'Fantasy';
+    if (str_contains($subjectsStr, 'adventure')) return 'Adventure';
+    if (str_contains($subjectsStr, 'science')) return 'Educational';
+    if (str_contains($subjectsStr, 'reference')) return 'Reference';
+    if (str_contains($subjectsStr, 'non-fiction') || str_contains($subjectsStr, 'biography') || str_contains($subjectsStr, 'memoir')) return 'Non-Fiction';
+
+    return 'Other';
+}
+
 foreach ($data['results'] as $book) {
-    // Escape book data to prevent SQL injection
     $title = $conn->real_escape_string($book['title']);
     $author = isset($book['authors'][0]['name']) ? $conn->real_escape_string($book['authors'][0]['name']) : 'Unknown';
     $cover = isset($book['formats']['image/jpeg']) ? $conn->real_escape_string($book['formats']['image/jpeg']) : null;
@@ -21,37 +34,32 @@ foreach ($data['results'] as $book) {
     $publication_date = date('Y-m-d', strtotime('-1 day'));
     $status = 'Upcoming';
     $stocks = 30;
-    $publisher_id = 1; // Assuming default publisher
 
-    // Use language as book description
-    if (isset($book['languages']) && !empty($book['languages'])) {
-        // Convert language codes (e.g., ['en', 'fr']) to a string "EN, FR"
-        $description = implode(', ', array_map('strtoupper', $book['languages']));
-    } else {
-        $description = 'Unknown';
-    }
+    // Description from languages
+    $description = isset($book['languages']) && !empty($book['languages']) ?
+        implode(', ', array_map('strtoupper', $book['languages'])) : 'Unknown';
     $description = $conn->real_escape_string($description);
 
-    // Simplify the genres by extracting only the primary genre word (before " --")
+    // Genre from subjects
     if (isset($book['subjects']) && !empty($book['subjects'])) {
-        // Extract only the first genre term before any " --"
-        $genres = array_map(function($genre) {
-            // Get only the part before " --" and return the simplified genre
+        $genres = array_map(function ($genre) {
             return strtok($genre, ' --');
         }, $book['subjects']);
-
-        // Join the genres with commas if there are multiple
         $book_genre = implode(', ', $genres);
+        $category = mapCategory($book['subjects']);
     } else {
-        $book_genre = 'Unknown'; // Fallback if no subjects are available
+        $book_genre = 'Unknown';
+        $category = 'Other';
     }
 
     $book_genre = $conn->real_escape_string($book_genre);
+    $category = $conn->real_escape_string($category);
 
-    // Insert into tbl_books
-    $sql = "INSERT INTO tbl_books (book_cover, book_title, book_author, book_description, publisher, publication_date, isbn, book_genre, book_stocks, status) 
-        VALUES ('$cover', '$title', '$author', '$description', 'Project Gutenberg', '$publication_date', '$ebook_no', '$book_genre', $stocks, '$status')";
-
+    // Insert into database with category
+    $sql = "INSERT INTO tbl_books 
+        (book_cover, book_title, book_author, book_description, publisher, publication_date, isbn, book_genre, book_category, book_stocks, status) 
+        VALUES 
+        ('$cover', '$title', '$author', '$description', 'Project Gutenberg', '$publication_date', '$ebook_no', '$book_genre', '$category', $stocks, '$status')";
 
     if ($conn->query($sql) === TRUE) {
         $imported++;
