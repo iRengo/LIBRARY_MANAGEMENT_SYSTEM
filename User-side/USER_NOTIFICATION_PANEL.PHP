@@ -49,17 +49,21 @@ function time_ago($datetime)
     <h4>Notifications</h4><br>
 
     <?php while ($row = $result->fetch_assoc()): ?>
-        <div
-            class="notification-item
         <?php
-        if ($row['type'] === 'approved') echo 'approved';
-        else if ($row['type'] === 'rejected') echo 'rejected';
-        else if ($row['type'] === 'due_today') echo 'due-today';
-        else if ($row['type'] === 'overdue') echo 'overdue';
-        else if ($row['type'] === 'pending_fine') echo 'pending-fine';
-        else echo 'other-type';
-        ?>"
+        // Determine classes
+        $statusClass = 'other-type';
+        if ($row['type'] === 'approved') $statusClass = 'approved';
+        else if ($row['type'] === 'rejected') $statusClass = 'rejected';
+        else if ($row['type'] === 'due_today') $statusClass = 'due-today';
+        else if ($row['type'] === 'overdue') $statusClass = 'overdue';
+        else if ($row['type'] === 'pending_fine') $statusClass = 'pending-fine';
+
+        $readClass = $row['is_read'] ? 'read' : 'unread';
+        ?>
+        <div
+            class="notification-item <?= $statusClass . ' ' . $readClass ?>"
             style="cursor:pointer;"
+            data-notif-id="<?= $row['notif_id'] ?>"
             data-book-title="<?= htmlspecialchars($row['book_title']) ?>"
             data-message="<?= htmlspecialchars($row['message']) ?>"
             data-created-at="<?= htmlspecialchars($row['created_at']) ?>"
@@ -71,6 +75,7 @@ function time_ago($datetime)
             data-fine-id="<?= !empty($row['fine_id']) ? htmlspecialchars($row['fine_id']) : '' ?>"
             data-fine-price="<?= !empty($row['price']) ? htmlspecialchars($row['price']) : '' ?>"
             data-fine-name="<?= !empty($row['fine_name']) ? htmlspecialchars($row['fine_name']) : '' ?>">
+            
             <?php if (!empty($row['book_cover'])): ?>
                 <img src="<?= htmlspecialchars($row['book_cover']) ?>" class="notif-cover" />
             <?php endif; ?>
@@ -84,7 +89,6 @@ function time_ago($datetime)
                 else if ($row['type'] === 'overdue') $typeClass = 'status-overdue';
                 else if ($row['type'] === 'fine_issued') $typeClass = 'status-fine_issued';
                 else if ($row['type'] === 'pending_fine') $typeClass = 'status-pending-fine';
-
                 ?>
                 <div class="notif-status <?= $typeClass ?>">
                     <?= htmlspecialchars(ucfirst(str_replace('_', ' ', $row['type']))) ?>
@@ -95,7 +99,5 @@ function time_ago($datetime)
                 <small class="notif-time"><?= time_ago($row['created_at']) ?></small>
             </div>
         </div>
-
-
     <?php endwhile; ?>
 </div>

@@ -2,14 +2,13 @@
 session_start();
 include '../Homepage/db_connect.php';
 
-date_default_timezone_set('Asia/Manila'); // Make sure the timezone is consistent
+date_default_timezone_set('Asia/Manila'); 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'];
     $borrow_id = $_POST['borrow_id'];
     $approved_by = $_SESSION['librarian_no'];
-
-    // Get book_id and other info from borrowed_books
+    
     $borrow_sql = "SELECT book_id, student_no, book_title FROM borrowed_books WHERE borrow_id = ?";
     $borrow_stmt = $conn->prepare($borrow_sql);
     $borrow_stmt->bind_param("i", $borrow_id);
@@ -37,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $update_stmt->execute();
 
         // Insert notification with book_id
-        $message = "Your borrow request for '{$title}' has been approved. Please pick it up.";
+        $message = "Your borrow request for '{$title}' has been approved. Please pick it up. You only have 24hrs, after that your request will be automatically cancelled";
         $type = "approved";
 
         $notif_sql = "INSERT INTO tbl_user_notifications (student_no, book_id, message, type, created_at, is_read) 

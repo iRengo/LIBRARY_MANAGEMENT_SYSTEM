@@ -1,6 +1,9 @@
 <?php
 
 include '../Homepage/db_connect.php';
+include '../Homepage/due_overdue_checkr.php';
+include '../Homepage/archiver.php';
+include '../Homepage/UNCLAIMED_BOOK_CHECKER.PHP';
 
 if (isset($_SESSION['librarian_no'])) {
     $librarianNo = $_SESSION['librarian_no'];

@@ -67,6 +67,16 @@ document.getElementById('notificationPanel').addEventListener('click', function 
     let notificationItem = e.target.closest('.notification-item');
     if (!notificationItem) return;
 
+    const notifId = notificationItem.getAttribute('data-notif-id');
+
+    if (notifId) {
+        fetch('../homepage/mark_notification_read.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'notif_id=' + encodeURIComponent(notifId)
+        }).then(res => res.text()).then(console.log).catch(console.error);
+    }
+
     const bookCover = notificationItem.getAttribute('data-book-cover');
     const bookTitle = notificationItem.getAttribute('data-book-title') || 'No Title';
     const message = notificationItem.getAttribute('data-message') || '';

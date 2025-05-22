@@ -213,23 +213,51 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reaction'])) {
     exit();
 }
 
-// 1. Check overdue books for blocking borrowing
-$borrow_blocked = false;
-$overdue = "SELECT 1 FROM borrowed_books 
-            WHERE student_no = ? 
-            AND status = 'Borrowed' 
-            AND due_date < CURRENT_DATE
-            LIMIT 1";
+$borrow_blocked = false; // Ensure it's always defined
+$has_overdue_books = false;
+$has_unpaid_fines = false;
 
-$check_overdue = $conn->prepare($overdue);
-$check_overdue->bind_param("s", $student_no);
-$check_overdue->execute();
-$check_overdue_result = $check_overdue->get_result();
-
-if ($check_overdue_result->num_rows > 0) {
-    $borrow_blocked = true;
+// Overdue books
+$overdue_query = "SELECT 1 FROM borrowed_books WHERE student_no = ? AND status = 'Borrowed' AND due_date < CURRENT_DATE LIMIT 1";
+$overdue_stmt = $conn->prepare($overdue_query);
+$overdue_stmt->bind_param("s", $student_no);
+$overdue_stmt->execute();
+$overdue_result = $overdue_stmt->get_result();
+if ($overdue_result->num_rows > 0) {
+    $has_overdue_books = true;
 }
-$check_overdue->close();
+$overdue_stmt->close();
+
+// Unpaid fines
+$fines_query = "SELECT 1 FROM student_fines WHERE student_no = ? AND status = 'unpaid' LIMIT 1";
+$fines_stmt = $conn->prepare($fines_query);
+$fines_stmt->bind_param("s", $student_no);
+$fines_stmt->execute();
+$fines_result = $fines_stmt->get_result();
+if ($fines_result->num_rows > 0) {
+    $has_unpaid_fines = true;
+}
+$fines_stmt->close();
+
+$borrow_blocked = $has_overdue_books || $has_unpaid_fines;
+
+
+
+$max_borrow_reached = false;
+
+// Check if student has 3 borrowed books
+$borrow_count_query = "SELECT COUNT(*) AS borrowed_count FROM borrowed_books 
+                       WHERE student_no = ? AND status = 'Borrowed'";
+$borrow_count_stmt = $conn->prepare($borrow_count_query);
+$borrow_count_stmt->bind_param("s", $student_no);
+$borrow_count_stmt->execute();
+$borrow_count_result = $borrow_count_stmt->get_result();
+$borrowed_count = $borrow_count_result->fetch_assoc()['borrowed_count'] ?? 0;
+$borrow_count_stmt->close();
+
+if ($borrowed_count >= 3) {
+    $max_borrow_reached = true;
+}
 
 
 // 2. Get latest borrow status for the book and student
@@ -316,7 +344,12 @@ $borrow_pending = ($borrow_status === 'Pending');
 
             <?php if ($borrow_blocked): ?>
                 <button class="borrow-button blocked" disabled>
-                    Borrow Blocked (Overdue Book Detected)
+                    (Overdue or Unpaid Fines Detected)
+                </button>
+
+            <?php elseif ($max_borrow_reached): ?>
+                <button class="borrow-button blocked" disabled>
+                    Maximum Borrow Limit Reached (3 Books)
                 </button>
 
             <?php elseif ($borrow_status === 'Approved'): ?>
@@ -365,7 +398,6 @@ $borrow_pending = ($borrow_status === 'Pending');
                     Borrow This
                 </button>
             <?php endif; ?>
-
 
 
 
