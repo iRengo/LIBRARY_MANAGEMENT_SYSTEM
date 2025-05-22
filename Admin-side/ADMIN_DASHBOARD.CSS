@@ -1,517 +1,384 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
-
-/* ===================== Main ===================== */
-.main {
-    position: absolute;
-    width: calc(100% - 300px);
-    left: 300px;
-    min-height: 100vh;
-    background: var(--white);
-    transition: 0.5s;
-}
-
-.main.active {
-    width: calc(100% - 80px);
-    left: 80px;
-}
-
-.topbar {
-    width: 100%;
-    height: 60px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 10px;
-    box-shadow: 0 4px 6px rgba(150, 150, 150, 0.2);
-
-}
-
-.toggle {
-    position: relative;
-    width: 60px;
-    height: 60px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 2.5rem;
-    cursor: pointer;
-    margin-right: 2%;
-}
-
-.viga-regular {
-    font-family: "Viga", serif;
-    font-weight: 400;
-    font-style: normal;
-}
-.zilla-slab-highlight-regular {
-    font-family: "Zilla Slab Highlight", serif;
-    font-weight: 400;
-    font-style: normal;
-  }
-  
-  .zilla-slab-highlight-bold {
-    font-family: "Zilla Slab Highlight", serif;
-    font-weight: 700;
-    font-style: normal;
-  }
-  .admin-icon {
-    width: 63px; 
-    height: 63px;  
-    margin-top: 30%;
-}
-/* Time and Date Display Styling */
-.time-container {
-    position: fixed;   
-    bottom: 0;       
-    left: 0;           
-    width: 100%;       
-    padding: 10px;
-    background: linear-gradient(to bottom, #1C2E5C, #343536); 
-    color: #fff;      
-    border-radius: 8px; 
-    box-sizing: border-box; 
-    text-align: left;
-}
-
-
-.admin-gradient {
-    background: linear-gradient(to top, #1C2E5C, #343536); /* Gradient direction */
-    background-size: 500px 190px 120px; /* Make the gradient cover the entire div */
-    background-position: 0 0; /* Ensure it starts from the top */
-    height: 100px;
-    padding: 0;
+* {
+    font-family: "Poppins", sans-serif;
     margin: 0;
-
+    padding: 0;
+    box-sizing: border-box;
 }
 
+body {
+    background-color: #f9fafc;
+    font-family: 'Poppins', sans-serif;
+    color: #2c3e50;
+}
 
+.availability-section {
+    margin: 2rem;
+}
 
-/*----------------MODAL------------------*/
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
+.full-width {
     width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.5);
+    max-width: 100%;
 }
-.modal-content {
-    background-color: white;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 30%;
-    text-align: center;
-    border-radius: 10px;
-}
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-}
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
-.modal-actions {
-    margin-top: 20px;
+
+.graph-section {
     display: flex;
-    justify-content: center;
-    gap: 20px;
-    align-content: center;
-    flex-wrap: nowrap;
-    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin: 2rem;
+}
+
+.card-box {
+    background-color: #ffffff;
+    border-radius: 16px;
+    padding: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ddd;
+    flex: 1;
+    min-width: 300px;
+}
+
+.shortcut-buttons {
+    margin: 2rem;
+}
+
+/* Dashboard Metrics Cards */
+.dashboard-cards {
+    display: flex;
+    justify-content: space-around;
     align-items: center;
+    margin: 30px auto;
+    gap: 20px;
+    max-width: 1200px;
+    flex-wrap: wrap;
 }
-.btn-action {
-    flex: 1; /* Equal button sizes */
-    max-width: 120px; /* Set max width for buttons */
+
+.dashboard-card {
+    flex: 1 1 22%;
+    background-color: #ffffff;
+    padding: 25px 20px;
     text-align: center;
-    padding: 10px 20px;
-    text-decoration: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
+    border-radius: 12px;
+    transition: transform 0.2s ease-in-out;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ddd;
 }
-.btn-yes {
-    background-color: #da1b1b;
+
+.dashboard-card h4 {
+    font-size: 18px;
+    color: #ffffff;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.dashboard-card p {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffffff;
+    margin: 0;
+}
+
+.dashboard-card:nth-child(1) {
+    background-color: #3a0ca3;
     color: white;
     border: none;
 }
-.btn-yes:hover {
-    background-color: #c21818;
+
+.dashboard-card:nth-child(2) {
+    background-color: #14213d;
+    color: white;
+    border: none;
+
 }
-.btn-no {
-    background-color: #ccc;
-    color: black;
+
+.dashboard-card:nth-child(3) {
+    background-color: #00b4d8;
+    color: white;
     border: none;
 }
-.btn-no:hover {
-    background-color: #bbb;
+
+.dashboard-card:nth-child(4) {
+    background-color: #6c5b7b;
+    color: white;
+    border: none;
 }
 
-/* Bar Graph Container */
-.bar-graph-container {
-    width: 460px; /* Adjust width as needed */
-    margin-left: 10px;
-    margin-top: 20px;
-    padding-right: 10px;
-    position: relative;
-    margin-left: 70px;
+
+.dashboard-card:hover {
+    transform: scale(1.05);
 }
 
-/* Title for the bar graph */
-.bar-graph-container h3 {
-    font-size: 18px;
-    color: #333;
-    font-weight: bold;
-    margin-bottom: 10px;
+.main-content {
+    margin: 2rem;
 }
 
-/* Bar Graph Styling */
-.bar-graph {
+.graph-row {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    height: 200px; /* Set the height of the graph container */
-    background-color: #fafafa; /* Background color */
-    padding: 20px;
-    box-shadow: 5px 10px 10px 0px #d1d1d1;
-    border-radius: 10px;
-}
-
-/* Individual Bars */
-.bar {
-    width: 20%; /* Each bar occupies 20% of the width */
-    background-color: #3498db; /* Blue color for the bars */
-    border-radius: 5px;
-    margin: 0 5px;
-    transition: height 0.3s ease-in-out;
-}
-
-
-
-/* Charts Container for both Doughnut and Pie Chart */
-.charts-container {
-    display: flex;
-    justify-content:flex;
-    gap: 40px;
-    padding: 20px;
     flex-wrap: wrap;
-    margin-top: -220px;
-    margin-left: 250px;
+    gap: 2rem;
+    margin-top: 1rem;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-/* Doughnut Chart */
-.doughnut-chart {
+.pie-chart,
+.top-users {
     flex: 1;
-    max-width: 45%; /* Ensures charts don't take up full width */
-    margin-left: 290px;
-    border-radius: 10px;
-    box-shadow: 5px 10px 10px 0px #d1d1d1;
-    padding: 20px;
-    background-color: #fafafa; /* Background color */
-    height: 200px;
-    
+    min-width: 300px;
 }
 
-.doughnut {
-    position: relative;
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    background: conic-gradient(
-        #d05759 0% 30%, /* Growth */
-        #fd8744 30% 60%, /* Satisfaction */
-        #0b8fd9 60% 85%, /* Usage */
-        #ffb95a 85% 100% /* Financial Stability */
-    );
-    display: flex;
-    justify-content: center;
-    align-items: center;
-   
-}
-
-.inner-circle {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background-color: var(--white);
-}
-
-/* Pie Chart */
-.pie-chart {
-    flex: 1;
-    max-width: 45%; /* Ensures charts don't take up full width */
-    margin-right: 40px;
-    border-radius: 10px;
-    box-shadow: 5px 10px 10px 0px #d1d1d1;
-    padding: 20px;
-    background-color: #fafafa; /* Background color */
-    height: 200px;
-}
-
-.pie {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    background: conic-gradient(
-        #d05759 0% 60%, /* Satisfactory */
-        #0b8fd9 60% 100% /* Unsatisfactory */
-    );
-}
-
-/* Legend for Doughnut and Pie Charts */
-.legend {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    font-size: 14px;
-    color: var(--black2);
-    text-align: left;
-    margin-top: -120px;
-    margin-left: 200px;
-}
-
-.legend li {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin: 5px 0;
-}
-
-.legend-color {
-    width: 15px;
-    height: 15px;
-    border-radius: 50%;
-    display: inline-block;
-}
-
-.legend-color.growth {
-    background-color: #d05759;
-}
-
-.legend-color.satisfaction {
-    background-color: #fd8744;
-}
-
-.legend-color.usage {
-    background-color: #0b8fd9;
-}
-
-.legend-color.financial {
-    background-color: #ffb95a;
-}
-
-.legend-color.satisfactory {
-    background-color: #d05759;
-}
-
-.legend-color.unsatisfactory {
-    background-color: #0b8fd9;
-}
-
-/* Gray-colored div under the charts */
-.used-box {
-    background-color: #fafafa; /* Gray color */
-    height: 300px;
-    width: 60%;
-    margin-top: 10px; /* Optional: Adjust spacing from the charts */
-    margin-left: 70px;
-    border-radius: 15px;
-    justify-content: center; /* Centers content horizontally */
-    align-items: center; /* Centers content vertically */
-    box-shadow: 10px 10px 10px 0px #d1d1d1;
-    position: relative; /* Required for absolute positioning of the text */
-    flex-direction: column; /* Arrange content vertically */
-}
-
-/* Title for the gray-box in the upper left corner */
-.used-text {
-    font-size: 20px;
-    font-weight: bold;
-    color: #333; /* Dark color for text */
-    position: absolute; /* Position it relative to the .gray-box */
-    top: 10px; /* Space from the top */
-    left: 10px; /* Space from the left */
-    margin-left: 10px;
-}
-
-
-
-.image1 {
-    width: auto; /* Keeps the aspect ratio of the image */
-    height: 75%; /* Adjust height to fit inside the div */
-    max-width: 100%; /* Prevents the image from overflowing */
-    object-fit: contain; /* Ensures the image doesn't stretch or distort */
-    margin: 5px;
-    margin-top: 50px ;
-    margin-left: 60px;
-}
-
-.image2 {
-    width: auto; /* Keeps the aspect ratio of the image */
-    height: 75%; /* Adjust height to fit inside the div */
-    max-width: 100%; /* Prevents the image from overflowing */
-    object-fit: contain; /* Ensures the image doesn't stretch or distort */
-    margin: 5px;
-    margin-top: 50px ;
-}
-
-.image3 {
-    width: auto; /* Keeps the aspect ratio of the image */
-    height: 75%; /* Adjust height to fit inside the div */
-    max-width: 100%; /* Prevents the image from overflowing */
-    object-fit: contain; /* Ensures the image doesn't stretch or distort */
-    margin: 5px;
-    margin-top: 50px ;
-}
-
-.image4 {
-    width: auto; /* Keeps the aspect ratio of the image */
-    height: 75%; /* Adjust height to fit inside the div */
-    max-width: 100%; /* Prevents the image from overflowing */
-    object-fit: contain; /* Ensures the image doesn't stretch or distort */
-    margin: 5px;
-    margin-top: 50px ;
-}
-
-.image5 {
-    width: auto; /* Keeps the aspect ratio of the image */
-    height: 75%; /* Adjust height to fit inside the div */
-    max-width: 100%; /* Prevents the image from overflowing */
-    object-fit: contain; /* Ensures the image doesn't stretch or distort */
-    margin: 5px;
-    margin-top: 50px ;
-}
-
-
-/* New brown-colored div below the gray box */
-.avail-box {
-    background-color: #fafafa; /* Brown color */
-    height: 230px;
-    width: 60%;
-    margin-top: 20px; /* Space between gray box and brown box */
-    margin-left: 70px;
-    border-radius: 15px;
-    display: flex;
-    flex-wrap: nowrap; /* Keep images in a single row */
-    justify-content: center; /* Centers images horizontally */
-    align-items: center; /* Centers images vertically */
-    box-shadow: 10px 10px 10px 0px #d1d1d1;
-    position: relative; /* Required for absolute positioning of the text */
-}
-
-/* Title for the brown-box in the upper left corner */
-.avail-text {
-    font-size: 20px;
-    font-weight: bold;
-    color: #333; /* Dark color for text */
-    position: absolute; /* Position it relative to the .avail-box */
-    top: 10px; /* Space from the top */
-    left: 10px; /* Space from the left */
-    margin-left: 10px;
-}
-
-/* Container for each image and its status */
-.avail-image-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 10px;
-}
-
-/* Image size adjustment */
-.avail-image {
-    width: auto; /* Set image width */
-    height: 130px; /* Set image height */
-    object-fit: contain; /* Ensures the image doesn't stretch or distort */
-    margin: 5px;
-    margin-top: 30px;
-}
-
-/* Availability status circle */
-.status {
-    width: 20px; /* Circle size */
-    height: 20px; /* Circle size */
-    border-radius: 50%; /* Make it circular */
-    margin-top: 0px; /* Space between the image and the circle */
-}
-
-.status.available {
-    background-color: green; /* Green circle for available */
-}
-
-.status.unavailable {
-    background-color: red; /* Red circle for unavailable */
-}
-
-
-/* New div for Top 10 Users List */
-.user-list-box {
-    background-color: #fafafa; /* Gray color for background */
-    height: 550px;
-    width: 30%; /* Adjust the width as needed */
-    margin-top: -550px;
-    margin-right: 60px; /* Same margin as .avail-box and .used-box */
-    border-radius: 15px;
-    box-shadow: 10px 10px 10px 0px #d1d1d1;
-    display: flex;
-    flex-direction: column; /* Display items vertically */
-    padding: 10px;
-    position: relative;
-    float: right;
-}
-
-/* Title for the user list */
-.user-list-text {
-    font-size: 20px;
-    font-weight: bold;
-    color: #333;
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    margin-left: 20px;
-}
-
-/* Style for the list of users */
-.user-list {
-    list-style: none;
-    padding: 0;
-    margin: 40px 0 0 10px; /* Adjust margin for spacing below title */
-    font-size: 14px;
-    color: #525252;
-    font-size: 20px;
-    margin-top: 20px;
-}
-
-.user-list li {
-    margin: 5px 0;
-    padding-left: 10px;
-    padding: 10px; /* Add padding to each list item */
-    display: flex;
-    align-items: center;
-}
-
-.user-list li .user-icon {
-    width: 40px; /* Icon size */
-    height: 40px; /* Icon size */
-    margin-right: 10px; /* Space between icon and name */
-    background-color: #ffffff; /* Example icon color */
-    border-radius: 50%; /* Make it circular */
-}
-
-/* Optional: Customize the icon */
-.user-list li .user-icon img {
+.top-users-table {
     width: 100%;
-    height: 100%;
+    border-collapse: collapse;
+    max-height: 250px;
+    /* optional fixed height */
+}
+
+.top-users-table thead tr {
+    background-color: #0c125d;
+    color: white;
+}
+
+.top-users-table th,
+.top-users-table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.book-slider-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    overflow: hidden;
+}
+
+.book-listing {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 1rem 2rem;
+    width: 100%;
+}
+
+.book-listing::-webkit-scrollbar {
+    display: none;
+}
+
+.book-listing {
+    -ms-overflow-style: none;
+    /* IE/Edge */
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+
+.book-card {
+    flex: 0 0 auto;
+    width: 120px;
+    /* smaller width */
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 0.5rem;
+    /* less padding */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.2s ease-in-out;
+    font-size: 12px;
+    /* smaller text */
+    /* Prevent wrapping */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.book-cover {
+    width: 100px;
+    height: 120px;
+    object-fit: cover;
+    margin: 0 auto 0.3rem auto;
+    /* centers horizontally, keeps bottom margin */
+    border-radius: 8px;
+    display: block;
+    /* needed for margin auto to work */
+}
+
+.book-cover-placeholder {
+    width: 70px;
+    height: 100px;
+    line-height: 100px;
+    background-color: #ccc;
+    border-radius: 8px;
+    margin: 0 auto 0.3rem auto;
+    font-size: 14px;
+    color: #666;
+}
+
+.book-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.book-info {
+    font-size: 12px;
+    line-height: 1.2;
+}
+
+.search-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    margin: 1rem 0;
+}
+
+.search-icon {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    color: #999;
+    font-size: 14px;
+}
+
+.book-search-input {
+    width: 100%;
+    padding: 10px 14px 10px 36px;
+    /* left padding to make room for icon */
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    outline: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    transition: 0.3s border-color ease;
+}
+
+.book-search-input:focus {
+    border-color: #2980b9;
+}
+
+/* Chevron Button Styles */
+.chevron-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #ffffff;
+    border: none;
+    font-size: 18px;
+    padding: 8px;
     border-radius: 50%;
-    object-fit: cover; /* Ensure the image fits the circle */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    z-index: 10;
+    color: #2c3e50;
+    transition: background 0.3s ease;
+}
+
+.chevron-btn:hover {
+    background-color: #eaeaea;
+}
+
+.chevron-btn.left {
+    left: 0.5rem;
+}
+
+.chevron-btn.right {
+    right: 0.5rem;
+}
+
+.book-stock {
+    margin-top: 4px;
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: bold;
+    display: inline-block;
+    color: white;
+}
+
+.low-stock {
+    background-color: #e74c3c;
+    /* red */
+}
+
+.medium-stock {
+    background-color: #f1c40f;
+    /* yellow */
+    color: #2c3e50;
+}
+
+.high-stock {
+    background-color: #2ecc71;
+    /* green */
+}
+
+
+/* Optional: hide buttons on small screens */
+@media (max-width: 600px) {
+    .chevron-btn {
+        display: none;
+    }
+}
+
+/* Pagination buttons style */
+.pagination-controls button {
+    background-color: #07468a;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    margin: 0 5px;
+    font-size: 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    min-width: 100px;
+    /* keep button size consistent */
+    transition: background-color 0.3s ease;
+}
+
+.pagination-controls button:disabled {
+    background-color: #a0a0a0;
+    cursor: not-allowed;
+}
+
+.pagination-controls button:hover:not(:disabled) {
+    background-color: #0056b3;
+}
+
+.shortcut-buttons {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 15px;
+}
+
+.shortcut-btn {
+    padding: 10px 15px;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+}
+
+.shortcut-btn i {
+    margin-right: 8px;
+}
+
+/* Specific button colors */
+.view-log-btn {
+    background-color: #837f8d;
+}
+
+.add-librarian-btn {
+    background-color: #837f8d;
+}
+
+/* Optional: hover effects */
+.shortcut-btn:hover {
+    opacity: 0.9;
 }

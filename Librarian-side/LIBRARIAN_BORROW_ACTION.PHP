@@ -119,7 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $student_no = $_POST['student_no'];
         $book_id = $_POST['book_id'];
         $handled_by = $_SESSION['librarian_no'];
-        $book_condition = 'Good'; // Because this action is only for 'Good' condition
+        $book_condition = 'Good'; 
 
         // Fetch book title from borrowed_books
         $fetch_sql = "SELECT book_title FROM borrowed_books WHERE borrow_id = ?";

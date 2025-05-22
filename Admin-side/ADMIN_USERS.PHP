@@ -115,7 +115,7 @@ if ($studentResult && $studentRow = $studentResult->fetch_assoc()) {
 }
 
 // Total Users
-$totalUsers = $totalAdmins + $totalLibrarians + $totalStudents;
+$totalUsers =  $totalLibrarians + $totalStudents;
 
 // Fetch Student Accounts
 $sql_students = "SELECT student_no AS user_id, first_name, last_name, email, last_logged_in, 'Student' AS role FROM stud_acc";
@@ -125,9 +125,6 @@ $result_students = $conn->query($sql_students);
 $sql_librarian = "SELECT librarian_no AS user_id, first_name, last_name, email, last_logged_in, 'Librarian' AS role FROM librarian_acc";
 $result_librarian = $conn->query($sql_librarian);
 
-// Fetch Admin Accounts
-$sql_admin = "SELECT admin_no AS user_id, first_name, last_name, email, last_logged_in, 'Admin' AS role FROM admin_acc";
-$result_admin = $conn->query($sql_admin);
 
 // Merge results into a unified array
 $all_users = [];
@@ -144,11 +141,6 @@ if ($result_librarian->num_rows > 0) {
     }
 }
 
-if ($result_admin->num_rows > 0) {
-    while ($row = $result_admin->fetch_assoc()) {
-        $all_users[] = $row;
-    }
-}
 
 $conn->close();
 
@@ -173,167 +165,6 @@ $users_on_page = array_slice($all_users, $start_index, $users_per_page);
 <head>
 
     <link rel="stylesheet" href="ADMIN_USERS.CSS">
-
-    <style>
-        /* Previous/Next button styling */
-        .pagination .page-item.disabled .page-link {
-            background-color: #ccc;
-            cursor: not-allowed;
-            color: #666;
-        }
-
-        /* Pagination Styling */
-        .pagination-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 20px;
-        }
-
-        .custom-pagination {
-            display: flex;
-            gap: 8px;
-        }
-
-        .pagination-btn {
-            padding: 8px 12px;
-            background-color: rgb(255, 255, 255);
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: background 0.3s ease;
-            border: 2px solid gray;
-            color: #16264b;
-        }
-
-        .pagination-btn:hover {
-            background-color: #16264b;
-            color: white;
-        }
-
-        .pagination-btn.active {
-            background-color: rgb(99, 95, 95);
-            color: white;
-
-
-        }
-
-        .archived-users-table th,
-        .archived-users-table td {
-            padding: 10px;
-            border: 1px solid #ddd;
-            /* Light gray border */
-            text-align: center;
-        }
-
-        .archived-users-table th {
-            background-color: rgb(62, 79, 120);
-            /* Dark color for the header */
-            color: white;
-            /* White text for the header */
-        }
-
-        .archived-users-table {
-            width: 100%;
-            /* Set the width of the table */
-            margin: 0 auto;
-            /* This will horizontally center the table */
-            border-collapse: collapse;
-        }
-
-        .archived-users-table tr:nth-child(even) {
-            background-color: #f2f2f2;
-            /* Alternate row color */
-        }
-
-        .archived-users-table tr:hover {
-            background-color: #ddd;
-            /* Hover effect for rows */
-        }
-
-        /* General Button Styling */
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-            color: white;
-            font-weight: bold;
-            text-align: center;
-            margin: 5px;
-        }
-
-        /* Restore Button Styling */
-        .restoreBtn {
-            background-color: #4CAF50;
-            /* Green for restore */
-            box-shadow: 0 4px 6px rgba(0, 255, 0, 0.2);
-            /* Light green shadow for a 3D effect */
-        }
-
-        .restoreBtn:hover {
-            background-color: #45a049;
-            box-shadow: 0 6px 12px rgba(0, 255, 0, 0.3);
-            /* Darker shadow on hover */
-        }
-
-        .restoreBtn:focus {
-            outline: none;
-        }
-
-        /* Delete Button Styling */
-        .deleteBtn {
-            background-color: #f44336;
-            /* Red for delete */
-            box-shadow: 0 4px 6px rgba(255, 0, 0, 0.2);
-            /* Light red shadow for 3D effect */
-        }
-
-        .deleteBtn:hover {
-            background-color: #e53935;
-            box-shadow: 0 6px 12px rgba(255, 0, 0, 0.3);
-            /* Darker shadow on hover */
-        }
-
-        .deleteBtn:focus {
-            outline: none;
-        }
-
-        /* Responsive Styling for Buttons */
-        button {
-            width: 150px;
-            /* Ensure buttons have a consistent size */
-            font-size: 14px;
-            /* Reduce font size for smaller screens */
-        }
-
-        @media (max-width: 600px) {
-            button {
-                width: 100%;
-                /* Full width for buttons on mobile */
-                font-size: 16px;
-            }
-        }
-
-        /* Hover/Focus State */
-        button:hover,
-        button:focus {
-            transform: translateY(-2px);
-            /* Slightly lift the button */
-        }
-
-        button:active {
-            transform: translateY(2px);
-            /* Move the button slightly down on click */
-        }
-
-        /* Optional: Add some space between the buttons if needed */
-        button+button {
-            margin-left: 10px;
-        }
-    </style>
 
 </head>
 
@@ -430,10 +261,7 @@ $users_on_page = array_slice($all_users, $start_index, $users_per_page);
                             <label for="filterUser">Student</label>
                         </div>
 
-                        <div>
-                            <input type="checkbox" id="filterAdmin" name="role" value="Admin">
-                            <label for="filterAdmin">Admin</label>
-                        </div>
+
 
                         <!-- New Archived Button -->
                         <button style="background-color: #ff5733; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-size: 0.95rem; width: 100%; margin-top: 15px; border:2px solid gray; color:black; background-color:white;" id="viewArchivedBtn">View Archived</button>
