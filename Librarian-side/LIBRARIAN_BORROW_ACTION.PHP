@@ -2,13 +2,18 @@
 session_start();
 include '../Homepage/db_connect.php';
 
-date_default_timezone_set('Asia/Manila'); 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require '../phpmailer/vendor/autoload.php';
+
+date_default_timezone_set('Asia/Manila');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'];
     $borrow_id = $_POST['borrow_id'];
     $approved_by = $_SESSION['librarian_no'];
-    
+
     $borrow_sql = "SELECT book_id, student_no, book_title FROM borrowed_books WHERE borrow_id = ?";
     $borrow_stmt = $conn->prepare($borrow_sql);
     $borrow_stmt->bind_param("i", $borrow_id);
@@ -119,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $student_no = $_POST['student_no'];
         $book_id = $_POST['book_id'];
         $handled_by = $_SESSION['librarian_no'];
-        $book_condition = 'Good'; 
+        $book_condition = 'Good';
 
         // Fetch book title from borrowed_books
         $fetch_sql = "SELECT book_title FROM borrowed_books WHERE borrow_id = ?";
@@ -171,6 +176,103 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             echo "Failed to update return status.";
         }
+
+        // 4. Increment book stock by 1
+        $update_stock = $conn->prepare("UPDATE tbl_books SET book_stocks = book_stocks + 1 WHERE book_id = ?");
+        $update_stock->bind_param("i", $book_id);
+        $update_stock->execute();
+
+        // 5. Check if there are reservations for this book
+        $res_query = $conn->prepare("SELECT * FROM reserved_books WHERE book_id = ? ORDER BY reserve_id ASC LIMIT 1");
+        $res_query->bind_param("i", $book_id);
+        $res_query->execute();
+        $res_result = $res_query->get_result();
+
+        if ($res_result->num_rows > 0) {
+            $reservation = $res_result->fetch_assoc();
+
+            $new_borrow_id = uniqid('BRW-');
+            $preferred_date = $reservation['preferred_date'];
+            $due_date = date('Y-m-d', strtotime($preferred_date . ' +7 days'));
+            $now = date('Y-m-d H:i:s');
+
+            // Get ISBN
+            $isbn_query = $conn->prepare("SELECT ISBN FROM tbl_books WHERE book_id = ?");
+            $isbn_query->bind_param("i", $book_id);
+            $isbn_query->execute();
+            $isbn_result = $isbn_query->get_result();
+            $isbn = $isbn_result->fetch_assoc()['ISBN'];
+
+            // Insert into borrowed_books
+            $insert_borrow = $conn->prepare("INSERT INTO borrowed_books 
+        (borrow_id, student_no, first_name, last_name, email, contact, book_id, ISBN, book_title, preferred_date, due_date, status, update_datetime, updated_by)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Approved', ?, ?)");
+            $insert_borrow->bind_param(
+                "ssssssissssss",
+                $new_borrow_id,
+                $reservation['student_no'],
+                $reservation['first_name'],
+                $reservation['last_name'],
+                $reservation['email'],
+                $reservation['contact'],
+                $book_id,
+                $isbn,
+                $book_title,
+                $preferred_date,
+                $due_date,
+                $now,
+                $handled_by
+            );
+            $insert_borrow->execute();
+
+            // Delete reservation
+            $delete_res = $conn->prepare("DELETE FROM reserved_books WHERE reserve_id = ?");
+            $delete_res->bind_param("i", $reservation['reserve_id']);
+            $delete_res->execute();
+
+            // Decrement stock (auto-consumed by approved reservation)
+            $dec_stock = $conn->prepare("UPDATE tbl_books SET book_stocks = book_stocks - 1 WHERE book_id = ?");
+            $dec_stock->bind_param("i", $book_id);
+            $dec_stock->execute();
+
+            // Send notification
+            $message = "Your reserved book '{$book_title}' is now available and automatically borrowed for you. Please Pickup on {$preferred_date}. you only have 24hours or your Request will automatically cancelled";
+            $type = "borrowed";
+
+            // Send email notification to the student
+            $mail = new PHPMailer(true);
+
+            try {
+                $mail->isSMTP();
+                $mail->Host = 'smtp.gmail.com';
+                $mail->SMTPAuth = true;
+                $mail->Username = 'systemlibrarymanagement8@gmail.com';
+                $mail->Password = 'ndur otbh aalt vicl';
+                $mail->SMTPSecure = 'tls';
+                $mail->Port = 587;
+
+                $mail->setFrom('no-reply@librasphere.com', 'LibraSphere Support');
+                $mail->addAddress($reservation['email'], $reservation['first_name'] . ' ' . $reservation['last_name']);
+
+                $mail->isHTML(true);
+                $mail->Subject = 'Reserved Book Now Available';
+                $mail->Body    = "Hello {$reservation['first_name']},<br><br>"
+                    . "Your reserved book <strong>{$book_title}</strong> is now available and has been automatically borrowed for you.<br>"
+                    . "Please pick it up by <strong>{$preferred_date}</strong>.<br><br>"
+                    . "Thank you,<br>Library Team";
+
+                $mail->send();
+            } catch (Exception $e) {
+
+                error_log("Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
+            }
+
+
+            $notif_stmt = $conn->prepare("INSERT INTO tbl_user_notifications (student_no, book_id, message, type, created_at, is_read) VALUES (?, ?, ?, ?, NOW(), 0)");
+            $notif_stmt->bind_param("siss", $reservation['student_no'], $book_id, $message, $type);
+            $notif_stmt->execute();
+        }
+
 
         exit;
     }

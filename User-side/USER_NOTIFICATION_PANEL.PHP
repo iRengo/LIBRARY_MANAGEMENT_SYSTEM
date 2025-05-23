@@ -43,10 +43,29 @@ function time_ago($datetime)
     elseif ($diff < 31553280) return floor($diff / 2629440) . ' months ago';
     else return floor($diff / 31553280) . ' years ago';
 }
+
+// Get total and unread notifications
+$notif_query = $conn->prepare("SELECT 
+    COUNT(*) as total, 
+    SUM(CASE WHEN is_read = 0 THEN 1 ELSE 0 END) as unread 
+    FROM tbl_user_notifications 
+    WHERE student_no = ?");
+$notif_query->bind_param("s", $student_no);
+$notif_query->execute();
+$notif_result = $notif_query->get_result()->fetch_assoc();
+
+$total = $notif_result['total'];
+$unread = $notif_result['unread'];
 ?>
 
 <div class="notification-scroll">
+    
     <h4>Notifications</h4><br>
+
+    <div style="font-size: 12px; margin-bottom: 10px; color: #555;">
+        <strong>Total Notifications:</strong> <?= $total ?> &nbsp;|&nbsp; 
+        <strong>Unread:</strong> <?= $unread ?>
+    </div>
 
     <?php while ($row = $result->fetch_assoc()): ?>
         <?php
@@ -60,9 +79,12 @@ function time_ago($datetime)
 
         $readClass = $row['is_read'] ? 'read' : 'unread';
         ?>
+
+        
         <div
             class="notification-item <?= $statusClass . ' ' . $readClass ?>"
             style="cursor:pointer;"
+            
             data-notif-id="<?= $row['notif_id'] ?>"
             data-book-title="<?= htmlspecialchars($row['book_title']) ?>"
             data-message="<?= htmlspecialchars($row['message']) ?>"
@@ -79,6 +101,7 @@ function time_ago($datetime)
             <?php if (!empty($row['book_cover'])): ?>
                 <img src="<?= htmlspecialchars($row['book_cover']) ?>" class="notif-cover" />
             <?php endif; ?>
+            
 
             <div class="notif-text">
                 <?php
@@ -98,6 +121,7 @@ function time_ago($datetime)
                 <br>
                 <small class="notif-time"><?= time_ago($row['created_at']) ?></small>
             </div>
+            
         </div>
     <?php endwhile; ?>
 </div>

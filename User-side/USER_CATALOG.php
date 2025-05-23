@@ -70,7 +70,7 @@ window.location.href = "../homepage/homepage.php";
     <div class="book-list">
         <?php
         // Fetch books from the database
-        $query = "SELECT book_id, book_cover, book_title, book_author FROM tbl_books WHERE status = 'available'";
+        $query = "SELECT book_id, book_cover, book_title, book_author FROM tbl_books WHERE status = 'Available'  or status = 'Upcoming'";
         $result = mysqli_query($conn, $query);
 
         if (mysqli_num_rows($result) > 0) {

@@ -87,7 +87,7 @@ $stmt->close();
 
         SELECT b.book_genre FROM reserved_books rb
         JOIN tbl_books b ON rb.book_id = b.book_id
-        WHERE rb.acc_no = ?
+        WHERE rb.student_no = ?
 
         UNION ALL
 

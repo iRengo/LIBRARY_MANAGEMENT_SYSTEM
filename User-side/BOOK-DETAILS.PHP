@@ -373,20 +373,10 @@ $borrow_pending = ($borrow_status === 'Pending');
                 </button>
 
             <?php elseif ($book['status'] === 'Upcoming' || $book['book_stocks'] == 0): ?>
-                <form method="POST" action="book_reserve.php">
-                    <input type="hidden" name="book_id" value="<?= htmlspecialchars($book['book_id']); ?>">
-                    <input type="hidden" name="book_title" value="<?= htmlspecialchars($book['book_title']); ?>">
-                    <input type="hidden" name="author" value="<?= htmlspecialchars($book['book_author']); ?>">
-                    <input type="hidden" name="ISBN" value="<?= htmlspecialchars($book['ISBN']); ?>">
-                    <input type="hidden" name="acc_no" value="<?= htmlspecialchars($_SESSION['acc_no']); ?>">
-                    <input type="hidden" name="student_no" value="<?= htmlspecialchars($student_no); ?>">
-                    <input type="hidden" name="first_name" value="<?= htmlspecialchars($first_name); ?>">
-                    <input type="hidden" name="last_name" value="<?= htmlspecialchars($last_name); ?>">
-                    <input type="hidden" name="email" value="<?= htmlspecialchars($email); ?>">
-                    <button type="submit" class="borrow-button reserve">
-                        Reserve This
-                    </button>
-                </form>
+                <button type="button" class="borrow-button reserve" id="reserve-button">
+                    Reserve This
+                </button>
+
 
             <?php elseif ($can_borrow_again && $book['book_stocks'] > 0): ?>
                 <button type="button" class="borrow-button again" id="borrow-again-btn">
@@ -394,7 +384,7 @@ $borrow_pending = ($borrow_status === 'Pending');
                 </button>
 
             <?php elseif ($book['status'] === 'Available' && $book['book_stocks'] > 0): ?>
-                <button class="borrow-button available" id="borrow-btn">
+                <button type="button" class="borrow-button available" id="borrow-button">
                     Borrow This
                 </button>
             <?php endif; ?>
@@ -522,6 +512,7 @@ $borrow_pending = ($borrow_status === 'Pending');
             </div>
 
             <div class="borrow-form-section" id="borrow-form">
+
                 <h1 class="book-title"><?= htmlspecialchars($book['book_title']); ?></h1>
                 <p class="author">by <strong><?= htmlspecialchars($book['book_author']); ?></strong></p>
                 <br>
@@ -530,6 +521,7 @@ $borrow_pending = ($borrow_status === 'Pending');
                 <p>Please ensure that all details are correct</p>
 
                 <form method="POST" action="borrow_book.php">
+                    <input type="hidden" name="form_type" value="borrow">
                     <input type="hidden" name="book_id" value="<?= htmlspecialchars($book['book_id']); ?>">
                     <input type="hidden" name="book_title" value="<?= htmlspecialchars($book['book_title']); ?>">
 
@@ -588,10 +580,6 @@ $borrow_pending = ($borrow_status === 'Pending');
                     </div>
                 </form>
             </div>
-
-
-
-
         </div>
 
 
@@ -616,87 +604,91 @@ $borrow_pending = ($borrow_status === 'Pending');
     </div>
 
     <script>
-        // document.addEventListener("DOMContentLoaded", function() {
-        //     document.querySelectorAll(".btn-borrow").forEach(button => {
-        //         button.addEventListener("click", function() {
-        //          let bookTitle = document.getElementById("top-title").innerText;
-        //            let bookAuthor = ""; // Set author dynamically if available
-        //          let bookISBN = ""; // Set ISBN dynamically if available
-
-        //          document.getElementById("bookTitle").value = bookTitle;
-        //        document.getElementById("author").value = bookAuthor;
-        //          document.getElementById("isbn").value = bookISBN;
-        //      });
-        //      });
-        //     });
-    </script>
-    <script>
-        // Redirect function to open new book details
-        function redirectToBook(bookId) {
-            window.location.href = 'book-details.php?book_id=' + bookId;
-        }
-    </script>
-    <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // Reusable function to show the borrow form
+            const reserveBtn = document.getElementById("reserve-button");
+            const borrowBtn = document.getElementById("borrow-button");
+            const borrowFormSection = document.getElementById("borrow-form");
+            const borrowForm = borrowFormSection.querySelector("form");
+
+            // Helper to set form action and form_type input
+            function setFormActionAndType(typeValue) {
+                borrowForm.action = "borrow_book.php";
+                let formTypeInput = borrowForm.querySelector('input[name="form_type"]');
+                if (!formTypeInput) {
+                    formTypeInput = document.createElement("input");
+                    formTypeInput.type = "hidden";
+                    formTypeInput.name = "form_type";
+                    borrowForm.appendChild(formTypeInput);
+                }
+                formTypeInput.value = typeValue;
+            }
+
+            // Show borrow form and hide other UI elements
             function showBorrowForm() {
                 const bookInfo = document.getElementById("book-info");
-                const borrowForm = document.getElementById("borrow-form");
-                const borrowBtn = document.getElementById("borrow-btn");
                 const borrowAgainBtn = document.getElementById("borrow-again-btn");
-                const reserveBtn = document.querySelector("[data-bs-target='#reserveModal']");
+                const reserveModalBtn = document.querySelector("[data-bs-target='#reserveModal']");
                 const addToCollectionBtn = document.querySelector("button[name='add_to_collection']");
 
-                // Hide book info and buttons
                 if (bookInfo) bookInfo.style.display = "none";
                 if (borrowBtn) borrowBtn.style.display = "none";
                 if (borrowAgainBtn) borrowAgainBtn.style.display = "none";
                 if (reserveBtn) reserveBtn.style.display = "none";
+                if (reserveModalBtn) reserveModalBtn.style.display = "none";
                 if (addToCollectionBtn) addToCollectionBtn.style.display = "none";
 
-                // Show borrow form
-                borrowForm.style.display = "block";
+                borrowFormSection.style.display = "block";
             }
 
-            // Reusable function to hide the borrow form and show the book info with buttons
+            // Hide borrow form and show other UI elements
             function hideBorrowForm() {
                 const bookInfo = document.getElementById("book-info");
-                const borrowForm = document.getElementById("borrow-form");
-                const borrowBtn = document.getElementById("borrow-btn");
                 const borrowAgainBtn = document.getElementById("borrow-again-btn");
-                const reserveBtn = document.querySelector("[data-bs-target='#reserveModal']");
+                const reserveModalBtn = document.querySelector("[data-bs-target='#reserveModal']");
                 const addToCollectionBtn = document.querySelector("button[name='add_to_collection']");
 
-                // Hide borrow form
-                borrowForm.style.display = "none";
+                borrowFormSection.style.display = "none";
 
-                // Show book info and restore the buttons
                 if (bookInfo) bookInfo.style.display = "block";
                 if (borrowBtn) borrowBtn.style.display = "block";
                 if (borrowAgainBtn) borrowAgainBtn.style.display = "block";
                 if (reserveBtn) reserveBtn.style.display = "block";
+                if (reserveModalBtn) reserveModalBtn.style.display = "block";
                 if (addToCollectionBtn) addToCollectionBtn.style.display = "block";
             }
 
-            // Event listeners for borrow and borrow-again buttons
-            const borrowBtn = document.getElementById("borrow-btn");
-            const borrowAgainBtn = document.getElementById("borrow-again-btn");
+            if (reserveBtn) {
+                reserveBtn.addEventListener("click", function() {
+                    setFormActionAndType("reserve");
+                    showBorrowForm();
+                });
+            }
 
             if (borrowBtn) {
-                borrowBtn.addEventListener("click", showBorrowForm);
+                borrowBtn.addEventListener("click", function() {
+                    setFormActionAndType("borrow");
+                    showBorrowForm();
+                });
             }
 
+            const borrowAgainBtn = document.getElementById("borrow-again-btn");
             if (borrowAgainBtn) {
-                borrowAgainBtn.addEventListener("click", showBorrowForm);
+                borrowAgainBtn.addEventListener("click", function() {
+                    setFormActionAndType("borrow");
+                    showBorrowForm();
+                });
             }
 
-            // Event listener for cancel button inside borrow form
             const cancelBtn = document.getElementById("cancel-borrow");
             if (cancelBtn) {
-                cancelBtn.addEventListener("click", hideBorrowForm);
+                cancelBtn.addEventListener("click", function(e) {
+                    e.preventDefault();
+                    hideBorrowForm();
+                });
             }
         });
     </script>
+
     <script>
         function formatDate(date) {
             let year = date.getFullYear();
