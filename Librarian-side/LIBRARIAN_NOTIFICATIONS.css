@@ -1,28 +1,38 @@
 .action-icons {
     display: flex;
-    flex-direction: column; 
+    flex-direction: row;
     justify-content: center;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+
 }
 
-.action-icons i {
-    cursor: pointer;
-    font-size: 18px;
+.action-icons ion-icon {
+  font-size: 28px !important;
+  cursor: pointer;
 }
-.accept { color: green; }
-.decline { color: red; }
 
-td.action-icons i {
-    background-color: #f0f0f0;
-    padding: 6px 10px;
-    border-radius: 6px;
-    margin-bottom: 5px;
-    transition: 0.2s;
+.action-icons ion-icon.accept {
+  color: green;
 }
+
+.action-icons ion-icon.decline {
+  color: red;
+}
+
+
+td {
+    padding: 14px 20px;
+    border: none;
+    /* remove inner borders */
+    color: #343536;
+    vertical-align: middle;
+}
+
 td.action-icons i.accept:hover {
     background-color: #c8f7c5;
 }
+
 td.action-icons i.decline:hover {
     background-color: #f7c5c5;
 }
@@ -34,8 +44,9 @@ td.action-icons i.decline:hover {
     background: white;
     padding: 30px;
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(28, 46, 92, 0.2);
-    margin-top: 10%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-top: 1%;
+    border: 1px solid #ddd;
 }
 
 h2 {
@@ -69,84 +80,206 @@ h2 {
 }
 
 .return-btn {
-    background-color: #4CAF50; /* green */
+    background-color: #007bff;
     color: white;
-    padding: 8px 16px;
+    padding: 8px 18px;
     border: none;
-    border-radius: 6px;
+    border-radius: 4px;
     font-size: 14px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .return-btn:hover {
+    transition: background-color 0.25s ease;
+    box-shadow: 0 2px 6px rgba(76, 175, 80, 0.4);
+}
+
+.return-btn:hover {
     background-color: #45a049;
-  }
-  
+    box-shadow: 0 4px 12px rgba(69, 160, 73, 0.6);
+}
+
+
 .tab-list li:hover {
     background-color: #e0e0e0;
 }
 
 .tab-list li.active {
-    background-color: #e0e0e0; /* Example active color */
-    color: rgb(110, 110, 110); /* Optional: change text color */
+    background-color: #e0e0e0;
+    color: rgb(110, 110, 110);
+
 }
 
 
 /* Custom class to make SweetAlert2 modal wider */
 .wide-modal {
-    width: 800px !important; /* adjust as needed */
-    max-width: 90vw; /* ensures responsiveness */
-  }
-  
+    width: 800px !important;
+    /* adjust as needed */
+    max-width: 90vw;
+    /* ensures responsiveness */
+}
+
 
 table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0 8px;
     background-color: white;
-    border: 1px solid #ccc;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    border-radius: 12px;
+    overflow: hidden;
+
 
 }
 
 thead {
     background-color: #1C2E5C;
     color: white;
+    font-weight: 600;
+    font-size: 15px;
 }
 
 th {
-padding: 12px;
-border: 1px solid #ddd;
-text-align: left;
-color: #ffffff;
+    padding: 14px 20px;
+    border: none;
+    text-align: left;
+    
 }
+
+
 td {
     padding: 12px;
     border: 1px solid #ddd;
     text-align: left;
     color: #343536;
+    
+}
+
+td img {
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    max-width: 60px;
+    height: auto;
+
+}
+.book-icon-cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px; /* match your existing td padding */
+}
+
+.book-details-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+    color: #1C2E5C;
+}
+td, th {
+    border-left: none;
+    border-right: none;
+}
+
+tbody tr {
+    background-color: #f9f9f9;
+    border-radius: 12px;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 2px 6px rgba(28, 46, 92, 0.05);
+    cursor: default;
 }
 
 tbody tr:hover {
-    background-color: #f3f3f3;
+    background-color: #e8f0fe;
+    box-shadow: 0 4px 12px rgba(28, 46, 92, 0.15);
 }
 
-
 .styled-btn {
-    background-color: #28a745;
-    color: white;
-    border: none;
+    background-color: #ffffff;      
+    color: #1C2E5C;                 
+    border: 2px solid #1C2E5C;   
     padding: 6px 14px;
     font-size: 14px;
-    border-radius: 6px;
+    border-radius: 3px;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
-.styled-btn:hover {
-    background-color: #218838;
-}
 
 .styled-btn:focus {
     outline: none;
     box-shadow: 0 0 0 2px rgba(72, 180, 97, 0.5);
 }
+
+.page-header {
+    max-width: 1300px;
+    margin: auto;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    border: 1px solid #ddd;
+    margin-top: 5%;
+}
+
+.page-header h2 {
+    margin: 0;
+    color: #1C2E5C;
+    font-size: 26px;
+}
+
+.page-subtitle {
+    margin-top: 8px;
+    color: #666;
+    font-size: 14px;
+}
+
+.search-bar-container {
+    float: right;
+    margin-top: -50px;
+}
+
+.search-input-wrapper {
+    position: relative;
+    width: 250px;
+}
+
+#searchInput {
+    padding: 8px 14px 8px 36px; /* left padding for icon */
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    width: 100%;
+    transition: border 0.3s ease;
+}
+
+#searchInput:focus {
+    border-color: #1C2E5C;
+    outline: none;
+}
+
+.search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+    font-size: 18px;
+    pointer-events: none;
+}
+
+.pagination-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top:2%;
+}
+
+.pagination-container > div {
+    margin-right: auto; 
+}
+.total-borrowed-text {
+    color: #1C2E5C;
+    font-size: 16px;
+
+}
+

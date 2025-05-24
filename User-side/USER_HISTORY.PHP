@@ -10,7 +10,7 @@ $borrowed_query->bind_param("s", $student_no);
 $borrowed_query->execute();
 $borrowed_result = $borrowed_query->get_result();
 
-$reserved_query = $conn->prepare("SELECT reserved_id, ISBN, book_title, author, reserved_date FROM reserved_books WHERE student_no = ?");
+$reserved_query = $conn->prepare("SELECT reserve_id, ISBN, book_title, reserve_date, preferred_date FROM reserved_books WHERE student_no = ?");
 $reserved_query->bind_param("s", $student_no);
 $reserved_query->execute();
 $reserved_result = $reserved_query->get_result();
@@ -94,18 +94,18 @@ $reserved_result = $reserved_query->get_result();
                         <th>Reservation ID</th>
                         <th>ISBN</th>
                         <th>Title</th>
-                        <th>Author</th>
+                        <th>Preferred Date</th>
                         <th>Reservation Date</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php while ($row = $reserved_result->fetch_assoc()): ?>
                         <tr>
-                            <td><?= htmlspecialchars($row['reserved_id']) ?></td>
+                            <td><?= htmlspecialchars($row['reserve_id']) ?></td>
                             <td><?= htmlspecialchars($row['ISBN']) ?></td>
                             <td><?= htmlspecialchars($row['book_title']) ?></td>
-                            <td><?= htmlspecialchars($row['author']) ?></td>
-                            <td><?= htmlspecialchars($row['reserved_date']) ?></td>
+                            <td><?= htmlspecialchars($row['preferred_date']) ?></td>
+                            <td><?= htmlspecialchars($row['reserve_date']) ?></td>
                         </tr>
                     <?php endwhile; ?>
                 </tbody>

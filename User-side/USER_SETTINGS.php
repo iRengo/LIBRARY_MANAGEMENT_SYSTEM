@@ -164,7 +164,6 @@ while ($fine_row = $fine_result->fetch_assoc()) {
                 <div class="settings-header-right">
                     <div class="settings-buttons">
                         <button id="account-btn" class="tab active" onclick="showContent('account')">Account</button>
-                        <button id="notifications-btn" class="tab" onclick="showContent('notifications')">Notifications</button>
                         <button id="fines-btn" class="tab" onclick="showContent('fines')">Fines</button>
                     </div>
                 </div>
@@ -229,41 +228,6 @@ while ($fine_row = $fine_result->fetch_assoc()) {
 
         </div>
 
-        <!-- Notifications Section -->
-        <div id="notifications" class="content content-section" style="display:none;">
-            <h2 class="sub-heading">Notification Preferences</h2>
-            <div class="notification-preferences">
-                <br>
-                <div class="notify-options">
-                    <label class="notify-button">
-                        <span class="icon email-icon">
-                            <ion-icon name="mail-unread" style="font-size:20px;"></ion-icon>
-                        </span>
-                        Email
-                        <input type="radio" name="notify" checked>
-                    </label>
-
-                    <label class="notify-button">
-                        <span class="icon app-icon">
-                            <img src="logo.png" alt="App Icon" style="width: 16px;" />
-                        </span>
-                        In-app notifications Only
-                        <input type="radio" name="notify">
-                    </label>
-
-                    <label class="notify-button">
-                        Both
-                        <input type="radio" name="notify">
-                    </label>
-                </div>
-
-                <br>
-                <div class="actions">
-                    <button class="save-button">Save Changes</button>
-                    <button class="edit-button">Edit</button>
-                </div>
-            </div>
-        </div>
 
         <!-- Fines Section -->
         <div id="fines" class="content content-section" style="display:none;">

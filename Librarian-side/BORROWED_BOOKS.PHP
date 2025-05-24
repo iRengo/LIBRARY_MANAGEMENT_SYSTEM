@@ -10,6 +10,15 @@ $borrow_sql = "SELECT bb.*, b.book_cover
 
 $borrow_result = mysqli_query($conn, $borrow_sql);
 
+
+$total_borrowed_sql = "SELECT COUNT(*) AS total FROM borrowed_books WHERE status = 'Borrowed'";
+$total_borrowed_result = mysqli_query($conn, $total_borrowed_sql);
+$total_borrowed = 0;
+if ($total_borrowed_result && mysqli_num_rows($total_borrowed_result) > 0) {
+    $row_total = mysqli_fetch_assoc($total_borrowed_result);
+    $total_borrowed = $row_total['total'];
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -26,8 +35,20 @@ $borrow_result = mysqli_query($conn, $borrow_sql);
     <?php include 'HEADER-NAVBAR.PHP'; ?>
 
 
+    <div class="page-header">
+        <h2>Student Borrowed Books</h2>
+        <p class="page-subtitle">List of books currently borrowed by students</p>
+
+        <div class="search-bar-container">
+            <div class="search-input-wrapper">
+                <input type="text" id="searchInput" placeholder="Search borrowed books..." />
+                <ion-icon name="search-outline" class="search-icon"></ion-icon>
+            </div>
+        </div>
+
+    </div>
     <div class="notifications-container">
-        <h2>Librarian Borrowed Books</h2>
+
 
         <div id="borrow" class="tab-content active-tab">
             <table>
@@ -45,45 +66,90 @@ $borrow_result = mysqli_query($conn, $borrow_sql);
 
                 <tbody>
                     <?php
-                    $borrow_sql = "SELECT bb.*, b.book_cover 
-                FROM borrowed_books bb
-                JOIN tbl_books b ON bb.book_id = b.book_id
-                WHERE bb.status = 'Borrowed'
-                ORDER BY bb.borrow_id DESC";
-
+                    $borrow_sql = "SELECT bb.*, b.book_cover, b.book_author 
+            FROM borrowed_books bb
+            JOIN tbl_books b ON bb.book_id = b.book_id
+            WHERE bb.status = 'Borrowed'
+            ORDER BY bb.borrow_id DESC";
 
                     $borrow_result = mysqli_query($conn, $borrow_sql);
 
                     if ($borrow_result && mysqli_num_rows($borrow_result) > 0) {
                         while ($row = mysqli_fetch_assoc($borrow_result)) {
-                            $imageURL = $row['book_cover'];
+                            $imageURL = htmlspecialchars($row['book_cover']);
+                            $bookTitle = htmlspecialchars($row['book_title']);
+                            $author = htmlspecialchars($row['book_author']);
 
                             echo "<tr>
-                                <td><img src='{$imageURL}' alt='Book Cover' style='width: 60px; height: auto; border-radius: 4px;'></td>
-                                <td>{$row['borrow_id']}</td>
-                                <td>{$row['student_no']}</td>
-                                <td>{$row['book_title']}</td>
-                                <td>{$row['due_date']}</td>
-                                <td>{$row['status']}</td>
-                               <td class='action-icons'>
-    <button 
-    class='return-btn'
+                    <td class='book-icon-cell'>
+                        <button 
+                            class='book-details-btn' 
+                            data-title='{$bookTitle}' 
+                            data-author='{$author}' 
+                            data-cover='{$imageURL}' 
+                            style='background:none; border:none; cursor:pointer; font-size: 24px; color:#1C2E5C;' 
+                            title='View Book Details'>
+                            <ion-icon name='book-outline'></ion-icon>
+                        </button>
+                    </td>
+                    <td>{$row['borrow_id']}</td>
+                    <td>{$row['student_no']}</td>
+                    <td>{$bookTitle}</td>
+                    <td>{$row['due_date']}</td>
+                    <td>{$row['status']}</td>
+                    <td class='action-icons'>
+                        <button 
+    class='return-btn' 
     data-borrow-id='{$row['borrow_id']}'
     data-student-no='{$row['student_no']}'
     data-book-id='{$row['book_id']}'
-    data-book-title=\"{$row['book_title']}\"
-    style='padding: 6px 12px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;'>
+    data-book-title='{$bookTitle}'
+    style='
+        padding: 6px 12px; 
+        background-color: #007bff; 
+        color: white; 
+        border: none; 
+        border-radius: 4px; 
+        cursor: pointer; 
+        display: inline-flex; 
+        align-items: center; 
+        gap: 6px;
+        font-size: 14px;
+    '
+    title='Mark as Returned'
+>
+    <ion-icon name='arrow-undo-outline' style='font-size: 18px; vertical-align: middle;'></ion-icon>
     Returned
 </button>
-</td>
-                              </tr>";
+
+                    </td>
+                </tr>";
                         }
                     } else {
-                        echo "<tr><td colspan='7'>No borrow requests found.</td></tr>";
+                        // No records from DB, show this row
+                        echo "<tr id='noDataRow'><td colspan='7' style='text-align:center; color:#666; font-style: italic;'>No borrow requests found.</td></tr>";
                     }
                     ?>
+
+                    <!-- Initially hidden, show on search filter no matches -->
+                    <tr id="noResultsRow" style="display:none;">
+                        <td colspan="7" style="text-align:center; color:#666; font-style: italic;">No more Data's to show.</td>
+                    </tr>
                 </tbody>
             </table>
+
+
+            <div class="pagination-container">
+                <div class="total-borrowed-text">
+                    Total Borrowed: <?php echo $total_borrowed; ?>
+                </div>
+                <button id="prevPage" class="styled-btn">Previous</button>
+                <span id="pageIndicator">Page 1</span>
+                <button id="nextPage" class="styled-btn">Next</button>
+            </div>
+
+
+
         </div>
 
 
@@ -99,10 +165,11 @@ $borrow_result = mysqli_query($conn, $borrow_sql);
 
                         Swal.fire({
                             title: 'Return Book',
+                            width: '600px',
                             html: `
                     <p><strong>Book Title:</strong> ${bookTitle}</p>
                     <p><strong>Student No:</strong> ${studentNo}</p>
-                    <select id="book_condition" class="swal2-select" style="width: 100%; margin-top: 10px;">
+                    <select id="book_condition" class="swal2-select" style="width: 80%; margin-top: 10px;">
                         <option value="">Select Book Condition</option>
                         <option value="Good">Good</option>
                         <option value="1">Damaged - Low</option>
@@ -171,7 +238,7 @@ $borrow_result = mysqli_query($conn, $borrow_sql);
                                     });
                             } else {
                                 const formData = new FormData();
-                                formData.append("fine_id", book_condition); 
+                                formData.append("fine_id", book_condition);
                                 formData.append("student_no", student_no);
                                 formData.append("book_id", book_id);
                                 formData.append("borrow_id", borrow_id);
@@ -191,6 +258,90 @@ $borrow_result = mysqli_query($conn, $borrow_sql);
                     });
                 });
             });
+
+
+            document.querySelectorAll('.book-details-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const title = btn.getAttribute('data-title');
+                    const author = btn.getAttribute('data-author');
+                    const cover = btn.getAttribute('data-cover');
+
+                    Swal.fire({
+                        title: title,
+                        html: `<p><strong>Author:</strong> ${author}</p>`,
+                        imageUrl: cover,
+                        imageAlt: `Cover of ${title}`,
+                        imageWidth: 300,
+                        imageHeight: 400,
+                        confirmButtonText: 'Close',
+                        customClass: {
+                            popup: 'swal2-border-radius'
+                        }
+                    });
+                });
+            });
+
+
+
+            const rowsPerPage = 4;
+            let currentPage = 1;
+
+            function filterTable() {
+                const input = document.getElementById('searchInput').value.toLowerCase();
+                const rows = document.querySelectorAll('tbody tr:not(#noResultsRow):not(#noDataRow)');
+                let visibleRows = 0;
+
+                rows.forEach(row => {
+                    const rowText = row.innerText.toLowerCase();
+                    const isMatch = rowText.includes(input);
+                    row.style.display = isMatch ? '' : 'none';
+                    row.setAttribute('data-visible', isMatch ? 'true' : 'false');
+                    if (isMatch) visibleRows++;
+                });
+
+                // Show or hide the "No results found" row
+                const noResultsRow = document.getElementById('noResultsRow');
+                noResultsRow.style.display = visibleRows === 0 ? '' : 'none';
+
+                // Reset to page 1 when filtering
+                currentPage = 1;
+                paginateTable(); // reset pagination after search
+            }
+
+
+            function paginateTable() {
+                const rows = document.querySelectorAll('tbody tr[data-visible="true"]');
+                const totalRows = rows.length;
+                const startIndex = (currentPage - 1) * rowsPerPage;
+                const endIndex = startIndex + rowsPerPage;
+
+                rows.forEach((row, index) => {
+                    row.style.display = index >= startIndex && index < endIndex ? '' : 'none';
+                });
+
+                document.getElementById('pageIndicator').innerText = `Page ${currentPage}`;
+                document.getElementById('prevPage').disabled = currentPage === 1;
+                document.getElementById('nextPage').disabled = endIndex >= totalRows;
+            }
+
+            document.getElementById('searchInput').addEventListener('input', () => {
+                currentPage = 1;
+                filterTable();
+            });
+
+            document.getElementById('prevPage').addEventListener('click', () => {
+                currentPage--;
+                paginateTable();
+            });
+
+            document.getElementById('nextPage').addEventListener('click', () => {
+                currentPage++;
+                paginateTable();
+            });
+
+            // On initial load
+            document.querySelectorAll('tbody tr').forEach(tr => tr.setAttribute('data-visible', 'true'));
+            paginateTable();
         </script>
 
 

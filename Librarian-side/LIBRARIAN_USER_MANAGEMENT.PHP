@@ -1,21 +1,14 @@
 <?php
 session_start();
 include '../homepage/db_connect.php';
-
-
-$sql = "SELECT student_no, first_name, last_name, email, contact, last_logged_in FROM stud_acc";
-$result = mysqli_query($conn, $sql);
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <title>Librarian - User Management</title>
     <link rel="stylesheet" href="librarian_user_management.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
-
 <body>
     <?php include 'HEADER-NAVBAR.PHP'; ?>
 
@@ -31,26 +24,27 @@ $result = mysqli_query($conn, $sql);
             </div>
         </div>
 
+        <!-- Active Students Table -->
         <div id="activeStudents" class="user-box">
-            <!-- Table Content -->
+            <?php
+            $activeQuery = mysqli_query($conn, "SELECT student_no, first_name, last_name, email, contact, last_logged_in FROM stud_acc");
+            ?>
             <table class="table">
                 <thead>
                     <tr>
                         <th>User ID</th>
-                        <th>First Name </th>
-                        <th>Last Name </th>
-                        <th>Email </th>
-                        <th>Contact Number </th>
-                        <th>Last Logged In </th>
-                        <th>Actions </th>
-
-
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email</th>
+                        <th>Contact Number</th>
+                        <th>Last Logged In</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
-                    if (mysqli_num_rows($result) > 0) {
-                        while ($row = mysqli_fetch_assoc($result)) {
+                    if (mysqli_num_rows($activeQuery) > 0) {
+                        while ($row = mysqli_fetch_assoc($activeQuery)) {
                             echo "<tr>";
                             echo "<td>" . htmlspecialchars($row['student_no']) . "</td>";
                             echo "<td>" . htmlspecialchars($row['first_name']) . "</td>";
@@ -59,11 +53,10 @@ $result = mysqli_query($conn, $sql);
                             echo "<td>" . htmlspecialchars($row['contact']) . "</td>";
                             echo "<td>" . htmlspecialchars($row['last_logged_in']) . "</td>";
                             echo "<td>
-
-  <button class='icon-button archive' title='Archive' onclick=\"promptArchiveStudent('{$row['student_no']}')\">
-    <ion-icon name='archive-outline'></ion-icon>
-</button>
-              </td>";
+                                <button class='icon-button archive' title='Archive' onclick=\"promptArchiveStudent('{$row['student_no']}')\">
+                                    <ion-icon name='archive-outline'></ion-icon>
+                                </button>
+                            </td>";
                             echo "</tr>";
                         }
                     } else {
@@ -73,8 +66,12 @@ $result = mysqli_query($conn, $sql);
                 </tbody>
             </table>
         </div>
+
         <!-- Archived Students Table -->
         <div id="archivedStudents" style="display: none;" class="user-box">
+            <?php
+            $archivedQuery = mysqli_query($conn, "SELECT * FROM archived_acc WHERE role = 'student'");
+            ?>
             <table class="table">
                 <thead>
                     <tr>
@@ -89,7 +86,6 @@ $result = mysqli_query($conn, $sql);
                 </thead>
                 <tbody>
                     <?php
-                    $archivedQuery = mysqli_query($conn, "SELECT * FROM archived_acc WHERE role = 'student'");
                     if (mysqli_num_rows($archivedQuery) > 0) {
                         while ($archived = mysqli_fetch_assoc($archivedQuery)) {
                             echo "<tr>";
@@ -100,20 +96,21 @@ $result = mysqli_query($conn, $sql);
                             echo "<td>" . htmlspecialchars($archived['email']) . "</td>";
                             echo "<td>" . htmlspecialchars($archived['archived_at']) . "</td>";
                             echo "<td>
-
-  <button class='icon-button restore' title='Restore' onclick=\"promptRestoreStudent('{$archived['archived_id']}')\">
-        <ion-icon name='refresh-outline'></ion-icon>
-    </button>
-              </td>";
+                                <button class='icon-button restore' title='Restore' onclick=\"promptRestoreStudent('{$archived['archived_id']}')\">
+                                    <ion-icon name='refresh-outline'></ion-icon>
+                                </button>
+                            </td>";
                             echo "</tr>";
                         }
                     } else {
-                        echo "<tr><td colspan='6'>No archived students found.</td></tr>";
+                        echo "<tr><td colspan='7'>No archived students found.</td></tr>";
                     }
                     ?>
                 </tbody>
             </table>
         </div>
+
+        <!-- Scripts -->
         <script>
             function toggleView() {
                 const active = document.getElementById("activeStudents");
@@ -131,68 +128,63 @@ $result = mysqli_query($conn, $sql);
                 }
             }
 
-function promptArchiveStudent(studentNo) {
-    Swal.fire({
-        title: 'Are you sure?',
-        text: "You want to archive this student?",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Yes, archive it!',
-        cancelButtonColor: '#d33',
-        confirmButtonColor: '#3085d6'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                url: 'LIBRARIAN_ARCHIVE_STUDENT.php',
-                type: 'POST',
-                data: { student_no: studentNo },
-                success: function(response) {
-                    if (response == 'success') {
-                        Swal.fire('Archived!', 'The student has been archived.', 'success').then(() => {
-                            window.location.replace('librarian_user_management.php');
+            function promptArchiveStudent(studentNo) {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You want to archive this student?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, archive it!',
+                    cancelButtonColor: '#d33',
+                    confirmButtonColor: '#3085d6'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: 'LIBRARIAN_ARCHIVE_STUDENT.php',
+                            type: 'POST',
+                            data: { student_no: studentNo },
+                            success: function(response) {
+                                if (response == 'success') {
+                                    Swal.fire('Archived!', 'The student has been archived.', 'success').then(() => {
+                                        location.reload();
+                                    });
+                                } else {
+                                    Swal.fire('Error!', 'Failed to archive the student.', 'error');
+                                }
+                            }
                         });
-                    } else {
-                        Swal.fire('Error!', 'Failed to archive the student.', 'error');
                     }
-                }
-            });
-        }
-    });
-}
+                });
+            }
 
-function promptRestoreStudent(archivedId) {
-    Swal.fire({
-        title: 'Are you sure?',
-        text: "You want to restore this student?",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Yes, restore it!',
-        cancelButtonColor: '#d33',
-        confirmButtonColor: '#3085d6'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                url: 'LIBRARIAN_RESTORE_STUDENT.php',
-                type: 'POST',
-                data: { archived_id: archivedId },
-                success: function(response) {
-                    if (response == 'success') {
-                        Swal.fire('Restored!', 'The student has been restored.', 'success').then(() => {
-                            window.location.replace('librarian_user_management.php');
+            function promptRestoreStudent(archivedId) {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You want to restore this student?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, restore it!',
+                    cancelButtonColor: '#d33',
+                    confirmButtonColor: '#3085d6'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: 'LIBRARIAN_RESTORE_STUDENT.php',
+                            type: 'POST',
+                            data: { archived_id: archivedId },
+                            success: function(response) {
+                                if (response == 'success') {
+                                    Swal.fire('Restored!', 'The student has been restored.', 'success').then(() => {
+                                       location.reload();
+                                    });
+                                } else {
+                                    Swal.fire('Error!', 'Failed to restore the student.', 'error');
+                                }
+                            }
                         });
-                    } else {
-                        Swal.fire('Error!', 'Failed to restore the student.', 'error');
                     }
-                }
-            });
-        }
-    });
-}
-
-
+                });
+            }
         </script>
-
-
 </body>
-
 </html>
