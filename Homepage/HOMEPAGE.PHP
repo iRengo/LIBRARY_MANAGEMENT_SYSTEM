@@ -68,8 +68,8 @@ include 'db_connect.php';
         <div class="overlay-text3">
             <div class="hours-dropdown">
                 <button class="hours-button">
-                    <i class="bx bx-alarm"></i> HOURS <!-- Boxicon clock icon -->
-                    <i class="bx bx-chevron-down"></i> <!-- Boxicon chevron down icon -->
+                    <i class="bx bx-alarm"></i> HOURS 
+                    <i class="bx bx-chevron-down"></i>
                 </button>
                 <div class="dropdown-content">
                     <ul>
