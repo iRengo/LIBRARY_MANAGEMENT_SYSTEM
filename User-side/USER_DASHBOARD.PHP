@@ -26,7 +26,12 @@
             exit(); // Stop further execution after showing the notification and redirect script
         }
 
-        $acc_no = $_SESSION['acc_no']; // Get logged-in user's account number
+        if (!isset($_SESSION['acc_no'])) {
+            die("❌ Session 'acc_no' is not set!");
+        }
+        
+        $acc_no = $_SESSION['acc_no'];
+        $student_no = $_SESSION['acc_no'];     
         $login_time = date("Y-m-d H:i:s");
 
         // Update the last_login column
@@ -37,7 +42,15 @@
 
       // Assuming you have a database connection $conn and a student number $student_no
 
-// Query to count borrowed books
+      // Get the student_no corresponding to the logged in acc_no
+$stmt = $conn->prepare("SELECT student_no FROM stud_acc WHERE acc_no = ?");
+$stmt->bind_param("i", $acc_no);
+$stmt->execute();
+$stmt->bind_result($student_no);
+$stmt->fetch();
+$stmt->close();
+
+    // Query borrowed books count
 $borrowed_query = "SELECT COUNT(*) FROM borrowed_books WHERE student_no = ?";
 $stmt = $conn->prepare($borrowed_query);
 $stmt->bind_param("i", $student_no);
@@ -46,7 +59,7 @@ $stmt->bind_result($borrowed_count);
 $stmt->fetch();
 $stmt->close();
 
-// Query to count reserved books
+// Query reserved books count
 $reserved_query = "SELECT COUNT(*) FROM reserved_books WHERE student_no = ?";
 $stmt = $conn->prepare($reserved_query);
 $stmt->bind_param("i", $student_no);
@@ -55,7 +68,7 @@ $stmt->bind_result($reserved_count);
 $stmt->fetch();
 $stmt->close();
 
-// Query to count overdue books (books that are borrowed but due before today)
+// Query overdue books count (due_date before now)
 $overdue_query = "SELECT COUNT(*) FROM borrowed_books WHERE student_no = ? AND due_date < NOW()";
 $stmt = $conn->prepare($overdue_query);
 $stmt->bind_param("i", $student_no);
@@ -64,7 +77,7 @@ $stmt->bind_result($overdue_count);
 $stmt->fetch();
 $stmt->close();
 
-// Query to count due books (books that are borrowed but not yet due, i.e., due today or in the future)
+// Query due books count (due_date today or in future)
 $due_query = "SELECT COUNT(*) FROM borrowed_books WHERE student_no = ? AND due_date >= NOW()";
 $stmt = $conn->prepare($due_query);
 $stmt->bind_param("i", $student_no);
@@ -72,7 +85,66 @@ $stmt->execute();
 $stmt->bind_result($due_count);
 $stmt->fetch();
 $stmt->close();
-    
+
+$stmt = $conn->prepare("SELECT student_no FROM stud_acc WHERE acc_no = ?");
+$stmt->bind_param("i", $acc_no);
+$stmt->execute();
+$stmt->bind_result($student_no);
+$stmt->fetch();
+$stmt->close();
+
+// Fetch borrowed books
+$borrowed_books = [];
+$query = "SELECT book_title, status, due_date FROM borrowed_books WHERE student_no = ?";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("i", $student_no);
+$stmt->execute();
+$result = $stmt->get_result();
+while ($row = $result->fetch_assoc()) {
+    $borrowed_books[] = $row;
+}
+$stmt->close();
+
+// Fetch reserved books
+$reserved_books = [];
+$query = "SELECT book_title, reserve_date FROM reserved_books WHERE student_no = ?";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("i", $student_no);
+$stmt->execute();
+$result = $stmt->get_result();
+while ($row = $result->fetch_assoc()) {
+    $reserved_books[] = $row;
+}
+$stmt->close();
+
+$due_books = [];
+$due_query = "SELECT book_title, status, due_date FROM borrowed_books WHERE student_no = ? AND due_date >= NOW()";
+$stmt = $conn->prepare($due_query);
+$stmt->bind_param("i", $student_no);
+$stmt->execute();
+$result = $stmt->get_result();
+while ($row = $result->fetch_assoc()) {
+    $due_books[] = $row;
+}
+$stmt->close();
+
+$due_count = count($due_books);
+
+$overdue_books = [];
+$overdue_query = "SELECT book_title, status, due_date FROM borrowed_books WHERE student_no = ? AND due_date < NOW()";
+$stmt = $conn->prepare($overdue_query);
+$stmt->bind_param("i", $student_no);
+$stmt->execute();
+$result = $stmt->get_result();
+while ($row = $result->fetch_assoc()) {
+    $overdue_books[] = $row;
+}
+$stmt->close();
+
+$overdue_count = count($overdue_books);
+
+
+
         
 
         // Get all genres with their counts
@@ -148,29 +220,6 @@ $stmt->close();
 
         $stmt->execute();
         $recommended = $stmt->get_result();
-
-
-                // Fetch Top Books Ranking (Most Liked, Reserved, & Borrowed This Week)
-        $query = "
-        SELECT 
-            b.book_id, 
-            b.book_title, 
-            b.book_author,
-            (
-                COUNT(DISTINCT CASE WHEN l.action = 'like' THEN l.id END) +
-                COUNT(DISTINCT rb.book_id) +
-                COUNT(DISTINCT bb.book_id)
-            ) AS total_count
-        FROM tbl_books b
-        LEFT JOIN book_likes_dislikes l ON b.book_id = l.book_id
-        LEFT JOIN reserved_books rb ON b.book_id = rb.book_id
-        LEFT JOIN borrowed_books bb ON b.book_id = bb.book_id
-        GROUP BY b.book_id, b.book_author
-        HAVING total_count > 0
-        ORDER BY total_count DESC
-        LIMIT 10";
-
-        $result = $conn->query($query);
 ?>
 
 
@@ -208,179 +257,188 @@ $stmt->close();
         <!-- Content Grid with Clickable Sections -->
         <br>
         <div class="content-grid">
-    <!-- Due Date -->
-    <div class="content-item">
+    
+            <!-- Due Date -->
+        <div class="content-item">
         <ion-icon name="calendar-outline" style="font-size: 50px; color: #4CAF50;"></ion-icon>
         <div class="content-text">
             <p>DUE DATE</p>
-            <h1><?= $due_count ?></h1> <!-- Display due books count -->
+            <h1><?= $due_count ?></h1>
         </div>
-    </div>
+        </div>
 
-    <!-- Borrowed Books -->
-    <div class="content-item">
+
+            <!-- Borrowed Books -->
+        <div class="content-item" id="borrowedCard">
         <ion-icon name="book-outline" style="font-size: 50px; color: #2196F3;"></ion-icon>
         <div class="content-text">
             <p>Borrowed</p>
-            <h1><?= $borrowed_count ?></h1> <!-- Display borrowed books count -->
+            <h1><?= $borrowed_count ?></h1>
         </div>
-    </div>
+        </div>
 
-    <!-- Overdue Books -->
-    <div class="content-item">
+            <!-- Overdue Books -->
+        <div class="content-item">
         <ion-icon name="alert-circle-outline" style="font-size: 50px; color: #FF5722;"></ion-icon>
         <div class="content-text">
             <p>Overdue</p>
-            <h1><?= $overdue_count ?></h1> <!-- Display overdue books count -->
+            <h1><?= $overdue_count ?></h1>
         </div>
-    </div>
+        </div>
 
-    <!-- Reserved Books -->
-    <div class="content-item">
-        <ion-icon name="bookmark-outline" style="font-size: 50px; color: #FFC107;"></ion-icon>
-        <div class="content-text">
-            <p>Reserved</p>
-            <h1><?= $reserved_count ?></h1> <!-- Display reserved books count -->
+
+            <!-- Reserved Books -->
+        <div class="content-item" id="reservedCard">
+            <ion-icon name="bookmark-outline" style="font-size: 50px; color: #FFC107;"></ion-icon>
+            <div class="content-text">
+                <p>Reserved</p>
+                <h1><?= $reserved_count ?></h1>
+            </div>
         </div>
-    </div>
+        </div>
+
+<!-- Modal (custom, not reusing .modal) -->
+<div id="borrowedModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#00000099;">
+  <div style="background:white; max-width:600px; margin:100px auto; padding:20px; border-radius:10px;">
+    <h2>Borrowed Books</h2>
+    <table border="1" width="100%">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Status</th>
+          <th>Due Date</th>
+        </tr>
+      </thead>
+      <tbody id="borrowedTableBody"></tbody>
+    </table>
+    <br>
+    <button onclick="document.getElementById('borrowedModal').style.display='none'">Close</button>
+  </div>
 </div>
 
-
-
-        <!-- Bootstrap Modal -->
-        <div class="modal fade" id="bookDetailsModal" tabindex="-1" aria-labelledby="bookDetailsLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content custom-modal">
-        <!-- Modal Header -->
-        <div class="modal-header custom-header">
-        <h5 class="modal-title" id="bookDetailsLabel">📖 Book Details</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-
-        <!-- Modal Body -->
-        <div class="modal-body">
-        <p><strong>📌 Title:</strong> <span id="modalBookTitle"></span></p>
-        <p><strong>✍ Author:</strong> <span id="modalBookAuthor"></span></p>
-        <p id="modalReservedDate" style="display: none;"><strong>📅 Reserved on:</strong> <span></span></p>
-        <p id="modalBorrowedAt" style="display: none;"><strong>📆 Borrowed at:</strong> <span></span></p>
-        <p id="modalDueDate" style="display: none;"><strong>⏳ Due Date:</strong> <span></span></p>
-        </div>
-
-        <!-- Modal Footer -->
-        <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        </div>
-        </div>
-        </div>
-        </div>
-
-        <!-- Custom CSS -->
-        <style>
-        /* Modal Styling */
-        .custom-modal {
-        border-radius: 10px;
-        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
-        overflow: hidden;
-        }
-
-        /* Header with Soft Gradient */
-        .custom-header {
-        background: linear-gradient(to right, #6a11cb, #2575fc);
-        color: white;
-        padding: 15px;
-        font-weight: bold;
-        border-radius: 10px 10px 0 0;
-        }
-
-        /* Modal Body Text */
-        .modal-body p {
-        font-size: 1rem;
-        color: #333;
-        margin-bottom: 8px;
-        padding: 8px 12px;
-        border-left: 4px solid #6a11cb;
-        background: #f9f9f9;
-        border-radius: 5px;
-        }
-
-        /* Modal Footer Buttons */
-        .btn-secondary {
-        background-color: #6a11cb;
-        border: none;
-        padding: 8px 15px;
-        font-weight: bold;
-        transition: 0.3s ease-in-out;
-        }
-
-        .btn-secondary:hover {
-        background-color: #2575fc;
-        }
-        </style>
-
-
-
-
-
-
-
-
-        <!-- Table Section -->
-        <div class="table-container">
-        <!-- Table Header -->
-        <h2 class="table-header">TOP BOOKS RANKING</h2>
-
-        <!-- Table -->
-        <table class="styled-table">
-        <thead>
+<div id="reservedModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#00000099;">
+  <div style="background:white; max-width:600px; margin:100px auto; padding:20px; border-radius:10px;">
+    <h2>Reserved Books</h2>
+    <table border="1" width="100%">
+      <thead>
         <tr>
-        <th>#</th>
-        <th>Title</th>
-        <th>Author</th>
-        <th>Actions</th>
+          <th>Title</th>
+          <th>Reserved Date</th>
         </tr>
+      </thead>
+      <tbody id="reservedTableBody"></tbody>
+    </table>
+    <br>
+    <button onclick="document.getElementById('reservedModal').style.display='none'">Close</button>
+  </div>
+</div>
+
+<div id="dueModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#00000099;">
+  <div style="background:white; max-width:600px; margin:100px auto; padding:20px; border-radius:10px;">
+    <h2>Due Date Books</h2>
+    <table border="1" width="100%">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Status</th>
+          <th>Due Date</th>
+        </tr>
+      </thead>
+      <tbody id="dueTableBody"></tbody>
+    </table>
+    <br>
+    <button onclick="document.getElementById('dueModal').style.display='none'">Close</button>
+  </div>
+</div>
+
+<div id="overdueModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#00000099;">
+  <div style="background:white; max-width:600px; margin:100px auto; padding:20px; border-radius:10px;">
+    <h2>Overdue Books</h2>
+    <table border="1" width="100%">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Status</th>
+          <th>Due Date</th>
+        </tr>
+      </thead>
+      <tbody id="overdueTableBody"></tbody>
+    </table>
+    <br>
+    <button onclick="document.getElementById('overdueModal').style.display='none'">Close</button>
+  </div>
+</div>
+
+<div class="table-container">
+    <h2 class="table-header">TOP BOOKS RANKING</h2>
+
+    <table class="styled-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Actions</th>
+            </tr>
         </thead>
         <tbody>
-        <?php
-        if (isset($_SESSION['message'])) {
-        echo "<div class='alert alert-info'>" . $_SESSION['message'] . "</div>";
-        unset($_SESSION['message']); // Clear message after displaying
-        }
-        ?>
+            <?php
+            // Run the query again in this exact block
+            $query = "
+            SELECT 
+                b.book_id, 
+                b.book_title, 
+                b.book_author,
+                (
+                    COUNT(DISTINCT CASE WHEN l.action = 'like' THEN l.id END) +
+                    COUNT(DISTINCT rb.book_id) +
+                    COUNT(DISTINCT bb.book_id)
+                ) AS total_count
+            FROM tbl_books b
+            LEFT JOIN book_likes_dislikes l ON b.book_id = l.book_id
+            LEFT JOIN reserved_books rb ON b.book_id = rb.book_id
+            LEFT JOIN borrowed_books bb ON b.book_id = bb.book_id
+            GROUP BY b.book_id, b.book_author
+            HAVING total_count > 0
+            ORDER BY total_count DESC
+            LIMIT 10";
 
+            $result = $conn->query($query);
 
-        <?php
-        if ($result->num_rows > 0) {
-        $rank = 1;
-        while ($row = $result->fetch_assoc()) {
-        echo "<tr>
-        <td>{$rank}</td>
-        <td>{$row['book_title']}</td>
-        <td>{$row['book_author']}</td>
-        <td class='action-column'>
-        <button class='btn view-btn' onclick=\"window.location.href='book-details.php?book_id={$row['book_id']}'\">View</button>
-        <form method='post' action='add_to_collection.php' style='display:inline;'>
-        <input type='hidden' name='book_id' value='" . $row['book_id'] . "'>
-        <button type='submit' class='btn btn-collection'
-        style='background-color:rgb(95, 183, 95); color: #fff; border: none; padding: 6px 12px;
-        font-size: 14px; font-weight: bold; border-radius: 5px; cursor: pointer;
-        transition: all 0.3s ease-in-out;'
-        onmouseover=\"this.style.backgroundColor='#4DA04D'; this.style.transform='scale(1.05)';\"
-        onmouseout=\"this.style.backgroundColor='rgb(95, 183, 95);'; this.style.transform='scale(1)';\">
-        Add to Collection
-        </button>
-        </form>
-        </td>
-        </tr>";
-
-        $rank++;
-        }
-        } else {
-        echo "<tr><td colspan='4'>No data available this week.</td></tr>";
-        }
-        ?>
+            if (!$result) {
+                echo "<tr><td colspan='4' style='color: red;'>SQL ERROR: " . $conn->error . "</td></tr>";
+            } elseif ($result->num_rows > 0) {
+                $rank = 1;
+                while ($row = $result->fetch_assoc()) {
+                    echo "<tr>
+                        <td>{$rank}</td>
+                        <td>" . htmlspecialchars($row['book_title']) . "</td>
+                        <td>" . htmlspecialchars($row['book_author']) . "</td>
+                        <td class='action-column'>
+                            <button class='btn view-btn' onclick=\"window.location.href='book-details.php?book_id={$row['book_id']}'\">View</button>
+                            <form method='post' action='add_to_collection.php' style='display:inline;'>
+                                <input type='hidden' name='book_id' value='" . $row['book_id'] . "'>
+                                <button type='submit' class='btn btn-collection'
+                                    style='background-color:rgb(95, 183, 95); color: #fff; border: none; padding: 6px 12px;
+                                    font-size: 14px; font-weight: bold; border-radius: 5px; cursor: pointer;
+                                    transition: all 0.3s ease-in-out;'
+                                    onmouseover=\"this.style.backgroundColor='#4DA04D'; this.style.transform='scale(1.05)';\"
+                                    onmouseout=\"this.style.backgroundColor='rgb(95, 183, 95);'; this.style.transform='scale(1)';\">
+                                    Add to Collection
+                                </button>
+                            </form>
+                        </td>
+                    </tr>";
+                    $rank++;
+                }
+            } else {
+                echo "<tr><td colspan='4'>No data available this week.</td></tr>";
+            }
+            ?>
         </tbody>
-        </table>
-        </div>
+    </table>
+</div>
+
 
         <!-- Book Container Section -->
         <div class="book-header">Upcoming Books </div> <!-- Moved outside book-container -->
@@ -508,39 +566,110 @@ $stmt->close();
         </div>
         </div>
 
+        <script>
+  const reservedData = <?= json_encode($reserved_books) ?>;
+
+  document.getElementById("reservedCard").addEventListener("click", () => {
+    const tbody = document.getElementById("reservedTableBody");
+    tbody.innerHTML = "";
+
+    if (reservedData.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;">No reserved books</td></tr>`;
+    } else {
+      reservedData.forEach(book => {
+        const row = `
+          <tr>
+            <td>${book.book_title}</td>
+            <td>${book.reserve_date}</td>
+          </tr>
+        `;
+        tbody.innerHTML += row;
+      });
+    }
+
+    document.getElementById("reservedModal").style.display = "block";
+  });
+</script>
 
         <script>
-        function showBooks(type) {
-        fetch(`fetch_books.php?type=${type}`)
-        .then(response => response.json())
-        .then(data => {
-        let modalBody = document.querySelector(".modal-body");
-        modalBody.innerHTML = ""; // Clear previous content
+  const borrowedData = <?= json_encode($borrowed_books) ?>;
 
-        if (data.length > 0) {
-        data.forEach(book => {
-        let bookDetails = `
-        <p><strong>📌 Title:</strong> ${book.book_title}</p>
-        <p><strong>✍ Author:</strong> ${book.author}</p>
-        ${book.reserved_date ? `<p><strong>📅 Reserved on:</strong> ${book.reserved_date}</p>` : ""}
-        ${book.borrowed_at ? `<p><strong>📆 Borrowed at:</strong> ${book.borrowed_at}</p>` : ""}
-        ${book.due_date ? `<p><strong>⏳ Due Date:</strong> ${book.due_date}</p>` : ""}
-        <hr>
+  document.getElementById("borrowedCard").addEventListener("click", () => {
+    const tbody = document.getElementById("borrowedTableBody");
+    tbody.innerHTML = "";
+
+    if (borrowedData.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;">No borrowed books</td></tr>`;
+    } else {
+      borrowedData.forEach(book => {
+        const row = `
+          <tr>
+            <td>${book.book_title}</td>
+            <td>${book.status}</td>
+            <td>${book.due_date}</td>
+          </tr>
         `;
-        modalBody.innerHTML += bookDetails;
-        });
-        } else {
-        // Display a message when no books are found
-        modalBody.innerHTML = `<p class="text-center text-muted">📌 No records found.</p>`;
-        }
+        tbody.innerHTML += row;
+      });
+    }
 
-        // Open the modal
-        let modal = new bootstrap.Modal(document.getElementById("bookDetailsModal"));
-        modal.show();
-        })
-        .catch(error => console.error("Error fetching book details:", error));
-        }
-        </script>
+    document.getElementById("borrowedModal").style.display = "block";
+  });
+</script>
+
+<script>
+  const dueData = <?= json_encode($due_books) ?>;
+
+  // Attach event listener to DUE DATE card
+  document.querySelector('.content-item:nth-child(1)').addEventListener('click', () => {
+    const tbody = document.getElementById('dueTableBody');
+    tbody.innerHTML = '';
+
+    if (dueData.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;">No due date books</td></tr>`;
+    } else {
+      dueData.forEach(book => {
+        const row = `
+          <tr>
+            <td>${book.book_title}</td>
+            <td>${book.status}</td>
+            <td>${book.due_date}</td>
+          </tr>
+        `;
+        tbody.innerHTML += row;
+      });
+    }
+
+    document.getElementById('dueModal').style.display = 'block';
+  });
+</script>
+
+<script>
+  const overdueData = <?= json_encode($overdue_books) ?>;
+
+  // Attach event listener to OVERDUE card
+  document.querySelector('.content-item:nth-child(3)').addEventListener('click', () => {
+    const tbody = document.getElementById('overdueTableBody');
+    tbody.innerHTML = '';
+
+    if (overdueData.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;">No overdue books</td></tr>`;
+    } else {
+      overdueData.forEach(book => {
+        const row = `
+          <tr>
+            <td>${book.book_title}</td>
+            <td>${book.status}</td>
+            <td>${book.due_date}</td>
+          </tr>
+        `;
+        tbody.innerHTML += row;
+      });
+    }
+
+    document.getElementById('overdueModal').style.display = 'block';
+  });
+</script>
 
 
         <!-- =========== Scripts ========= -->
