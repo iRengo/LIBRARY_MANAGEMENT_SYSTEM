@@ -1,0 +1,552 @@
+body {
+            font-family: Poppins, sans-serif;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+
+        .navbar {
+    display: flex;
+    justify-content: space-around; /* evenly space items across the bar */
+    align-items: center;
+    background-color: #fff;
+    padding: 15px 30px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 100%; /* make sure it spans full width */
+    flex-wrap: wrap; /* allow wrapping on smaller screens */
+}
+
+
+        .navbar a {
+            margin-right: 30px;
+            color: #333;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        .navbar a:hover,
+        .navbar a.active {
+            color: #ff6600;
+        }
+
+
+        .main-container {
+            padding: 30px;
+        }
+
+        .book-details {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .book-details h2 {
+            background-color: #294c85;
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+        }
+
+        .form-row input, .form-row textarea, .form-row select {
+            flex: 1;
+            margin-left: 10px;
+            padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 3px 2px rgba(0, 0, 0, 0.1);
+    font-size: 14px;
+        }
+
+        .book-list {
+            margin-top: 30px;
+        }
+
+        .book-item {
+            display: flex;
+            background-color: #fff;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 5px;
+          
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 3px 2px rgba(0, 0, 0, 0.1);
+    font-size: 14px;
+        }
+
+        .book-cover {
+            width: 80px;
+            margin-right: 20px;
+        }
+
+        .book-details-text {
+            flex: 1;
+        }
+
+        .book-actions button {
+            margin-right: 10px;
+            background-color: #3b5b9b;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .form-buttons {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end; /* aligns buttons to the right */
+}
+
+
+        .form-buttons button {
+            padding: 10px 20px;
+            margin-right: 10px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .save-btn {
+            background-color: #294c85;
+            color: white;
+        }
+
+        .cancel-btn {
+            background-color: #777;
+            color: white;
+        }
+
+ 
+/*Generate report*/
+.report-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin: 20px 0;
+}
+
+.overview {
+    font-weight: bold;
+    font-size: 14px;
+    color: #333;
+}
+
+.filters {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.report-select, .report-date {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.report-table thead {
+    background-color: #395d96;
+    color: white;
+}
+
+.report-table th, .report-table td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    font-size: 14px;
+}
+
+.report-table tr:last-child td {
+    border-bottom: none;
+}
+
+.pagination-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-start; /* align to the left */
+    gap: 10px;
+}
+
+.pagination-btn {
+    padding: 8px 16px;
+    background-color: #f0f0f0;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #333;
+}
+
+.pagination-btn:hover {
+    background-color: #ddd;
+}
+
+.pagination-btn.active {
+    background-color: #294c85;
+    color: white;
+}
+/*Generate report*/
+
+
+
+/*Library inventory*/
+
+/* Reuse styles from generate report section */
+.inventory-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.filters {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.report-date {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+.filter-btn {
+    background-color: #294c85;
+    color: white;
+    border: none;
+    padding: 8px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.filter-btn:hover {
+    background-color: #1e3c6e;
+}
+
+.add-book-btn {
+    background-color: #294c85;
+    color: white;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.add-book-btn:hover {
+    background-color: #1e3c6e;
+}
+
+.inventory-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.inventory-table thead {
+    background-color: #294c85;
+    color: white;
+}
+
+.inventory-table th,
+.inventory-table td {
+    padding: 12px 16px;
+    text-align: left;
+}
+
+.inventory-table tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+.inventory-table tbody tr:nth-child(even) {
+    background-color: #ffffff;
+}
+
+.inventory-table th:first-child,
+.inventory-table td:first-child {
+    border-top-left-radius: 8px;
+}
+
+.inventory-table th:last-child,
+.inventory-table td:last-child {
+    border-top-right-radius: 8px;
+}
+
+.inventory-table tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 8px;
+}
+
+.inventory-table tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 8px;
+}
+
+
+/* Buttons styled similarly */
+.action-btn {
+    border: none;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 4px;
+    font-size: 14px;
+}
+
+.edit-btn {
+    background-color: #28a745;
+}
+
+.delete-btn {
+    background-color: #dc3545;
+}
+
+.archived-btn {
+    background-color: #9b9b9b;
+}
+/*Library inventory*/
+
+
+
+/*Circulation records*/
+.circulation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.circulation-search {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+.circulation-filter-btn {
+    background-color: #294c85;
+    color: white;
+    border: none;
+    padding: 8px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.circulation-filter-btn:hover {
+    background-color: #1e3c6e;
+}
+
+.circulation-add-btn {
+    background-color: #294c85;
+    color: white;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+
+.circulation-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    font-family: Poppins, sans-serif;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.circulation-table thead {
+    background-color: #294c85;
+    color: white;
+}
+
+.circulation-table th,
+.circulation-table td {
+    padding: 12px 16px;
+    text-align: left;
+}
+
+.circulation-table tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+.circulation-table tbody tr:nth-child(even) {
+    background-color: #ffffff;
+}
+
+.circulation-table th:first-child,
+.circulation-table td:first-child {
+    border-top-left-radius: 8px;
+}
+
+.circulation-table th:last-child,
+.circulation-table td:last-child {
+    border-top-right-radius: 8px;
+}
+
+.circulation-table tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 8px;
+}
+
+.circulation-table tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 8px;
+}
+/*Circulation records*/
+
+
+
+/* Manage users */
+.user-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.user-search {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+.user-filter-btn {
+    background-color: #294c85;
+    color: white;
+    border: none;
+    padding: 8px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 8px;
+}
+
+.user-filter-btn:hover {
+    background-color: #1e3c6e;
+}
+
+.add-user-btn {
+    background-color: #294c85;
+    color: white;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.user-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    font-family: Poppins, sans-serif;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.user-table thead {
+    background-color: #294c85;
+    color: white;
+}
+
+.user-table th {
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 14px; /* Font size adjusted */
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.user-table td {
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 14px;
+    border-bottom: 1px solid #d8d8d8de;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+}
+
+
+.user-table tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+.user-table tbody tr:nth-child(even) {
+    background-color: #ffffff;
+}
+
+.user-table th:first-child,
+.user-table td:first-child {
+    border-top-left-radius: 8px;
+}
+
+.user-table th:last-child,
+.user-table td:last-child {
+    border-top-right-radius: 8px;
+}
+
+.user-table tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 8px;
+}
+
+.user-table tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 8px;
+}
+
+/* Shared action button base style */
+.action-btn {
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    margin-right: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* View button - blue */
+.view-btn {
+    background-color: #294c85;
+}
+
+.view-btn:hover {
+    background-color: #1d5cb3;
+}
+
+/* Edit button - green */
+.edit-btn {
+    background-color: #3bb273;
+}
+
+.edit-btn:hover {
+    background-color: #2a8c59;
+}
+
+
+

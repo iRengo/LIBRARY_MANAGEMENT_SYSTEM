@@ -9,10 +9,14 @@ include '../Homepage/db_connect.php';
 <head>
     <title>Librarian Catalog</title>
     <link rel="stylesheet" href="LIBRARIAN_CATALOG.CSS">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
 </head>
 
 <body>
     <?php include 'HEADER-NAVBAR.PHP'; ?>
+
 
 
     <!-- Available Books Section -->
@@ -46,22 +50,26 @@ include '../Homepage/db_connect.php';
     <!-- Available Book List -->
     <div class="book-list" id="available-book-list">
         <?php
-        $limit = 14;
         $query_available = "
-        SELECT 
-            b.book_id, 
-            b.book_cover, 
-            b.book_title, 
-            b.book_author, 
-            b.book_stocks, 
-            COUNT(bb.book_id) AS borrow_count
-        FROM tbl_books b
-        LEFT JOIN borrowed_books bb ON b.book_id = bb.book_id AND bb.status = 'returned'
-        WHERE b.status = 'available'
-        GROUP BY b.book_id
-        ORDER BY borrow_count DESC
-        LIMIT $limit
-    ";
+    SELECT 
+        b.book_id, 
+        b.book_cover, 
+        b.book_title, 
+        b.book_author, 
+        b.book_stocks, 
+        b.publisher, 
+        b.publication_date, 
+        b.ISBN, 
+        b.book_genre,
+        b.book_description,
+        b.book_category,
+        COUNT(bb.book_id) AS borrow_count
+    FROM tbl_books b
+    LEFT JOIN borrowed_books bb ON b.book_id = bb.book_id AND bb.status = 'returned'
+    WHERE b.status = 'available'
+    GROUP BY b.book_id
+    ORDER BY borrow_count DESC
+";
 
         $result = mysqli_query($conn, $query_available);
 
@@ -73,154 +81,13 @@ include '../Homepage/db_connect.php';
                 $author = $row['book_author'];
                 $borrow_count = $row['borrow_count'];
                 $book_stocks = (int)$row['book_stocks'];
+                $publisher = $row['publisher'];
+                $publication_date = date("Y-m-d", strtotime($row['publication_date']));
+                $isbn = $row['ISBN'];
+                $genre = $row['book_genre'];
+                $category = $row['book_category'];
+                $book_description = $row['book_description'];
 
-                if ($book_stocks >= 21 && $book_stocks <= 30) {
-                    $stock_class = 'stock-high';
-                } elseif ($book_stocks >= 11 && $book_stocks <= 20) {
-                    $stock_class = 'stock-medium';
-                } else {
-                    $stock_class = 'stock-low';
-                }
-        ?>
-                <div class="book-main-container" data-book-id="<?php echo $book_id; ?>">
-                    <a href="BOOK-DETAILS.PHP?book_id=<?php echo urlencode($book_id); ?>" class="book-link">
-                        <div class="book-container">
-                            <img src="<?php echo htmlspecialchars($book_cover); ?>" class="book-cover" alt="Book Cover">
-                        </div>
-                        <div class="book-details">
-                            <div>
-                                <span class="borrow-count"><?php echo $borrow_count; ?> borrows</span>
-                                <span class="stock-badge <?php echo $stock_class; ?>"><?php echo $book_stocks; ?> left</span>
-                            </div>
-                            <h5><?php echo htmlspecialchars($book_title); ?></h5>
-                            <p><?php echo htmlspecialchars($author); ?></p>
-                        </div>
-                    </a>
-                </div>
-        <?php
-            }
-        } else {
-            echo "<p>No available books found.</p>";
-        }
-        ?>
-    </div>
-
-    <button id="toggleAvailableBooks">Show More</button>
-
-    <script>
-        const limit = <?php echo $limit; ?>;
-        const toggleBtn = document.getElementById('toggleAvailableBooks');
-        const bookList = document.getElementById('available-book-list');
-        let showingAll = false;
-        let allBooks = [];
-
-        // Helper function to render books
-        function renderBooks(booksToRender) {
-            bookList.innerHTML = '';
-            booksToRender.forEach(book => {
-                let stockClass = 'stock-low';
-                if (book.book_stocks >= 21 && book.book_stocks <= 30) stockClass = 'stock-high';
-                else if (book.book_stocks >= 11 && book.book_stocks <= 20) stockClass = 'stock-medium';
-
-                const div = document.createElement('div');
-                div.classList.add('book-main-container');
-                div.setAttribute('data-book-id', book.book_id);
-
-                div.innerHTML = `
-<a href="BOOK-DETAILS.PHP?book_id=${encodeURIComponent(book.book_id)}" class="book-link">
-  <div class="book-container">
-    <img src="${book.book_cover}" class="book-cover" alt="Book Cover">
-  </div>
-  <div class="book-details">
-    <div>
-      <span class="borrow-count">${book.borrow_count} borrows</span>
-      <span class="stock-badge ${stockClass}">${book.book_stocks} left</span>
-    </div>
-    <h5>${book.book_title}</h5>
-    <p>${book.book_author}</p>
-  </div>
-</a>
-      `;
-
-                bookList.appendChild(div);
-            });
-        }
-
-        toggleBtn.addEventListener('click', () => {
-            // Add fade-out class to trigger opacity transition
-            bookList.classList.add('fade-out');
-
-            setTimeout(() => {
-                if (!showingAll) {
-                    // Fetch all books
-                    fetch(`fetch_more_books.php?all=true`)
-                        .then(res => res.json())
-                        .then(data => {
-                            allBooks = data;
-                            renderBooks(data);
-                            toggleBtn.textContent = 'Show Less';
-                            showingAll = true;
-                            bookList.classList.remove('fade-out'); // fade-in
-                        })
-                        .catch(err => {
-                            console.error('Error fetching all books:', err);
-                            bookList.classList.remove('fade-out'); // fade-in even if error
-                        });
-                } else {
-                    // Show limited books from cached allBooks or fallback to limit
-                    const limitedBooks = allBooks.length > 0 ? allBooks.slice(0, limit) : [];
-                    renderBooks(limitedBooks);
-                    toggleBtn.textContent = 'Show More';
-                    showingAll = false;
-                    bookList.classList.remove('fade-out'); // fade-in
-                }
-            }, 500); // match CSS transition duration (0.5s)
-        });
-    </script>
-
-
-    <!-- Upcoming Books Section -->
-    <div class="titles-container" style="margin-top: 40px;">
-        <div class="header-container">
-            <div class="titles">
-                <div class="upcoming">Upcoming Books</div>
-            </div>
-            <div class="search-bar">
-                <input type="text" class="form-control" placeholder="Search upcoming books..." id="searchUpcomingInput">
-            </div>
-        </div>
-    </div>
-
-    <!-- Upcoming Book List -->
-    <div class="book-list" id="upcoming-book-list">
-        <?php
-        $query_upcoming = "
-        SELECT 
-            b.book_id, 
-            b.book_cover, 
-            b.book_title, 
-            b.book_author, 
-            b.book_stocks, 
-            COUNT(bb.book_id) AS borrow_count
-        FROM tbl_books b
-        LEFT JOIN borrowed_books bb ON b.book_id = bb.book_id AND bb.status = 'returned'
-        WHERE b.status = 'upcoming'
-        GROUP BY b.book_id
-        ORDER BY borrow_count DESC
-    ";
-
-        $result_upcoming = mysqli_query($conn, $query_upcoming);
-
-        if (mysqli_num_rows($result_upcoming) > 0) {
-            while ($row = mysqli_fetch_assoc($result_upcoming)) {
-                $book_id = $row['book_id'];
-                $book_cover = $row['book_cover'];
-                $book_title = $row['book_title'];
-                $author = $row['book_author'];
-                $borrow_count = $row['borrow_count'];
-                $book_stocks = (int)$row['book_stocks'];
-
-                // Determine stock badge class
                 if ($book_stocks >= 21 && $book_stocks <= 30) {
                     $stock_class = 'stock-high';
                 } elseif ($book_stocks >= 11 && $book_stocks <= 20) {
@@ -230,7 +97,21 @@ include '../Homepage/db_connect.php';
                 }
         ?>
                 <div class="book-main-container">
-                    <a href="BOOK-DETAILS.PHP?book_id=<?php echo urlencode($book_id); ?>" class="book-link">
+                    <a href="#" class="book-link"
+                        data-book-id="<?php echo $book_id; ?>"
+                        data-book-title="<?php echo htmlspecialchars($book_title); ?>"
+                        data-book-author="<?php echo htmlspecialchars($author); ?>"
+                        data-book-cover="<?php echo htmlspecialchars($book_cover); ?>"
+                        data-book-stocks="<?php echo $book_stocks; ?>"
+                        data-borrow-count="<?php echo $borrow_count; ?>"
+                        data-book-isbn="<?php echo htmlspecialchars($isbn); ?>"
+                        data-book-publisher="<?php echo htmlspecialchars($publisher); ?>"
+                        data-book-date="<?php echo htmlspecialchars($publication_date); ?>"
+                        data-book-language="English"
+                        data-book-genre="<?php echo htmlspecialchars($genre); ?>"
+                        data-book-category="<?php echo htmlspecialchars($category); ?>"
+                        data-book-description="<?php echo htmlspecialchars($book_description); ?>">
+
                         <div class="book-container">
                             <img src="<?php echo htmlspecialchars($book_cover); ?>" class="book-cover" alt="Book Cover">
                         </div>
@@ -244,13 +125,113 @@ include '../Homepage/db_connect.php';
                         </div>
                     </a>
                 </div>
+
         <?php
             }
         } else {
-            echo "<p>No upcoming books found.</p>";
+            echo "<p>No available books found.</p>";
         }
         ?>
     </div>
+
+
+
+
+    </script>
+
+
+    <!-- Upcoming Books Section -->
+    <div class="titles-container" style="margin-top: 40px;">
+        <div class="header-container">
+            <div class="titles">
+                <div class="upcoming">Upcoming Books</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upcoming Book List -->
+<div class="book-list" id="upcoming-book-list">
+    <?php
+    $query_upcoming = "
+        SELECT 
+            b.book_id, 
+            b.book_cover, 
+            b.book_title, 
+            b.book_author, 
+            b.book_stocks, 
+            b.ISBN,
+            b.publisher,
+            b.publication_date,
+            b.book_description,
+            COUNT(bb.book_id) AS borrow_count
+        FROM tbl_books b
+        LEFT JOIN borrowed_books bb ON b.book_id = bb.book_id AND bb.status = 'returned'
+        WHERE b.status = 'upcoming'
+        GROUP BY b.book_id
+        ORDER BY borrow_count DESC
+    ";
+
+    $result_upcoming = mysqli_query($conn, $query_upcoming);
+
+    if (mysqli_num_rows($result_upcoming) > 0) {
+        while ($row = mysqli_fetch_assoc($result_upcoming)) {
+            $book_id = $row['book_id'];
+            $book_cover = $row['book_cover'];
+            $book_title = $row['book_title'];
+            $author = $row['book_author'];
+            $borrow_count = $row['borrow_count'];
+            $book_stocks = (int)$row['book_stocks'];
+            $isbn = $row['ISBN'];
+            $publisher = $row['publisher'];
+            $publication_date = $row['publication_date'];
+            $description = $row['book_description'];
+
+            // Determine stock badge class
+            if ($book_stocks >= 21 && $book_stocks <= 30) {
+                $stock_class = 'stock-high';
+            } elseif ($book_stocks >= 11 && $book_stocks <= 20) {
+                $stock_class = 'stock-medium';
+            } else {
+                $stock_class = 'stock-low';
+            }
+    ?>
+            <div class="book-main-container">
+                <a 
+                    href="#" 
+                    class="book-link"
+                    data-book-id="<?php echo htmlspecialchars($book_id); ?>"
+                    data-book-cover="<?php echo htmlspecialchars($book_cover); ?>"
+                    data-book-title="<?php echo htmlspecialchars($book_title); ?>"
+                    data-book-author="<?php echo htmlspecialchars($author); ?>"
+                    data-book-stocks="<?php echo htmlspecialchars($book_stocks); ?>"
+                    data-borrow-count="<?php echo htmlspecialchars($borrow_count); ?>"
+                    data-book-isbn="<?php echo htmlspecialchars($isbn); ?>"
+               data-book-language="English"
+                    data-book-publisher="<?php echo htmlspecialchars($publisher); ?>"
+                    data-book-date="<?php echo htmlspecialchars($publication_date); ?>"
+                    data-book-description="<?php echo htmlspecialchars($description); ?>"
+                >
+                    <div class="book-container">
+                        <img src="<?php echo htmlspecialchars($book_cover); ?>" class="book-cover" alt="Book Cover">
+                    </div>
+                    <div class="book-details">
+                        <div>
+                            <span class="borrow-count"><?php echo $borrow_count; ?> borrows</span>
+                            <span class="stock-badge <?php echo $stock_class; ?>"><?php echo $book_stocks; ?> left</span>
+                        </div>
+                        <h5><?php echo htmlspecialchars($book_title); ?></h5>
+                        <p><?php echo htmlspecialchars($author); ?></p>
+                    </div>
+                </a>
+            </div>
+    <?php
+        }
+    } else {
+        echo "<p>No upcoming books found.</p>";
+    }
+    ?>
+</div>
+
 
     <!-- JavaScript Search -->
     <script>
@@ -463,6 +444,129 @@ include '../Homepage/db_connect.php';
                 }
             });
         }
+
+         document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.book-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    const bookId = this.dataset.bookId;
+                    const bookTitle = this.dataset.bookTitle;
+                    const bookAuthor = this.dataset.bookAuthor;
+                    const bookCover = this.dataset.bookCover;
+                    const bookStocks = this.dataset.bookStocks;
+                    const borrowCount = this.dataset.borrowCount;
+                    const bookISBN = this.dataset.bookIsbn;
+                    const bookLanguage = this.dataset.bookLanguage || '';
+                    const bookPublisher = this.dataset.bookPublisher;
+                    const bookDate = this.dataset.bookDate;
+                    const bookDescription = this.dataset.bookDescription;
+
+                    Swal.fire({
+                        title: `<strong style="text-align: left; display: block;">Edit Book Info</strong>`,
+                        customClass: {
+                            popup: 'wide-modal'
+                        },
+                        html: `
+                
+                    <div class="text-center mb-3">
+                        <img src="${bookCover}" alt="Book Cover" class="img-fluid" style="max-width: 150px;">
+                    </div>
+                    <form id="edit-book-form" style="text-align: left;">
+    <input type="hidden" name="book_id" value="${bookId}">
+    
+    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+        <div style="flex: 1;">
+            <label style="display: block; margin-bottom: 5px;">Title</label>
+            <input type="text" name="book_title" value="${bookTitle}" class="swal2-input" style="width: 80%;" required>
+        </div>
+        <div style="flex: 1;">
+            <label style="display: block; margin-bottom: 5px;">Author</label>
+            <input type="text" name="book_author" value="${bookAuthor}" class="swal2-input" style="width: 80%;" required>
+        </div>
+    </div>
+
+    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+        <div style="flex: 1;">
+            <label style="display: block; margin-bottom: 5px;">ISBN</label>
+            <input type="text" name="ISBN" value="${bookISBN}" class="swal2-input" style="width: 80%;" required>
+        </div>
+        <div style="flex: 1;">
+            <label style="display: block; margin-bottom: 5px;">Language</label>
+            <input type="text" name="book_language" value="${bookLanguage}" class="swal2-input" style="width: 80%;">
+        </div>
+    </div>
+
+    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+        <div style="flex: 1;">
+            <label style="display: block; margin-bottom: 5px;">Publisher</label>
+            <input type="text" name="publisher" value="${bookPublisher}" class="swal2-input" style="width: 80%;" required>
+        </div>
+        <div style="flex: 1;">
+            <label style="display: block; margin-bottom: 5px;">Publication Date</label>
+            <input type="date" name="publication_date" value="${bookDate}" class="swal2-input" style="width: 80%;" required>
+        </div>
+    </div>
+
+    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+        <div style="flex: 1;">
+            <label style="display: block; margin-bottom: 5px;">Available Stocks</label>
+            <input type="number" name="book_stocks" value="${bookStocks}" class="swal2-input" style="width: 80%;" min="0" required>
+        </div>
+        <div style="flex: 1;">
+            <!-- You can use this for an optional field or leave blank -->
+        </div>
+    </div>
+
+    <div style="margin-top: 10px;">
+        <label style="display: block; margin-bottom: 5px;">Description</label>
+        <textarea name="book_description" class="swal2-textarea" rows="4" style="width: 80%;" required>${bookDescription}</textarea>
+    </div>
+</form>
+
+                `,
+                        showCancelButton: true,
+                        confirmButtonText: 'Save',
+                        focusConfirm: false,
+                        didOpen: () => {
+                            // Optional: Initialize any Bootstrap JS components if needed
+                        },
+                        preConfirm: () => {
+                            const form = Swal.getPopup().querySelector('#edit-book-form');
+                            const formData = new FormData(form);
+                            for (const [key, value] of formData.entries()) {
+                                if (!value.trim() && key !== 'book_language') {
+                                    Swal.showValidationMessage(`Please fill out the ${key.replace('_', ' ')} field`);
+                                    return false;
+                                }
+                            }
+                            return formData;
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            fetch('LIBRARIAN_UPDATEBOOK.php', {
+                                    method: 'POST',
+                                    body: result.value
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        Swal.fire('Updated!', 'Book info has been updated.', 'success').then(() => {
+                                            location.reload();
+                                        });
+                                    } else {
+                                        Swal.fire('Error', data.message || 'Failed to update book info.', 'error');
+                                    }
+                                })
+                                .catch(() => {
+                                    Swal.fire('Error', 'Failed to send request.', 'error');
+                                });
+                        }
+                    });
+                });
+            });
+        });
+
     </script>
 </body>
 

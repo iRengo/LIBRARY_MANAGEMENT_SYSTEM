@@ -4,32 +4,15 @@ include '../homepage/db_connect.php';
 $loggedInUser = $_SESSION['librarian_no'];
 
 
-$monthFilter = $_POST['month_filter'] ?? 'this_month';
-
-if ($monthFilter === 'previous_month') {
-    $startDate = date("Y-m-01", strtotime("first day of previous month"));
-    $endDate = date("Y-m-t", strtotime("last day of previous month"));
-    $monthName = date("F", strtotime("first day of previous month"));
-} else {
-    $startDate = date("Y-m-01");
-    $endDate = date("Y-m-t");
-    $monthName = date("F");
-}
-
-function dateRangeFilter($dateColumn, $startDate, $endDate)
-{
-    return "$dateColumn >= '$startDate' AND $dateColumn <= '$endDate'";
-}
-
 $summary_overall = [];
 
 
 $sql_borrowed = "
     SELECT COUNT(*) AS count 
     FROM borrowed_books 
-    WHERE status = 'Borrowed' 
-    AND " . dateRangeFilter('preferred_date', $startDate, $endDate) . "
+    WHERE status = 'Borrowed'
 ";
+
 $result = mysqli_query($conn, $sql_borrowed);
 $row = mysqli_fetch_assoc($result);
 $summary_overall['Borrowed Books'] = $row['count'] ?? 0;
@@ -37,9 +20,9 @@ $summary_overall['Borrowed Books'] = $row['count'] ?? 0;
 
 $sql_reserved = "
     SELECT COUNT(*) AS count 
-    FROM reserved_books 
-    WHERE " . dateRangeFilter('reserved_date', $startDate, $endDate) . "
+    FROM reserved_books
 ";
+
 $result = mysqli_query($conn, $sql_reserved);
 $row = mysqli_fetch_assoc($result);
 $summary_overall['Reserved Books'] = $row['count'] ?? 0;
@@ -47,9 +30,9 @@ $summary_overall['Reserved Books'] = $row['count'] ?? 0;
 
 $sql_returned = "
     SELECT COUNT(*) AS count 
-    FROM returned_books 
-    WHERE " . dateRangeFilter('return_date', $startDate, $endDate) . "
+    FROM returned_books
 ";
+
 $result = mysqli_query($conn, $sql_returned);
 $row = mysqli_fetch_assoc($result);
 $summary_overall['Returned Books'] = $row['count'] ?? 0;
@@ -57,8 +40,7 @@ $summary_overall['Returned Books'] = $row['count'] ?? 0;
 
 $sql_fines_count = "
     SELECT COUNT(*) AS count 
-    FROM student_fines 
-    WHERE " . dateRangeFilter('date_issued', $startDate, $endDate) . "
+    FROM student_fines
 ";
 $result = mysqli_query($conn, $sql_fines_count);
 $row = mysqli_fetch_assoc($result);
@@ -68,8 +50,7 @@ $summary_overall['Fines Issued'] = $row['count'] ?? 0;
 $sql_total_fines = "
     SELECT IFNULL(SUM(f.price), 0) AS total 
     FROM student_fines sf 
-    LEFT JOIN fines_table f ON sf.fine_id = f.fine_id 
-    WHERE " . dateRangeFilter('sf.date_issued', $startDate, $endDate) . "
+    LEFT JOIN fines_table f ON sf.fine_id = f.fine_id
 ";
 $result = mysqli_query($conn, $sql_total_fines);
 $row = mysqli_fetch_assoc($result);
@@ -80,6 +61,7 @@ function selectedIf($value, $selectedValue)
 {
     return $value === $selectedValue ? 'selected' : '';
 }
+
 ?>
 
 
@@ -97,17 +79,6 @@ function selectedIf($value, $selectedValue)
 
 
     <div class="receipt-container">
-
-
-        <h2>Librarian Report Summary for "<?= htmlspecialchars($monthName) ?>"</h2>
-
-        <form method="POST" id="monthFilterForm">
-            <label for="month_filter" style="font-weight: 600;">Select Month:</label>
-            <select name="month_filter" id="month_filter" onchange="document.getElementById('monthFilterForm').submit()">
-                <option value="this_month" <?= $monthFilter === 'this_month' ? 'selected' : '' ?>><?= date("F") ?></option>
-                <option value="previous_month" <?= $monthFilter === 'previous_month' ? 'selected' : '' ?>><?= date("F", strtotime("first day of previous month")) ?></option>
-            </select>
-        </form>
         <Br> <Br>
 
         <div class="summary-overall">
@@ -259,18 +230,18 @@ function selectedIf($value, $selectedValue)
                         <tbody>
                             <?php
                             $reserved_sql = "
-                        SELECT b.book_title, r.reserved_date
+                        SELECT b.book_title, r.reserve_date
                         FROM reserved_books r
                         LEFT JOIN tbl_books b ON r.book_id = b.book_id
                         WHERE r.student_no = '$selectedStudent'
-                        ORDER BY r.reserved_date DESC
+                        ORDER BY r.reserve_date DESC
                         ";
                             $reserved_result = mysqli_query($conn, $reserved_sql);
                             if (mysqli_num_rows($reserved_result) > 0) {
                                 while ($row = mysqli_fetch_assoc($reserved_result)) {
                                     echo "<tr>
                                     <td>" . htmlspecialchars($row['book_title']) . "</td>
-                                    <td>" . htmlspecialchars($row['reserved_date']) . "</td>
+                                    <td>" . htmlspecialchars($row['reserve_date']) . "</td>
                                 </tr>";
                                 }
                             } else {

@@ -31,6 +31,13 @@ body {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   
 }
+.wide-modal {
+    width: 900px !important;
+    max-width: 95vw;
+    height: auto !important;
+    max-height: 90vh;
+    overflow-y: auto;
+}
 
 /* Search Bar */
 .search-bar {

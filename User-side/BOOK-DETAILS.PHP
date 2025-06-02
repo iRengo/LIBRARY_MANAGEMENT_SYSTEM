@@ -5,9 +5,15 @@ include '../homepage/db_connect.php';
 $user_id = $_SESSION['acc_no'];
 $book_id = $_GET['book_id'];
 
+
+$user_role = $_SESSION['user_role'] ?? 'student'; 
+
+
+$disable_borrow = in_array($user_role, ['admin', 'librarian']);
+
 if (isset($_SESSION['error'])) {
     echo '<div class="alert alert-danger">' . $_SESSION['error'] . '</div>';
-    unset($_SESSION['error']); // Clear the message after displaying
+    unset($_SESSION['error']); 
 }
 
 // Initialize variables to avoid undefined warnings
