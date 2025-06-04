@@ -99,7 +99,7 @@ if (isset($_SESSION['admin_no'])) {
                         <span class="icon">
                             <ion-icon name="people-outline"></ion-icon>
                         </span>
-                        <span class="title">Users</span>
+                        <span class="title">User Management</span>
                     </a>
                 </li>
 

@@ -63,23 +63,25 @@ $stmt->execute();
     <div class="main-container">
         <div id="book-cataloging" class="content-section">
             <div class="book-details">
-                <h2>BOOK DETAILS</h2>
+                <h2>Book Details</h2>
+
+                <!-- Hidden input to hold selected book ID -->
+                <input type="hidden" id="selectedBookId">
 
                 <div class="form-row">
                     <input type="text" id="bookTitle" placeholder="Title">
                     <input type="text" id="bookAuthor" placeholder="Author">
-                    <input type="text" id="bookISBN" placeholder="ISBN">
-                    <input type="text" id="bookGenre" placeholder="category">
+                    <input type="text" id="bookISBN" placeholder="ISBN" disabled>
+                    <input type="text" id="bookGenre" placeholder="Category">
                 </div>
                 <div class="form-row">
-                    <input type="date" id="bookPubDate" placeholder="Publication Date">
+                    <input type="date" id="bookPubDate" placeholder="Publication Date" disabled>
                     <input type="text" id="bookPublisher" placeholder="Publisher">
                     <input type="number" id="bookStocks" placeholder="Number Of Copies">
                 </div>
                 <div class="form-row">
                     <textarea rows="4" id="bookDescription" placeholder="Description" style="width: 100%;"></textarea>
                 </div>
-
 
                 <div class="book-scroll-wrapper">
                     <button class="scroll-btn left-btn">&#8592;</button> <!-- ← -->
@@ -124,19 +126,22 @@ $stmt->execute();
         <!-- Generate report -->
         <div id="generate-report" class="content-section" style="display: none;">
             <div class="book-details">
-                <h2>GENERATE REPORT</h2>
+                <h2>Generate Report</h2>
                 <div class="report-header">
                     <div class="overview">
 
                     </div>
-                    <div class="filters">
-                        <select id="report-type" class="report-select">
-                            <option value="RESERVATION">Reserved Books</option>
-                            <option value="BORROWED">Borrowed Books</option>
-                            <option value="FINES">Student Fines</option>
-                        </select>
-
-                        <input type="date" class="report-date">
+                    <div class="form-buttons">
+                        <form method="POST" action="ADMIN_GENERATE_REPORT.php" target="_blank">
+                            <label for="report-type">Select Report Type:</label>
+                            <select name="report_type" id="report-type">
+                                <option value="RESERVATION">Reserved Books</option>
+                                <option value="BORROWED">Borrowed Books</option>
+                                <option value="FINES">Student Fines</option>
+                                <option value="ALL">All Reports</option>
+                            </select>
+                            <button type="submit">Print Report</button>
+                        </form>
                     </div>
                 </div>
 
@@ -213,6 +218,7 @@ $stmt->execute();
                 </table>
 
                 <!-- Student Fines Table -->
+
                 <table id="fines-report" class="report-table" style="display: none;">
                     <thead>
                         <tr>
@@ -264,19 +270,6 @@ $stmt->execute();
                         ?>
                     </tbody>
                 </table>
-
-                <div class="pagination-container">
-                    <button class="pagination-btn">Prev</button>
-                    <button class="pagination-btn active">1</button>
-                    <button class="pagination-btn">2</button>
-                    <button class="pagination-btn">3</button>
-                    <button class="pagination-btn">Next</button>
-                </div>
-
-                <div class="form-buttons">
-                    <button class="save-btn">GENERATE</button>
-                    <button class="cancel-btn">CLEAR</button>
-                </div>
             </div>
         </div>
 
@@ -289,6 +282,8 @@ $stmt->execute();
 
                 function toggleReports() {
                     const selected = reportSelect.value;
+
+                    // Hide all tables initially
                     reservedTable.style.display = "none";
                     borrowedTable.style.display = "none";
                     finesTable.style.display = "none";
@@ -299,12 +294,17 @@ $stmt->execute();
                         borrowedTable.style.display = "table";
                     } else if (selected === "FINES") {
                         finesTable.style.display = "table";
+                    } else if (selected === "ALL") {
+                        reservedTable.style.display = "table";
+                        borrowedTable.style.display = "table";
+                        finesTable.style.display = "table";
                     }
                 }
 
-                // Initialize
+                // Initialize on page load
                 toggleReports();
 
+                // Trigger toggle on dropdown change
                 reportSelect.addEventListener("change", toggleReports);
             });
         </script>
@@ -317,23 +317,24 @@ $stmt->execute();
                 <h2>Library Inventory</h2>
                 <div class="inventory-header">
                     <div class="filters">
-                        <input type="text" class="report-date" placeholder="Search...">
-                        <button class="filter-btn" title="Filter"><i class="fa-solid fa-filter"></i></button>
+                        <input type="text" id="inventorySearch" class="report-date" placeholder="Search...">
+                        <button class="filter-btn" title="Filter"><i class="fa-solid fa-search"></i></button>
                     </div>
-                    <button class="add-book-btn">Add New Book</button>
+                    <form method="POST" action="admin_print_book.php" target="_blank" style="display: inline;">
+                        <button type="submit" class="print-book-btn">Print Report</button>
+                    </form>
                 </div>
 
 
-                <table class="report-table inventory-table">
+                <table id="inventoryTable" class="report-table inventory-table">
                     <thead>
                         <tr>
                             <th>ISBN</th>
                             <th>BOOK TITLE</th>
                             <th>AUTHOR</th>
-                            <th>NO. OF BOOKS</th>
+                            <th>BOOK STOCKS</th>
                             <th>GENRE</th>
                             <th>PUBLISHER</th>
-                            <th>ACTION</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -352,17 +353,6 @@ $stmt->execute();
                                     <td><?= intval($row['book_stocks']) ?></td>
                                     <td><?= htmlspecialchars($row['book_category']) ?></td>
                                     <td><?= htmlspecialchars($row['publisher']) ?></td>
-                                    <td>
-                                        <button class="action-btn edit-btn" data-id="<?= $row['book_id'] ?>" title="Edit">
-                                            <i class="fa-solid fa-pen-to-square"></i>
-                                        </button>
-                                        <button class="action-btn delete-btn" data-id="<?= $row['book_id'] ?>" title="Delete">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                        <button class="action-btn archived-btn" data-id="<?= $row['book_id'] ?>" title="Archived">
-                                            <i class="fa-solid fa-box-archive"></i>
-                                        </button>
-                                    </td>
                                 </tr>
                         <?php
                             endwhile;
@@ -371,21 +361,15 @@ $stmt->execute();
                         endif;
 
                         ?>
-
                     </tbody>
-
-
                 </table>
-
-                <div class="pagination-container">
-                    <button class="pagination-btn">Prev</button>
-                    <button class="pagination-btn active">1</button>
-                    <button class="pagination-btn">2</button>
-                    <button class="pagination-btn">3</button>
-                    <button class="pagination-btn">Next</button>
+                <div id="pagination-controls" style="margin-top: 15px; text-align: center;">
+                    <button id="prevPage" class="pagination-btn">Previous</button>
+                    <span id="pageInfo" style="margin: 0 10px;"></span>
+                    <button id="nextPage" class="pagination-btn">Next</button>
                 </div>
-            </div>
 
+            </div>
         </div>
 
 
@@ -395,12 +379,14 @@ $stmt->execute();
                 <h2>Circulation Records</h2>
                 <div class="circulation-header">
                     <div class="filters">
-                        <input type="text" class="circulation-search" placeholder="Search records">
+                        <input type="text" id="circulationSearch" class="circulation-search" placeholder="Search records">
+
                         <button class="circulation-filter-btn" title="Filter">
-                            <i class="fa-solid fa-filter"></i>
+                            <i class="fa-solid fa-search"></i>
                         </button>
                     </div>
                 </div>
+
 
                 <table class="report-table circulation-table">
                     <thead>
@@ -411,7 +397,6 @@ $stmt->execute();
                             <th>DUE DATE</th>
                             <th>STATUS</th>
                             <th>LAST UPDATED</th>
-                            <th>ACTION</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -431,14 +416,7 @@ $stmt->execute();
                                     <td><?= htmlspecialchars($row['due_date']) ?></td>
                                     <td><?= htmlspecialchars($row['status']) ?></td>
                                     <td><?= htmlspecialchars($row['update_datetime']) ?></td>
-                                    <td>
-                                        <button class="action-btn edit-btn" data-id="<?= $row['borrow_id'] ?>" title="Edit">
-                                            <i class="fa-solid fa-pen-to-square"></i>
-                                        </button>
-                                        <button class="action-btn delete-btn" data-id="<?= $row['borrow_id'] ?>" title="Delete">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                    </td>
+
                                 </tr>
                         <?php
                             endwhile;
@@ -447,18 +425,12 @@ $stmt->execute();
                         endif;
                         ?>
                     </tbody>
+
+                    <form method="POST" action="admin_print_borrowed.php" target="_blank" style="display: inline; margin-bottom: 15px;">
+                        <button type="submit" class="print-borrowed-btn">Print Report</button>
+                    </form>
                 </table>
 
-
-                </table>
-
-                <div class="pagination-container">
-                    <button class="pagination-btn">Prev</button>
-                    <button class="pagination-btn active">1</button>
-                    <button class="pagination-btn">2</button>
-                    <button class="pagination-btn">3</button>
-                    <button class="pagination-btn">Next</button>
-                </div>
             </div>
         </div>
 
@@ -474,66 +446,193 @@ $stmt->execute();
 
 
     <script>
-        document.querySelectorAll('.book-item').forEach(item => {
-            item.addEventListener('click', () => {
-                // Get data attributes from clicked book
-                const id = item.getAttribute('data-id');
-                const title = item.getAttribute('data-title');
-                const author = item.getAttribute('data-author');
-                const isbn = item.getAttribute('data-isbn');
-                const genre = item.getAttribute('data-genre');
-                const pubdate = item.getAttribute('data-pubdate');
-                const publisher = item.getAttribute('data-publisher');
-                const stocks = item.getAttribute('data-stocks');
-                const description = item.getAttribute('data-description');
+        document.addEventListener("DOMContentLoaded", function() {
+            const table = document.getElementById("inventoryTable");
+            const tbody = table.querySelector("tbody");
+            const rows = Array.from(tbody.querySelectorAll("tr"));
+            const rowsPerPage = 5;
+            let currentPage = 1;
+            const totalPages = Math.ceil(rows.length / rowsPerPage);
 
-                // Fill inputs
-                document.getElementById('bookTitle').value = title;
-                document.getElementById('bookAuthor').value = author;
-                document.getElementById('bookISBN').value = isbn;
-                document.getElementById('bookGenre').value = genre;
-                document.getElementById('bookPubDate').value = pubdate;
-                document.getElementById('bookPublisher').value = publisher;
-                document.getElementById('bookStocks').value = stocks;
-                document.getElementById('bookDescription').value = description;
+            const prevBtn = document.getElementById("prevPage");
+            const nextBtn = document.getElementById("nextPage");
+            const pageInfo = document.getElementById("pageInfo");
 
-                // If you want to store the book_id somewhere for save/update later
-                document.getElementById('book-cataloging').setAttribute('data-current-book-id', id);
-            });
-        });
+            function showPage(page) {
+                const start = (page - 1) * rowsPerPage;
+                const end = start + rowsPerPage;
 
-        function showSection(sectionId, clickedLink) {
-            // Hide all content sections
-            const sections = document.querySelectorAll('.content-section');
-            sections.forEach(sec => sec.style.display = 'none');
+                rows.forEach((row, index) => {
+                    row.style.display = (index >= start && index < end) ? "" : "none";
+                });
 
-            // Show the selected section
-            const targetSection = document.getElementById(sectionId);
-            if (targetSection) {
-                targetSection.style.display = 'block';
+                pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+                prevBtn.disabled = currentPage === 1;
+                nextBtn.disabled = currentPage === totalPages;
             }
 
-            // Remove 'active' from all navbar links
-            const links = document.querySelectorAll('.navbar a');
-            links.forEach(link => link.classList.remove('active'));
-
-            // Add 'active' to the clicked link
-            clickedLink.classList.add('active');
-        }
-
-        document.querySelector(".left-btn").addEventListener("click", () => {
-            document.getElementById("bookList").scrollBy({
-                left: -200,
-                behavior: 'smooth'
+            prevBtn.addEventListener("click", () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    showPage(currentPage);
+                }
             });
+
+            nextBtn.addEventListener("click", () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    showPage(currentPage);
+                }
+            });
+
+            if (rows.length > 0) {
+                showPage(currentPage);
+            } else {
+                pageInfo.textContent = "No records found.";
+                prevBtn.disabled = true;
+                nextBtn.disabled = true;
+            }
         });
 
-        document.querySelector(".right-btn").addEventListener("click", () => {
-            document.getElementById("bookList").scrollBy({
-                left: 200,
-                behavior: 'smooth'
+        $(document).ready(function() {
+            $('#inventorySearch').on('input', function() {
+                let searchQuery = $(this).val();
+                $.ajax({
+                    type: 'POST',
+                    url: 'admin_search_inventory.php',
+                    data: {
+                        inventory_search: searchQuery
+                    },
+                    success: function(response) {
+                        $('.inventory-table tbody').html(response);
+                    }
+                });
             });
         });
+        $(document).ready(function() {
+            $('#circulationSearch').on('input', function() {
+                let search = $(this).val();
+                $.ajax({
+                    url: 'admin_search_circulation.php',
+                    method: 'POST',
+                    data: {
+                        query: search
+                    },
+                    success: function(response) {
+                        $('.circulation-table tbody').html(response);
+                    }
+                });
+            });
+        });
+       // Store selected book element
+let selectedBookElement = null;
+
+document.querySelectorAll('.book-item').forEach(item => {
+    item.addEventListener('click', function () {
+        // Highlight selected
+        document.querySelectorAll('.book-item').forEach(b => b.classList.remove('selected'));
+        this.classList.add('selected');
+        selectedBookElement = this;
+
+        // Fill input fields
+        document.getElementById('selectedBookId').value = this.dataset.id;
+        document.getElementById('bookTitle').value = this.dataset.title;
+        document.getElementById('bookAuthor').value = this.dataset.author;
+        document.getElementById('bookISBN').value = this.dataset.isbn;
+        document.getElementById('bookGenre').value = this.dataset.genre;
+        document.getElementById('bookPubDate').value = this.dataset.pubdate;
+        document.getElementById('bookPublisher').value = this.dataset.publisher;
+        document.getElementById('bookStocks').value = this.dataset.stocks;
+        document.getElementById('bookDescription').value = this.dataset.description;
+    });
+});
+
+document.querySelector('.save-btn').addEventListener('click', function () {
+    const bookId = document.getElementById('selectedBookId').value;
+    if (!bookId) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'No Book Selected',
+            text: 'Please select a book first.'
+        });
+        return;
+    }
+
+    const data = {
+        book_id: bookId,
+        book_title: document.getElementById('bookTitle').value,
+        book_author: document.getElementById('bookAuthor').value,
+        ISBN: document.getElementById('bookISBN').value,
+        book_category: document.getElementById('bookGenre').value,
+        publication_date: document.getElementById('bookPubDate').value,
+        publisher: document.getElementById('bookPublisher').value,
+        book_stocks: document.getElementById('bookStocks').value,
+        book_description: document.getElementById('bookDescription').value
+    };
+
+    fetch('ADMIN_EDIT_BOOK.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(res => res.text())
+    .then(response => {
+        // Use SweetAlert instead of alert
+        Swal.fire({
+            icon: response.includes('successfully') ? 'success' : 'error',
+            title: response.includes('successfully') ? 'Success' : 'Error',
+            text: response
+        }).then(() => {
+            if (response.includes('successfully')) {
+                location.reload();
+            }
+        });
+    });
+});
+
+
+document.querySelector('.cancel-btn').addEventListener('click', function () {
+    // Clear inputs
+    document.getElementById('selectedBookId').value = '';
+    document.querySelectorAll('.form-row input, .form-row textarea').forEach(el => el.value = '');
+    // Deselect book
+    document.querySelectorAll('.book-item').forEach(el => el.classList.remove('selected'));
+    selectedBookElement = null;
+});
+
+function showSection(sectionId, clickedLink) {
+    // Hide all content sections
+    const sections = document.querySelectorAll('.content-section');
+    sections.forEach(sec => sec.style.display = 'none');
+
+    // Show selected section
+    const targetSection = document.getElementById(sectionId);
+    if (targetSection) {
+        targetSection.style.display = 'block';
+    }
+
+    // Remove active from all links
+    const links = document.querySelectorAll('.navbar a');
+    links.forEach(link => link.classList.remove('active'));
+
+    // Add active to clicked link
+    clickedLink.classList.add('active');
+}
+
+document.querySelector(".left-btn").addEventListener("click", () => {
+    document.getElementById("bookList").scrollBy({
+        left: -200,
+        behavior: 'smooth'
+    });
+});
+
+document.querySelector(".right-btn").addEventListener("click", () => {
+    document.getElementById("bookList").scrollBy({
+        left: 200,
+        behavior: 'smooth'
+    });
+});
+
     </script>
 
 

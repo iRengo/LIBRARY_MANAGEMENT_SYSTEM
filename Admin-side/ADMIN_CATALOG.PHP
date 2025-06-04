@@ -64,7 +64,7 @@ if (isset($_SESSION['archive_success'])) {
                             <img src="<?= htmlspecialchars($row['book_cover']); ?>" class="book-cover" alt="Book Cover">
                             <div class="overlay">
                                 <button class="archive-btn" onclick="archiveBook(<?= $row['book_id']; ?>)">ARCHIVE</button>
-                                <button class="edit-btn" onclick="editBook(<?= $row['book_id']; ?>)">EDIT</button>
+                                <!-- <button class="edit-btn" onclick="editBook(<?= $row['book_id']; ?>)">EDIT</button> -->
                             </div>
                         </div>
                         <div class="book-details">
@@ -407,7 +407,7 @@ if (isset($_SESSION['archive_success'])) {
                                 <!-- Overlay Buttons -->
                                 <div class="overlay">
                                     <button class="archive-btn" onclick="archiveBook(${book.book_id})">ARCHIVE</button>
-                                    <button class="edit-btn" onclick="editBook(${book.book_id})">EDIT</button>
+                        
                                 </div>
                             </div>
 
@@ -454,7 +454,7 @@ if (isset($_SESSION['archive_success'])) {
                             <!-- Overlay Buttons -->
                             <div class="overlay">
                                 <button class="archive-btn" onclick="archiveBook(${book.book_id})">ARCHIVE</button>
-                                <button class="edit-btn" onclick="editBook(${book.book_id})">EDIT</button>
+                            
                             </div>
                         </div>
 

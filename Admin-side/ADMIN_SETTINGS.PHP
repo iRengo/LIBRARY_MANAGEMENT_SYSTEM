@@ -4,13 +4,15 @@ session_start();
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="ADMIN_SETTINGS.CSS">
 </head>
+
 <body>
-    <?PHP INCLUDE 'HEADER-NAVBAR.PHP' ?>
+    <?PHP include 'HEADER-NAVBAR.PHP' ?>
     <div class="container">
         <div class="library-settings">
             <h2>Library settings</h2>
@@ -60,9 +62,9 @@ session_start();
 
             <div class="settings-section" data-tab="library-policies" style="display: none;">
                 <h1>Library Policies</h1>
-                <div class="container">
+                <div class="settings-container">
                     <!-- Left Card -->
-                    <div class="card">
+                    <div class="card policy-card">
                         <div class="section-title">Borrowing Limits</div>
                         <div class="field-group">
                             <label for="max-books">Maximum Number of Books:</label>
@@ -83,31 +85,9 @@ session_start();
                             <input type="number" id="grace-period" placeholder="Enter grace period in days" min="0" required>
                         </div>
                     </div>
-
-                    <!-- Right Card -->
-                    <div class="card">
-                        <div class="section-title">Renewal Options</div>
-                        <div class="field-group">
-                            <label for="max-renewals">Maximum Renewals:</label>
-                            <input type="number" id="max-renewals" placeholder="Enter max renewals" min="0" required>
-                        </div>
-                        <div class="field-group">
-                            <label for="renewal-duration">Renewal Duration (Days):</label>
-                            <input type="number" id="renewal-duration" placeholder="Enter duration in days" min="1" required>
-                        </div>
-
-                        <div class="section-title">Reservation Timeframes</div>
-                        <div class="field-group">
-                            <label for="reservation-duration">Reservation Duration (Days):</label>
-                            <input type="number" id="reservation-duration" placeholder="Enter duration in days" min="1" required>
-                        </div>
-                        <div class="field-group">
-                            <label for="reservation-notice">Reservation Notice (Days):</label>
-                            <input type="number" id="reservation-notice" placeholder="Enter notice period in days" min="0" required>
-                        </div>
-                    </div>
                 </div>
             </div>
+
 
             <div class="settings-section" data-tab="catalog-collection" style="display: none;">
                 <div class="box-shadow">
@@ -151,7 +131,7 @@ session_start();
                         </div>
                     </div>
 
-                    <!-- Book Genres Table -->
+                    <!-- Book Genres Table 
                     <div class="table-card">
                         <h3>Book Genres</h3>
                         <div class="table-wrapper">
@@ -188,6 +168,8 @@ session_start();
                             </table>
                         </div>
                     </div>
+
+                    -->
                 </div>
             </div>
 
@@ -246,4 +228,5 @@ session_start();
         });
     </script>
 </body>
+
 </html>

@@ -82,15 +82,15 @@ include 'db_connect.php';
         </div>
     </div>
 
-
+ <!--
     <div style="display: flex; align-items: center; justify-content: center; padding: 5%; gap: 20px; margin-top:5%;">
 
-        <!-- Big Picture -->
+     
         <div style="flex: 1; text-align: center;">
             <img src="whatlibra.jpg" alt="Big Picture" style="width: 100%; height: auto; max-height: 500px; object-fit: cover; border-radius: 10px;">
         </div>
 
-        <!-- Description -->
+   
         <div id="about-section" style="flex: 1; text-align: left; color: #4B4A4A; font-family: Arial, sans-serif; line-height: 1.6;">
             <h2 style="font-weight: bold; margin-bottom: 15px;">What is Library Management System ?</h2>
             <p>The Library Management System is a tool that simplifies and streamlines the process of managing library operations. It enables librarians to organize, search, and catalog books, manage user accounts, and monitor borrowing activities. </p>
@@ -108,45 +108,44 @@ include 'db_connect.php';
     <center>
         <h3 style="font-weight: 300; padding: 1%;">These features will help you to manage accounts and process with ease and security</h3>
     </center>
-    <!-- System Features Section -->
+
     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 2% 5%;">
 
-        <!-- Div 1 -->
+    
         <div style="background-color: #4B4A4A; border-radius: 10px; padding: 20px; text-align: center; color: white;">
             <ion-icon name="book" style="font-size: 50px; margin-bottom: 10px; color: white;"></ion-icon>
             <h4 style="font-weight: bold; margin-bottom: 10px;">CATALOGUING</h4>
             <p style="font-size: 0.9rem;">It is the process of creating a list of all bibliographic items such as short description, list of subjects, author name, and the classification.</p>
         </div>
 
-        <!-- Div 2 -->
+
         <div style="background-color: #4B4A4A; border-radius: 10px; padding: 20px; text-align: center; color: white;">
             <ion-icon name="shield-half" style="font-size: 50px; margin-bottom: 10px; color: white;"></ion-icon>
             <h4 style="font-weight: bold; margin-bottom: 10px;">ONE TIME PASSWORD (OTP)</h4>
             <p style="font-size: 0.9rem;">It is a type of security where a generated sequence of numbers can be used for a single time</p>
         </div>
 
-        <!-- Div 3 -->
+  
         <div style="background-color: #4B4A4A; border-radius: 10px; padding: 20px; text-align: center; color: white;">
             <ion-icon name="albums" style="font-size: 50px; margin-bottom: 10px; color: white;"></ion-icon>
             <h4 style="font-weight: bold; margin-bottom: 10px;">PERSONAL COLLECTION</h4>
             <p style="font-size: 0.9rem;">A user can collect his/her favorite books that can be organized in his/her own account</p>
         </div>
 
-        <!-- Div 4 -->
         <div style="background-color: #4B4A4A; border-radius: 10px; padding: 20px; text-align: center; color: white;">
             <ion-icon name="people-circle" style="font-size: 50px; margin-bottom: 10px; color: white;"></ion-icon>
             <h4 style="font-weight: bold; margin-bottom: 10px;">GUEST ACCOUNT</h4>
             <p style="font-size: 0.9rem;">A user can view a some limited features for them to see the system without creating an account</p>
         </div>
 
-        <!-- Div 5 -->
+
         <div style="background-color: #4B4A4A; border-radius: 10px; padding: 20px; text-align: center; color: white;">
             <ion-icon name="time" style="font-size: 50px; margin-bottom: 10px; color: white;"></ion-icon>
             <h4 style="font-weight: bold; margin-bottom: 10px;"> MONITORING ACTIVITIES</h4>
             <p style="font-size: 0.9rem;">A user and librarian activities are monitored by admin keeping the system safe from suspicious activities or might be a unauthorized access </p>
         </div>
 
-        <!-- Div 6 -->
+
         <div style="background-color: #4B4A4A; border-radius: 10px; padding: 20px; text-align: center; color: white;">
             <ion-icon name="hourglass" style="font-size: 50px; margin-bottom: 10px; color: white;"></ion-icon>
             <h4 style="font-weight: bold; margin-bottom: 10px;">EASY, FAST AND EFFICIENT</h4>
@@ -154,14 +153,14 @@ include 'db_connect.php';
         </div>
 
     </div>
-    <!-- Benefits Section -->
+ 
     <div style="display: flex; align-items: center; justify-content: space-between; padding: 5%; gap: 20px; margin-top: 5%; background-color:#F0F0F0;">
 
-        <!-- Left Section: Checkboxes and Descriptions -->
+
         <div style="flex: 1; padding-right: 20px; font-family: Arial, sans-serif; line-height: 1.6;">
             <h2 style="color: #1C2E5C; font-weight: bold; margin-bottom: 15px;">Benefits of Library Management System</h2>
 
-            <!-- Original 5 Benefits -->
+      
             <div style="display: flex; align-items: center; margin-bottom: 10px;">
                 <ion-icon name="checkbox" style="font-size: 25px; color: blue; margin-right: 10px;"></ion-icon>
                 <p>Improved catalog management for faster access to resources.</p>
@@ -183,7 +182,7 @@ include 'db_connect.php';
                 <p>Easy tracking of overdue books and timely notifications.</p>
             </div>
 
-            <!-- 5 Additional Benefits -->
+        
             <div style="display: flex; align-items: center; margin-bottom: 10px;">
                 <ion-icon name="checkbox" style="font-size: 25px; color: blue; margin-right: 10px;"></ion-icon>
                 <p>Supports digital and physical book management seamlessly.</p>
@@ -206,15 +205,15 @@ include 'db_connect.php';
             </div>
         </div>
 
-        <!-- Right Section: Big Picture -->
+   
         <div style="flex: 1; text-align: center;">
             <img src="benefitsr.png" alt="Benefits of Library Management System" style="width: 100%; height: auto; max-height: 500px; object-fit: cover; border-radius: 10px;">
         </div>
     </div>
 
-    <!-- About Us Section -->
+
     <div id="about-section" style="display: flex; align-items: flex-start; justify-content: space-between; padding: 5%; gap: 20px;">
-        <!-- Left Section: About Us Title -->
+      
         <div style="flex: 1; padding: 20px; border: 1px solid #AFAFAF; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
 
             <h2 style="font-family: Arial, sans-serif; color: #1C2E5C; font-weight: 700; margin-bottom: 15px;">ABOUT US</h2>
@@ -232,20 +231,20 @@ include 'db_connect.php';
         </div>
 
 
-        <!-- Right Section: About Us Description and Picture -->
+  
         <div style="flex: 1; text-align: left; color: #4B4A4A; font-family: Arial, sans-serif; line-height: 1.6; border: 1px solid #AFAFAF; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); padding: 20px;">
-            <!-- Image Section -->
+     
             <img src="books.jpg" alt="About Us Image" style="width: 100%; height: auto; max-height: 300px; object-fit: cover; margin-top: 10px;">
 
-            <!-- New Section with two Divs -->
+       
             <div style="display: flex; gap: 20px; margin-top: 20px;">
-                <!-- Div 1 -->
+         
                 <div style="flex: 1; padding: 20px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); background-color:#F0F0F0;">
                     <h2 style="font-family: Arial, Helvetica, sans-serif;">3 Months of</h2>
                     <p style="font-family:Arial, Helvetica, sans-serif;font-size:small;color:gray;"> Giving People Fast, Efficient, and reliable system for managing books and booking books </p>
                 </div>
 
-                <!-- Div 2 -->
+           
                 <div style="flex: 1; padding: 20px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); background-color:#F0F0F0;">
                     <h2 style="font-family: Arial, Helvetica, sans-serif;">Most Trusted by 100+ Users </h2>
                     <p style="color:gray;font-size:small;font-family:Arial, Helvetica, sans-serif;"> Trusted by Instructors and Students </p>
@@ -254,15 +253,15 @@ include 'db_connect.php';
         </div>
 
     </div>
-    <!-- Header Section -->
+
     <div class="header" id="policies">
         PRIVACY POLICY
         <h4 style="font-size: medium; font-weight:200; margin-top:1%;"> Rules and regulations about the library management system & process </h4>
     </div>
 
-    <!-- Content Section -->
+ 
     <div class="container">
-        <!-- Left Side Content -->
+     
         <div class="left-content">
             <h2>Privacy Introduction & Effective Date</h2>
             <p><strong>Effective January, 2024</strong></p>
@@ -276,7 +275,7 @@ include 'db_connect.php';
         </div>
 
 
-        <!-- Right Side Content (Table of Contents) -->
+  
         <div class="right-content">
             <h2>Table of Contents</h2>
             <ul>
@@ -285,12 +284,12 @@ include 'db_connect.php';
                 <li><a href="#section4">Library Rules</a></li>
                 <li><a href="#section3">Data Collection</a></li>
                 <li><a href="#section4">Cookies</a></li>
-                <!-- Add more sections as needed -->
+      
             </ul>
         </div>
     </div>
 
-    <!-- Latest News Section -->
+
     <div style="padding: 5%; background-color: #f9f9f9; border-top: 1px solid #e0e0e0;">
         <h2 style="text-align: center; font-family: Arial, sans-serif; font-weight: 700; margin-bottom: 20px;">Latest News</h2>
         <div style="display: flex; gap: 20px; justify-content: center;">
@@ -305,7 +304,7 @@ include 'db_connect.php';
         </div>
     </div>
 
-    <!-- Testimonials Section -->
+
     <div style="padding: 5%; background-color: #ffffff; border-top: 1px solid #e0e0e0;">
         <h2 style="text-align: center; font-family: Arial, sans-serif; font-weight: 700; margin-bottom: 20px;">What Our Users Say</h2>
         <div style="display: flex; gap: 20px; justify-content: center;">
@@ -320,7 +319,7 @@ include 'db_connect.php';
         </div>
     </div>
 
-    <!-- Enhanced Contact Us Section -->
+
     <div class="contact-us" style="padding: 5%; background:rgb(240, 240, 240); border-top: 1px solid #e0e0e0; color: white; border:1px solid gray;" id="contact-us">
         <h2 style="font-family: Arial, sans-serif; font-weight: 700; margin-bottom: 20px; color: black;">Contact Us</h2>
         <div style="display: flex; gap: 20px;">
@@ -380,16 +379,16 @@ include 'db_connect.php';
         </div>
     </div>
 
-    <!-- FAQ Section with Taller Height -->
+
     <div class="faq-container" style="padding: 40px; margin-top: 20px; height: 800px; overflow-y: auto;" id="faq">
 
-        <!-- Title and Subtitle -->
+   
         <div class="faq-title" style="text-align: center; margin-bottom: 20px;">
             <h4 style="font-size: 24px; color: #1C2E5C;">LIBRASPHERE'S</h4>
             <h2 style="font-size: 36px; font-weight: bold; color: #1C2E5C;">FREQUENTLY ASKED QUESTIONS</h2>
         </div>
 
-        <!-- Search Bar -->
+
         <div class="search-bar" style="text-align: center; margin-bottom: 20px;">
             <input
                 type="text"
@@ -403,10 +402,10 @@ include 'db_connect.php';
                 onkeyup="searchFAQ()" />
         </div>
         <br> <Br> <br> <Br> <br> <Br>
-        <!-- FAQ Sections in 1x3 Grid -->
+
         <div class="faq-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
 
-            <!-- General Section -->
+ 
             <div class="faq-section" id="general">
                 <h3>General</h3>
                 <div class="faq-item" style="padding: 20px;">
@@ -427,7 +426,7 @@ include 'db_connect.php';
                 </div>
             </div>
 
-            <!-- Accounts Section -->
+     
             <div class="faq-section" id="accounts">
                 <h3>Accounts</h3>
                 <div class="faq-item" style="padding: 20px;">
@@ -448,7 +447,7 @@ include 'db_connect.php';
                 </div>
             </div>
 
-            <!-- Transactions Section -->
+
             <div class="faq-section" id="transactions">
                 <h3>Transactions</h3>
                 <div class="faq-item" style="padding: 20px;">
@@ -469,7 +468,7 @@ include 'db_connect.php';
                 </div>
             </div>
 
-        </div> <!-- End FAQ Grid -->
+        </div> 
 
     </div>
 
@@ -506,7 +505,7 @@ include 'db_connect.php';
         }
     </script>
 
-    <!-- Footer Section -->
+  
     <footer style="background-color: #1C2E5C; color: white; padding: 20px 0; text-align: center;">
         <p style="margin: 0; font-family: Arial, sans-serif;">&copy; 2025 Librasphere. All rights reserved.</p>
         <div style="margin-top: 10px;">
@@ -515,7 +514,7 @@ include 'db_connect.php';
             <a href="mailto:support@librasphere.com" style="color: white; text-decoration: none; margin: 0 10px;">Contact Us</a>
         </div>
 
-        <!-- Social Media Links -->
+    
         <div style="margin-top: 15px;">
             <a href="https://www.facebook.com" target="_blank" style="color: white; text-decoration: none; margin: 0 15px;">
                 <ion-icon name="logo-facebook" style="font-size: 24px;"></ion-icon>
@@ -530,14 +529,14 @@ include 'db_connect.php';
                 <ion-icon name="logo-twitter" style="font-size: 24px;"></ion-icon>
             </a>
         </div>
-        <!-- Go to Top Button -->
+
         <button id="goToTop" onclick="scrollToTop()" style="position: fixed; bottom: 20px; right: 20px; background-color: #f4f4f4; color: #1C2E5C; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; display: none;">
             ↑ Go to Top
         </button>
     </footer>
 
     <script>
-        // Show the "Go to Top" button when the user scrolls down
+ 
         window.onscroll = function() {
             var button = document.getElementById("goToTop");
             if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
@@ -559,10 +558,11 @@ include 'db_connect.php';
 
 
 
-    <!--continue here-->
+ 
 </body>
 
 <script type="module" src="https://cdn.jsdelivr.net/npm/ionicons@5.5.4/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule src="https://cdn.jsdelivr.net/npm/ionicons@5.5.4/dist/ionicons/ionicons.js"></script>
 
 </html>
+-->

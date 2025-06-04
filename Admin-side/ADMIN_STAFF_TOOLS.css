@@ -106,6 +106,14 @@ body {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+.book-item.selected {
+  position: relative;
+  filter: brightness(85%); 
+  border: 2px solid #007bff; 
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+  z-index: 10;
+  cursor: default; 
+}
 
 .scroll-btn {
     background-color: #444;
@@ -173,9 +181,36 @@ body {
     border-radius: 5px;
 }
 
+.print-book-btn {
+  background-color: #06488e; /* Bootstrap blue */
+  color: white;
+  border: none;
+  padding: 8px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+
+.print-borrowed-btn {
+  background-color: #06488e; /* Bootstrap blue */
+  color: white;
+  border: none;
+  padding: 8px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  float: right;
+  margin-bottom: 1%;
+}
+
 .save-btn {
     background-color: #294c85;
     color: white;
+    padding: 10px;
+    border-radius: 5px;
 }
 
 .cancel-btn {
