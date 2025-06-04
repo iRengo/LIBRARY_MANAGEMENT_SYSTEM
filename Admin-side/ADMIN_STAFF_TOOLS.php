@@ -47,775 +47,497 @@ $stmt->execute();
 </head>
 
 <body>
-    <?PHP INCLUDE 'HEADER-NAVBAR.PHP' ?>
-    
-            <!-- Content HERE -->
-<div class="navbar" id="navbar">
-    <a href="#" onclick="showSection('book-cataloging', this)">Book Cataloging</a>
-    <a href="#" onclick="showSection('generate-report', this)">Generate Report</a>
-    <a href="#" onclick="showSection('library-inventory', this)">Library Inventory</a>
-    <a href="#" onclick="showSection('circulation-records', this)">Circulation Records</a>
-    <a href="#" onclick="showSection('manage-patrons', this)">Manage Users</a>
-</div>
+    <?PHP include 'HEADER-NAVBAR.PHP' ?>
+
+    <!-- Content HERE -->
+    <div class="navbar" id="navbar">
+        <a href="#" onclick="showSection('book-cataloging', this)">Book Cataloging</a>
+        <a href="#" onclick="showSection('generate-report', this)">Generate Report</a>
+        <a href="#" onclick="showSection('library-inventory', this)">Library Inventory</a>
+        <a href="#" onclick="showSection('circulation-records', this)">Circulation Records</a>
+    </div>
 
 
 
 
-<div class="main-container">
-    <div id="book-cataloging" class="content-section">
-    <div class="book-details">
-        <h2>BOOK DETAILS</h2>
+    <div class="main-container">
+        <div id="book-cataloging" class="content-section">
+            <div class="book-details">
+                <h2>BOOK DETAILS</h2>
 
-        <div class="form-row">
-            <input type="text" placeholder="Title">
-            <input type="text" placeholder="Author">
-            <input type="text" placeholder="ISBN">
-            <input type="text" placeholder="Genre">
-        </div>
-        <div class="form-row">
-            <input type="date" placeholder="Publication Date">
-            <input type="text" placeholder="Publisher">
-            <input type="file" placeholder="Cover Image">
-            <input type="number" placeholder="Number Of Copies">
-        </div>
-        <div class="form-row">
-            <textarea rows="4" placeholder="Description" style="width: 100%;"></textarea>
-        </div>
-
-   
-        <div class="book-list">
-            <h3>LIST OF BOOKS</h3>
-            <div class="book-item">
-                <img class="book-cover" src="cover1.jpg" alt="Cover">
-                <div class="book-details-text">
-                    <p><strong>Title:</strong> Soul</p>
-                    <p><strong>Author:</strong> Chris Moore</p>
-                    <p><strong>ISBN:</strong> 978-1987-2345</p>
-                    <p><strong>Description:</strong> A captivating story about...</p>
+                <div class="form-row">
+                    <input type="text" id="bookTitle" placeholder="Title">
+                    <input type="text" id="bookAuthor" placeholder="Author">
+                    <input type="text" id="bookISBN" placeholder="ISBN">
+                    <input type="text" id="bookGenre" placeholder="category">
                 </div>
-                <div class="book-actions">
-                    <button>Edit</button>
-                    <button>Publish</button>
-                    <button>Archive</button>
+                <div class="form-row">
+                    <input type="date" id="bookPubDate" placeholder="Publication Date">
+                    <input type="text" id="bookPublisher" placeholder="Publisher">
+                    <input type="number" id="bookStocks" placeholder="Number Of Copies">
+                </div>
+                <div class="form-row">
+                    <textarea rows="4" id="bookDescription" placeholder="Description" style="width: 100%;"></textarea>
+                </div>
+
+
+                <div class="book-scroll-wrapper">
+                    <button class="scroll-btn left-btn">&#8592;</button> <!-- ← -->
+
+                    <div class="book-list" id="bookList">
+                        <?php
+                        $query = "SELECT * FROM tbl_books";
+                        $result = mysqli_query($conn, $query);
+                        while ($row = mysqli_fetch_assoc($result)) {
+                            $cover = !empty($row['book_cover']) ? $row['book_cover'] : 'https://via.placeholder.com/150x220?text=No+Cover';
+                            echo '<div class="book-item" ' .
+                                'data-id="' . $row['book_id'] . '" ' .
+                                'data-title="' . htmlspecialchars($row['book_title'], ENT_QUOTES) . '" ' .
+                                'data-author="' . htmlspecialchars($row['book_author'], ENT_QUOTES) . '" ' .
+                                'data-isbn="' . htmlspecialchars($row['ISBN'], ENT_QUOTES) . '" ' .
+                                'data-genre="' . htmlspecialchars($row['book_category'], ENT_QUOTES) . '" ' .
+                                'data-pubdate="' . $row['publication_date'] . '" ' .
+                                'data-publisher="' . htmlspecialchars($row['publisher'], ENT_QUOTES) . '" ' .
+                                'data-stocks="' . $row['book_stocks'] . '" ' .
+                                'data-description="' . htmlspecialchars($row['book_description'], ENT_QUOTES) . '"' .
+                                '>';
+                            echo '<img class="book-cover" src="' . htmlspecialchars($cover) . '" alt="Cover">';
+                            echo '<div class="book-details-text">';
+                            echo '<p><strong>Title:</strong> ' . htmlspecialchars($row['book_title']) . '</p>';
+                            echo '<p><strong>Author:</strong> ' . htmlspecialchars($row['book_author']) . '</p>';
+                            echo '</div>';
+                            echo '</div>';
+                        }
+                        ?>
+                    </div>
+
+                    <button class="scroll-btn right-btn">&#8594;</button> <!-- → -->
+                </div>
+
+                <div class="form-buttons">
+                    <button class="save-btn">Save</button>
+                    <button class="cancel-btn">Cancel</button>
                 </div>
             </div>
-            <!-- Add more book-item as needed -->
-        </div>
-        <div class="form-buttons">
-            <button class="save-btn">Save</button>
-            <button class="cancel-btn">Cancel</button>
-        </div>
-    </div>
-</div>
-
-<!-- Generate report -->
-<div id="generate-report" class="content-section" style="display: none;">
-        <div class="book-details">
-        <h2>GENERATE REPORT</h2>
-        <div class="report-header">
-            <div class="overview">
-                <strong>MONTHLY RESERVATION OVERVIEW</strong><br>
-                Date Generated: <?php echo date("m-d-Y"); ?>
-            </div>
-            <div class="filters">
-                <select class="report-select">
-                    <option value="">word/pdf...</option>
-                    <option value="pdf">PDF</option>
-                    <option value="word">Word</option>
-                </select>
-                <input type="date" class="report-date">
-            </div>
         </div>
 
-        <table class="report-table">
-            <thead>
-                <tr>
-                    <th>RESERVED BY</th>
-                    <th>BOOK TITLE</th>
-                    <th>AUTHOR</th>
-                    <th>RESERVATION DATE</th>
-                    <th>DUE DATE</th>
-                    <th>STATUS</th>
-                </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>John Reyes</td>
-                <td>The Alchemist</td>
-                <td>Paulo Coelho</td>
-                <td>2025-05-15</td>
-                <td>2025-05-30</td>
-                <td>Returned</td>
-            </tr>
-            <tr>
-                <td>Ana Dela Cruz</td>
-                <td>To Kill a Mockingbird</td>
-                <td>Harper Lee</td>
-                <td>2025-05-10</td>
-                <td>2025-05-25</td>
-                <td>Still Borrowing</td>
-            </tr>
-            <tr>
-                <td>Marco Santos</td>
-                <td>1984</td>
-                <td>George Orwell</td>
-                <td>2025-05-05</td>
-                <td>2025-05-20</td>
-                <td>Overdue</td>
-            </tr>
-            <tr>
-                <td>Ella Villanueva</td>
-                <td>Pride and Prejudice</td>
-                <td>Jane Austen</td>
-                <td>2025-05-12</td>
-                <td>2025-05-27</td>
-                <td>Returned</td>
-            </tr>
-            <tr>
-                <td>Brian Gomez</td>
-                <td>The Great Gatsby</td>
-                <td>F. Scott Fitzgerald</td>
-                <td>2025-05-18</td>
-                <td>2025-06-02</td>
-                <td>Still Borrowing</td>
-            </tr>
-            <tr>
-                <td>Samantha Cruz</td>
-                <td>Harry Potter and the Sorcerer’s Stone</td>
-                <td>J.K. Rowling</td>
-                <td>2025-05-14</td>
-                <td>2025-05-29</td>
-                <td>Returned</td>
-            </tr>
-            <tr>
-                <td>Luis Mercado</td>
-                <td>The Catcher in the Rye</td>
-                <td>J.D. Salinger</td>
-                <td>2025-05-11</td>
-                <td>2025-05-26</td>
-                <td>Overdue</td>
-            </tr>
-            <tr>
-                <td>Andrea Torres</td>
-                <td>The Hobbit</td>
-                <td>J.R.R. Tolkien</td>
-                <td>2025-05-09</td>
-                <td>2025-05-24</td>
-                <td>Returned</td>
-            </tr>
-            <tr>
-                <td>James Lim</td>
-                <td>Animal Farm</td>
-                <td>George Orwell</td>
-                <td>2025-05-13</td>
-                <td>2025-05-28</td>
-                <td>Still Borrowing</td>
-            </tr>
-            <tr>
-                <td>Nina Angeles</td>
-                <td>Little Women</td>
-                <td>Louisa May Alcott</td>
-                <td>2025-05-16</td>
-                <td>2025-05-31</td>
-                <td>Returned</td>
-            </tr>
-        </tbody>
+        <!-- Generate report -->
+        <div id="generate-report" class="content-section" style="display: none;">
+            <div class="book-details">
+                <h2>GENERATE REPORT</h2>
+                <div class="report-header">
+                    <div class="overview">
 
+                    </div>
+                    <div class="filters">
+                        <select id="report-type" class="report-select">
+                            <option value="RESERVATION">Reserved Books</option>
+                            <option value="BORROWED">Borrowed Books</option>
+                            <option value="FINES">Student Fines</option>
+                        </select>
 
-        </table>
-        <div class="pagination-container">
-            <button class="pagination-btn">Prev</button>
-            <button class="pagination-btn active">1</button>
-            <button class="pagination-btn">2</button>
-            <button class="pagination-btn">3</button>
-            <button class="pagination-btn">Next</button>
-        </div>
-
-
-        <div class="form-buttons">
-            <button class="save-btn">GENERATE</button>
-            <button class="cancel-btn">CLEAR</button>
-        </div>
-
-    </div>
-    </div>
-<!-- Generate report -->
-
-
- <!-- Library Inventory -->
-    <div id="library-inventory" class="content-section" style="display: none;">
-        <div class="book-details">
-        <h2>Library Inventory</h2>
-    <div class="inventory-header">
-        <div class="filters">
-            <input type="text" class="report-date" placeholder="Search...">
-            <button class="filter-btn" title="Filter"><i class="fa-solid fa-filter"></i></button>
-        </div>
-        <button class="add-book-btn">Add New Book</button>
-    </div>
-
-
-    <table class="report-table inventory-table">
-        <thead>
-            <tr>
-                <th>BOOK TITLE</th>
-                <th>AUTHOR</th>
-                <th>ISBN</th>
-                <th>NO. OF BOOKS</th>
-                <th>GENRE</th>
-                <th>PUBLISHER</th>
-                <th>ACTION</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>The Great Gatsby</td>
-                <td>F. Scott Fitzgerald</td>
-                <td>9780743273565</td>
-                <td>5</td>
-                <td>Fiction</td>
-                <td>Scribner</td>
-                <td>
-                    <button class="action-btn edit-btn" title="Edit">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                    </button>
-                    <button class="action-btn delete-btn" title="Delete">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                    <button class="action-btn archived-btn" title="Archived">
-                        <i class="fa-solid fa-box-archive"></i>
-                    </button>
-                </td>
-            </tr>
-            <tr>
-                <td>To Kill a Mockingbird</td>
-                <td>Harper Lee</td>
-                <td>9780060935467</td>
-                <td>3</td>
-                <td>Classic</td>
-                <td>J.B. Lippincott & Co.</td>
-                <td>
-                    <button class="action-btn edit-btn" title="Edit">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                    </button>
-                    <button class="action-btn delete-btn" title="Delete">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                    <button class="action-btn archived-btn" title="Archived">
-                        <i class="fa-solid fa-box-archive"></i>
-                    </button>
-                </td>
-            </tr>
-            <tr>
-                <td>1984</td>
-                <td>George Orwell</td>
-                <td>9780451524935</td>
-                <td>7</td>
-                <td>Dystopian</td>
-                <td>Secker & Warburg</td>
-                <td>
-                    <button class="action-btn edit-btn" title="Edit">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                    </button>
-                    <button class="action-btn delete-btn" title="Delete">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                    <button class="action-btn archived-btn" title="Archived">
-                        <i class="fa-solid fa-box-archive"></i>
-                    </button>
-                </td>
-            </tr>
-            <tr>
-                <td>Pride and Prejudice</td>
-                <td>Jane Austen</td>
-                <td>9780141040349</td>
-                <td>4</td>
-                <td>Romance</td>
-                <td>Penguin Classics</td>
-                <td>
-                    <button class="action-btn edit-btn" title="Edit">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                    </button>
-                    <button class="action-btn delete-btn" title="Delete">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                    <button class="action-btn archived-btn" title="Archived">
-                        <i class="fa-solid fa-box-archive"></i>
-                    </button>
-                </td>
-            </tr>
-            <tr>
-                <td>The Hobbit</td>
-                <td>J.R.R. Tolkien</td>
-                <td>9780547928227</td>
-                <td>6</td>
-                <td>Fantasy</td>
-                <td>George Allen & Unwin</td>
-                <td>
-                    <button class="action-btn edit-btn" title="Edit">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                    </button>
-                    <button class="action-btn delete-btn" title="Delete">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                    <button class="action-btn archived-btn" title="Archived">
-                        <i class="fa-solid fa-box-archive"></i>
-                    </button>
-                </td>
-            </tr>
-            <tr>
-                <td>The Catcher in the Rye</td>
-                <td>J.D. Salinger</td>
-                <td>9780316769488</td>
-                <td>8</td>
-                <td>Fiction</td>
-                <td>Little, Brown and Company</td>
-                <td>
-                    <button class="action-btn edit-btn" title="Edit">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                    </button>
-                    <button class="action-btn delete-btn" title="Delete">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                    <button class="action-btn archived-btn" title="Archived">
-                        <i class="fa-solid fa-box-archive"></i>
-                    </button>
-                </td>
-            </tr>
-            <tr>
-                <td>Brave New World</td>
-                <td>Aldous Huxley</td>
-                <td>9780060850524</td>
-                <td>5</td>
-                <td>Science Fiction</td>
-                <td>Chatto & Windus</td>
-                <td>
-                    <button class="action-btn edit-btn" title="Edit">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                    </button>
-                    <button class="action-btn delete-btn" title="Delete">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                    <button class="action-btn archived-btn" title="Archived">
-                        <i class="fa-solid fa-box-archive"></i>
-                    </button>
-                </td>
-            </tr>
-            <tr>
-                <td>Harry Potter and the Sorcerer's Stone</td>
-                <td>J.K. Rowling</td>
-                <td>9780590353427</td>
-                <td>10</td>
-                <td>Fantasy</td>
-                <td>Bloomsbury</td>
-                <td>
-                    <button class="action-btn edit-btn" title="Edit">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                    </button>
-                    <button class="action-btn delete-btn" title="Delete">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                    <button class="action-btn archived-btn" title="Archived">
-                        <i class="fa-solid fa-box-archive"></i>
-                    </button>
-                </td>
-            </tr>
-            <tr>
-                <td>Moby Dick</td>
-                <td>Herman Melville</td>
-                <td>9781503280786</td>
-                <td>2</td>
-                <td>Adventure</td>
-                <td>Harper & Brothers</td>
-                <td>
-                    <button class="action-btn edit-btn" title="Edit">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                    </button>
-                    <button class="action-btn delete-btn" title="Delete">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                    <button class="action-btn archived-btn" title="Archived">
-                        <i class="fa-solid fa-box-archive"></i>
-                    </button>
-                </td>
-            </tr>
-            <tr>
-                <td>The Odyssey</td>
-                <td>Homer</td>
-                <td>9780140268867</td>
-                <td>5</td>
-                <td>Epic</td>
-                <td>Penguin Classics</td>
-                <td>
-                    <button class="action-btn edit-btn" title="Edit">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                    </button>
-                    <button class="action-btn delete-btn" title="Delete">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                    <button class="action-btn archived-btn" title="Archived">
-                        <i class="fa-solid fa-box-archive"></i>
-                    </button>
-                </td>
-            </tr>
-        </tbody>
-
-
-    </table>
-
-    <div class="pagination-container">
-        <button class="pagination-btn">Prev</button>
-        <button class="pagination-btn active">1</button>
-        <button class="pagination-btn">2</button>
-        <button class="pagination-btn">3</button>
-        <button class="pagination-btn">Next</button>
-    </div>
-</div>
-
-    </div>
-
-    
-    <!-- Circulation Records -->
-<div id="circulation-records" class="content-section" style="display: none;">
-    <div class="book-details">
-        <h2>Circulation Records</h2>
-        <div class="circulation-header">
-            <div class="filters">
-                <input type="text" class="circulation-search" placeholder="Search records">
-                <button class="circulation-filter-btn" title="Filter">
-                    <i class="fa-solid fa-filter"></i>
-                </button>
-            </div>
-        </div>
-
-        <table class="report-table circulation-table">
-            <thead>
-                <tr>
-                    <th>BOOK TITLE</th>
-                    <th>USERNAME</th>
-                    <th>BORROWED DATE</th>
-                    <th>DUE DATE</th>
-                    <th>RETURN DATE</th>
-                    <th>STATUS</th>
-                    <th>ACTION</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>The Great Gatsby</td>
-                    <td>Jane Doe</td>
-                    <td>2025-05-10</td>
-                    <td>2025-05-20</td>
-                    <td>2025-05-18</td>
-                    <td>Returned</td>
-                    <td>
-                        <button class="action-btn edit-btn"><i class="fa-solid fa-pen-to-square"></i></button>
-                        <button class="action-btn delete-btn"><i class="fa-solid fa-trash"></i></button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>To Kill a Mockingbird</td>
-                    <td>John Smith</td>
-                    <td>2025-05-01</td>
-                    <td>2025-05-10</td>
-                    <td>2025-05-09</td>
-                    <td>Returned</td>
-                    <td>
-                        <button class="action-btn edit-btn"><i class="fa-solid fa-pen-to-square"></i></button>
-                        <button class="action-btn delete-btn"><i class="fa-solid fa-trash"></i></button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>1984</td>
-                    <td>Maria Clara</td>
-                    <td>2025-05-05</td>
-                    <td>2025-05-15</td>
-                    <td>2025-05-20</td>
-                    <td>Overdue</td>
-                    <td>
-                        <button class="action-btn edit-btn"><i class="fa-solid fa-pen-to-square"></i></button>
-                        <button class="action-btn delete-btn"><i class="fa-solid fa-trash"></i></button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Harry Potter and the Sorcerer's Stone</td>
-                    <td>Elijah Cruz</td>
-                    <td>2025-05-15</td>
-                    <td>2025-05-25</td>
-                    <td>-</td>
-                    <td>Borrowed</td>
-                    <td>
-                        <button class="action-btn edit-btn"><i class="fa-solid fa-pen-to-square"></i></button>
-                        <button class="action-btn delete-btn"><i class="fa-solid fa-trash"></i></button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Pride and Prejudice</td>
-                    <td>Grace Lee</td>
-                    <td>2025-05-12</td>
-                    <td>2025-05-22</td>
-                    <td>2025-05-22</td>
-                    <td>Returned</td>
-                    <td>
-                        <button class="action-btn edit-btn"><i class="fa-solid fa-pen-to-square"></i></button>
-                        <button class="action-btn delete-btn"><i class="fa-solid fa-trash"></i></button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Little Women</td>
-                    <td>Samuel Tan</td>
-                    <td>2025-04-25</td>
-                    <td>2025-05-05</td>
-                    <td>2025-05-10</td>
-                    <td>Overdue</td>
-                    <td>
-                        <button class="action-btn edit-btn"><i class="fa-solid fa-pen-to-square"></i></button>
-                        <button class="action-btn delete-btn"><i class="fa-solid fa-trash"></i></button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>The Hobbit</td>
-                    <td>Andrea Ramos</td>
-                    <td>2025-05-17</td>
-                    <td>2025-05-27</td>
-                    <td>-</td>
-                    <td>Borrowed</td>
-                    <td>
-                        <button class="action-btn edit-btn"><i class="fa-solid fa-pen-to-square"></i></button>
-                        <button class="action-btn delete-btn"><i class="fa-solid fa-trash"></i></button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Life of Pi</td>
-                    <td>Kevin Yu</td>
-                    <td>2025-04-20</td>
-                    <td>2025-04-30</td>
-                    <td>2025-05-02</td>
-                    <td>Overdue</td>
-                    <td>
-                        <button class="action-btn edit-btn"><i class="fa-solid fa-pen-to-square"></i></button>
-                        <button class="action-btn delete-btn"><i class="fa-solid fa-trash"></i></button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>The Catcher in the Rye</td>
-                    <td>Louise Navarro</td>
-                    <td>2025-05-02</td>
-                    <td>2025-05-12</td>
-                    <td>2025-05-11</td>
-                    <td>Returned</td>
-                    <td>
-                        <button class="action-btn edit-btn"><i class="fa-solid fa-pen-to-square"></i></button>
-                        <button class="action-btn delete-btn"><i class="fa-solid fa-trash"></i></button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>The Alchemist</td>
-                    <td>Joshua Lim</td>
-                    <td>2025-05-18</td>
-                    <td>2025-05-28</td>
-                    <td>-</td>
-                    <td>Borrowed</td>
-                    <td>
-                        <button class="action-btn edit-btn"><i class="fa-solid fa-pen-to-square"></i></button>
-                        <button class="action-btn delete-btn"><i class="fa-solid fa-trash"></i></button>
-                    </td>
-                </tr>
-            </tbody>
-
-        </table>
-
-        <div class="pagination-container">
-            <button class="pagination-btn">Prev</button>
-            <button class="pagination-btn active">1</button>
-            <button class="pagination-btn">2</button>
-            <button class="pagination-btn">3</button>
-            <button class="pagination-btn">Next</button>
-        </div>
-    </div>
-</div>
-
-
-    <!-- Manage Users -->
-    <div id="manage-patrons" class="content-section" style="display: none;">
-        <div class="book-details">
-            <h2>Manage Users</h2>
-            <div class="user-header">
-                <div class="filters">
-                    <input type="text" class="user-search" placeholder="Search Users">
-                    <button class="user-filter-btn" title="Filter">
-                        <i class="fa-solid fa-filter"></i>
-                    </button>
+                        <input type="date" class="report-date">
+                    </div>
                 </div>
-                <button class="add-user-btn">Add new Users</button>
+
+                <!-- Reserved Books Table -->
+                <table id="reserved-report" class="report-table">
+                    <thead>
+                        <tr>
+                            <th>RESERVE ID</th>
+                            <th>STUDENT NO</th>
+                            <th>EMAIL</th>
+                            <th>BOOK TITLE</th>
+                            <th>RESERVE DATE</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $sql = "SELECT reserve_id, student_no, email, book_title, reserve_date FROM reserved_books";
+                        $result = mysqli_query($conn, $sql);
+                        if (mysqli_num_rows($result) > 0):
+                            while ($row = mysqli_fetch_assoc($result)):
+                        ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($row['reserve_id']) ?></td>
+                                    <td><?= htmlspecialchars($row['student_no']) ?></td>
+                                    <td><?= htmlspecialchars($row['email']) ?></td>
+                                    <td><?= htmlspecialchars($row['book_title']) ?></td>
+                                    <td><?= htmlspecialchars($row['reserve_date']) ?></td>
+                                </tr>
+                        <?php
+                            endwhile;
+                        else:
+                            echo "<tr><td colspan='5'>No reservations found.</td></tr>";
+                        endif;
+                        ?>
+                    </tbody>
+                </table>
+
+                <!-- Borrowed Books Table -->
+                <table id="borrowed-report" class="report-table" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>BORROW ID</th>
+                            <th>STUDENT NO</th>
+                            <th>EMAIL</th>
+                            <th>BOOK TITLE</th>
+                            <th>BORROW DATE</th>
+                            <th>DUE DATE</th>
+                            <th>STATUS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $sql_borrowed = "SELECT borrow_id, student_no, email, book_title, preferred_date, due_date, status FROM borrowed_books";
+                        $result_borrowed = mysqli_query($conn, $sql_borrowed);
+                        if (mysqli_num_rows($result_borrowed) > 0):
+                            while ($row = mysqli_fetch_assoc($result_borrowed)):
+                        ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($row['borrow_id']) ?></td>
+                                    <td><?= htmlspecialchars($row['student_no']) ?></td>
+                                    <td><?= htmlspecialchars($row['email']) ?></td>
+                                    <td><?= htmlspecialchars($row['book_title']) ?></td>
+                                    <td><?= htmlspecialchars($row['preferred_date']) ?></td>
+                                    <td><?= htmlspecialchars($row['due_date']) ?></td>
+                                    <td><?= htmlspecialchars($row['status']) ?></td>
+                                </tr>
+                        <?php
+                            endwhile;
+                        else:
+                            echo "<tr><td colspan='7'>No borrowed books found.</td></tr>";
+                        endif;
+                        ?>
+                    </tbody>
+                </table>
+
+                <!-- Student Fines Table -->
+                <table id="fines-report" class="report-table" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>STUDENT NO</th>
+                            <th>BOOK TITLE</th>
+                            <th>AUTHOR</th>
+                            <th>FINE NAME</th>
+                            <th>AMOUNT</th>
+                            <th>STATUS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $fines_sql = "
+                    SELECT 
+                        sf.student_no,
+                        b.book_title,
+                        b.book_cover,
+                        b.book_author,
+                        f.fine_name,
+                        f.price AS fine_amount,
+                        sf.status,
+                        sf.fine_id,
+                        sf.proof
+                    FROM student_fines sf
+                    LEFT JOIN tbl_books b ON sf.book_id = b.book_id
+                    LEFT JOIN fines_table f ON sf.fine_id = f.fine_id
+                    WHERE sf.status = 'unpaid'
+                    ORDER BY sf.fine_id DESC
+                ";
+                        $result_fines = mysqli_query($conn, $fines_sql);
+                        if (mysqli_num_rows($result_fines) > 0):
+                            while ($row = mysqli_fetch_assoc($result_fines)):
+                        ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($row['student_no']) ?></td>
+                                    <td><?= htmlspecialchars($row['book_title']) ?></td>
+
+                                    <td><?= htmlspecialchars($row['book_author']) ?></td>
+                                    <td><?= htmlspecialchars($row['fine_name']) ?></td>
+                                    <td><?= htmlspecialchars(number_format($row['fine_amount'], 2)) ?></td>
+                                    <td><?= htmlspecialchars($row['status']) ?></td>
+                                </tr>
+                        <?php
+                            endwhile;
+                        else:
+                            echo "<tr><td colspan='8'>No unpaid fines found.</td></tr>";
+                        endif;
+                        ?>
+                    </tbody>
+                </table>
+
+                <div class="pagination-container">
+                    <button class="pagination-btn">Prev</button>
+                    <button class="pagination-btn active">1</button>
+                    <button class="pagination-btn">2</button>
+                    <button class="pagination-btn">3</button>
+                    <button class="pagination-btn">Next</button>
+                </div>
+
+                <div class="form-buttons">
+                    <button class="save-btn">GENERATE</button>
+                    <button class="cancel-btn">CLEAR</button>
+                </div>
             </div>
-
-            <table class="user-table">
-                <thead>
-                    <tr>
-                        <th>USERNAME</th>
-                        <th>USER ID</th>
-                        <th>STATUS</th>
-                        <th>FINES</th>
-                        <th>LAST BORROWED DATE</th>
-                        <th>ACTIONS</th>
-                    </tr>
-                </thead>
-                <tbody>
-            <tr>
-                <td>Garcia, Juan D.</td>
-                <td>2025-0001-0001</td>
-                <td>Active</td>
-                <td>₱0.00</td>
-                <td>01/05/2025</td>
-                <td>
-                    <button class="action-btn edit-btn"><i class="fa-solid fa-pen-to-square"></i></button>
-                    <button class="action-btn view-btn"><i class="fa-solid fa-address-card"></i></button>
-                </td>
-            </tr>
-            <tr>
-                <td>Santos, Maria L.</td>
-                <td>2025-0001-0002</td>
-                <td>Inactive</td>
-                <td>₱100.00</td>
-                <td>15/03/2025</td>
-                <td>
-                    <button class="action-btn edit-btn"><i class="fa-solid fa-pen-to-square"></i></button>
-                    <button class="action-btn view-btn"><i class="fa-solid fa-address-card"></i></button>
-                </td>
-            </tr>
-            <tr>
-                <td>Reyes, Carlos M.</td>
-                <td>2025-0001-0003</td>
-                <td>Active</td>
-                <td>₱10.00</td>
-                <td>22/04/2025</td>
-                <td>
-                    <button class="action-btn edit-btn"><i class="fa-solid fa-pen-to-square"></i></button>
-                    <button class="action-btn view-btn"><i class="fa-solid fa-address-card"></i></button>
-                </td>
-            </tr>
-            <tr>
-                <td>Dela Cruz, Ana B.</td>
-                <td>2025-0001-0004</td>
-                <td>Active</td>
-                <td>₱0.00</td>
-                <td>10/05/2025</td>
-                <td>
-                    <button class="action-btn edit-btn"><i class="fa-solid fa-pen-to-square"></i></button>
-                    <button class="action-btn view-btn"><i class="fa-solid fa-address-card"></i></button>
-                </td>
-            </tr>
-            <tr>
-                <td>Lopez, Mark C.</td>
-                <td>2025-0001-0005</td>
-                <td>Inactive</td>
-                <td>₱100.00</td>
-                <td>05/02/2025</td>
-                <td>
-                    <button class="action-btn edit-btn"><i class="fa-solid fa-pen-to-square"></i></button>
-                    <button class="action-btn view-btn"><i class="fa-solid fa-address-card"></i></button>
-                </td>
-            </tr>
-            <tr>
-                <td>Mendoza, Paula E.</td>
-                <td>2025-0001-0006</td>
-                <td>Active</td>
-                <td>₱0.00</td>
-                <td>12/05/2025</td>
-                <td>
-                    <button class="action-btn edit-btn"><i class="fa-solid fa-pen-to-square"></i></button>
-                    <button class="action-btn view-btn"><i class="fa-solid fa-address-card"></i></button>
-                </td>
-            </tr>
-            <tr>
-                <td>Torres, Elijah F.</td>
-                <td>2025-0001-0007</td>
-                <td>Active</td>
-                <td>₱100.00</td>
-                <td>20/04/2025</td>
-                <td>
-                    <button class="action-btn edit-btn"><i class="fa-solid fa-pen-to-square"></i></button>
-                    <button class="action-btn view-btn"><i class="fa-solid fa-address-card"></i></button>
-                </td>
-            </tr>
-            <tr>
-                <td>Fernandez, Rica G.</td>
-                <td>2025-0001-0008</td>
-                <td>Inactive</td>
-                <td>₱15.00</td>
-                <td>18/01/2025</td>
-                <td>
-                    <button class="action-btn edit-btn"><i class="fa-solid fa-pen-to-square"></i></button>
-                    <button class="action-btn view-btn"><i class="fa-solid fa-address-card"></i></button>
-                </td>
-            </tr>
-            <tr>
-                <td>Ramos, Kevin H.</td>
-                <td>2025-0001-0009</td>
-                <td>Active</td>
-                <td>₱0.00</td>
-                <td>02/05/2025</td>
-                <td>
-                    <button class="action-btn edit-btn"><i class="fa-solid fa-pen-to-square"></i></button>
-                    <button class="action-btn view-btn"><i class="fa-solid fa-address-card"></i></button>
-                </td>
-            </tr>
-            <tr>
-                <td>Villanueva, Grace I.</td>
-                <td>2025-0001-0010</td>
-                <td>Active</td>
-                <td>₱0.00</td>
-                <td>11/05/2025</td>
-                <td>
-                    <button class="action-btn edit-btn"><i class="fa-solid fa-pen-to-square"></i></button>
-                    <button class="action-btn view-btn"><i class="fa-solid fa-address-card"></i></button>
-                </td>
-            </tr>
-        </tbody>
-
-        </table>
-        <div class="pagination-container">
-            <button class="pagination-btn">Prev</button>
-            <button class="pagination-btn active">1</button>
-            <button class="pagination-btn">2</button>
-            <button class="pagination-btn">3</button>
-            <button class="pagination-btn">Next</button>
         </div>
-
-    </div>
-    <!-- Manage Users -->
-
-
-</div>
-
-            <!-- Content HERE -->
-
-        <!-- ========================= Main END ==================== -->
-
 
         <script>
-            function showSection(sectionId, clickedLink) {
-                // Hide all content sections
-                const sections = document.querySelectorAll('.content-section');
-                sections.forEach(sec => sec.style.display = 'none');
+            document.addEventListener("DOMContentLoaded", function() {
+                const reportSelect = document.getElementById("report-type");
+                const reservedTable = document.getElementById("reserved-report");
+                const borrowedTable = document.getElementById("borrowed-report");
+                const finesTable = document.getElementById("fines-report");
 
-                // Show the selected section
-                const targetSection = document.getElementById(sectionId);
-                if (targetSection) {
-                    targetSection.style.display = 'block';
+                function toggleReports() {
+                    const selected = reportSelect.value;
+                    reservedTable.style.display = "none";
+                    borrowedTable.style.display = "none";
+                    finesTable.style.display = "none";
+
+                    if (selected === "RESERVATION") {
+                        reservedTable.style.display = "table";
+                    } else if (selected === "BORROWED") {
+                        borrowedTable.style.display = "table";
+                    } else if (selected === "FINES") {
+                        finesTable.style.display = "table";
+                    }
                 }
 
-                // Remove 'active' from all navbar links
-                const links = document.querySelectorAll('.navbar a');
-                links.forEach(link => link.classList.remove('active'));
+                // Initialize
+                toggleReports();
 
-                // Add 'active' to the clicked link
-                clickedLink.classList.add('active');
-            }
+                reportSelect.addEventListener("change", toggleReports);
+            });
         </script>
 
 
 
+        <!-- Library Inventory -->
+        <div id="library-inventory" class="content-section" style="display: none;">
+            <div class="book-details">
+                <h2>Library Inventory</h2>
+                <div class="inventory-header">
+                    <div class="filters">
+                        <input type="text" class="report-date" placeholder="Search...">
+                        <button class="filter-btn" title="Filter"><i class="fa-solid fa-filter"></i></button>
+                    </div>
+                    <button class="add-book-btn">Add New Book</button>
+                </div>
+
+
+                <table class="report-table inventory-table">
+                    <thead>
+                        <tr>
+                            <th>ISBN</th>
+                            <th>BOOK TITLE</th>
+                            <th>AUTHOR</th>
+                            <th>NO. OF BOOKS</th>
+                            <th>GENRE</th>
+                            <th>PUBLISHER</th>
+                            <th>ACTION</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <?php
+                        $book_sql = "SELECT book_id, book_title, book_author, book_stocks, ISBN, book_category, publisher FROM tbl_books";
+                        $fetch_book = mysqli_query($conn, $book_sql);
+
+                        if (mysqli_num_rows($fetch_book) > 0):
+                            while ($row = mysqli_fetch_assoc($fetch_book)):
+                        ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($row['ISBN']) ?></td>
+                                    <td><?= htmlspecialchars($row['book_title']) ?></td>
+                                    <td><?= htmlspecialchars($row['book_author']) ?></td>
+                                    <td><?= intval($row['book_stocks']) ?></td>
+                                    <td><?= htmlspecialchars($row['book_category']) ?></td>
+                                    <td><?= htmlspecialchars($row['publisher']) ?></td>
+                                    <td>
+                                        <button class="action-btn edit-btn" data-id="<?= $row['book_id'] ?>" title="Edit">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </button>
+                                        <button class="action-btn delete-btn" data-id="<?= $row['book_id'] ?>" title="Delete">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                        <button class="action-btn archived-btn" data-id="<?= $row['book_id'] ?>" title="Archived">
+                                            <i class="fa-solid fa-box-archive"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                        <?php
+                            endwhile;
+                        else:
+                            echo "<tr><td colspan='7'>No books found.</td></tr>";
+                        endif;
+
+                        ?>
+
+                    </tbody>
+
+
+                </table>
+
+                <div class="pagination-container">
+                    <button class="pagination-btn">Prev</button>
+                    <button class="pagination-btn active">1</button>
+                    <button class="pagination-btn">2</button>
+                    <button class="pagination-btn">3</button>
+                    <button class="pagination-btn">Next</button>
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- Circulation Records -->
+        <div id="circulation-records" class="content-section" style="display: none;">
+            <div class="book-details">
+                <h2>Circulation Records</h2>
+                <div class="circulation-header">
+                    <div class="filters">
+                        <input type="text" class="circulation-search" placeholder="Search records">
+                        <button class="circulation-filter-btn" title="Filter">
+                            <i class="fa-solid fa-filter"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <table class="report-table circulation-table">
+                    <thead>
+                        <tr>
+                            <th>BOOK TITLE</th>
+                            <th>USERNAME</th>
+                            <th>BORROWED DATE</th>
+                            <th>DUE DATE</th>
+                            <th>STATUS</th>
+                            <th>LAST UPDATED</th>
+                            <th>ACTION</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        // Fetch all records from borrowed_book
+                        $sql = "SELECT * FROM borrowed_books";
+                        $result = mysqli_query($conn, $sql);
+
+                        if (mysqli_num_rows($result) > 0):
+                            while ($row = mysqli_fetch_assoc($result)):
+                                $username = $row['first_name'] . ' ' . $row['last_name'];
+                        ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($row['book_title']) ?></td>
+                                    <td><?= htmlspecialchars($username) ?></td>
+                                    <td><?= htmlspecialchars($row['preferred_date']) ?></td>
+                                    <td><?= htmlspecialchars($row['due_date']) ?></td>
+                                    <td><?= htmlspecialchars($row['status']) ?></td>
+                                    <td><?= htmlspecialchars($row['update_datetime']) ?></td>
+                                    <td>
+                                        <button class="action-btn edit-btn" data-id="<?= $row['borrow_id'] ?>" title="Edit">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </button>
+                                        <button class="action-btn delete-btn" data-id="<?= $row['borrow_id'] ?>" title="Delete">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                        <?php
+                            endwhile;
+                        else:
+                            echo "<tr><td colspan='7'>No borrowed books found.</td></tr>";
+                        endif;
+                        ?>
+                    </tbody>
+                </table>
+
+
+                </table>
+
+                <div class="pagination-container">
+                    <button class="pagination-btn">Prev</button>
+                    <button class="pagination-btn active">1</button>
+                    <button class="pagination-btn">2</button>
+                    <button class="pagination-btn">3</button>
+                    <button class="pagination-btn">Next</button>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+    </div>
+
+    <!-- Content HERE -->
+
+    <!-- ========================= Main END ==================== -->
+
+
+    <script>
+        document.querySelectorAll('.book-item').forEach(item => {
+            item.addEventListener('click', () => {
+                // Get data attributes from clicked book
+                const id = item.getAttribute('data-id');
+                const title = item.getAttribute('data-title');
+                const author = item.getAttribute('data-author');
+                const isbn = item.getAttribute('data-isbn');
+                const genre = item.getAttribute('data-genre');
+                const pubdate = item.getAttribute('data-pubdate');
+                const publisher = item.getAttribute('data-publisher');
+                const stocks = item.getAttribute('data-stocks');
+                const description = item.getAttribute('data-description');
+
+                // Fill inputs
+                document.getElementById('bookTitle').value = title;
+                document.getElementById('bookAuthor').value = author;
+                document.getElementById('bookISBN').value = isbn;
+                document.getElementById('bookGenre').value = genre;
+                document.getElementById('bookPubDate').value = pubdate;
+                document.getElementById('bookPublisher').value = publisher;
+                document.getElementById('bookStocks').value = stocks;
+                document.getElementById('bookDescription').value = description;
+
+                // If you want to store the book_id somewhere for save/update later
+                document.getElementById('book-cataloging').setAttribute('data-current-book-id', id);
+            });
+        });
+
+        function showSection(sectionId, clickedLink) {
+            // Hide all content sections
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(sec => sec.style.display = 'none');
+
+            // Show the selected section
+            const targetSection = document.getElementById(sectionId);
+            if (targetSection) {
+                targetSection.style.display = 'block';
+            }
+
+            // Remove 'active' from all navbar links
+            const links = document.querySelectorAll('.navbar a');
+            links.forEach(link => link.classList.remove('active'));
+
+            // Add 'active' to the clicked link
+            clickedLink.classList.add('active');
+        }
+
+        document.querySelector(".left-btn").addEventListener("click", () => {
+            document.getElementById("bookList").scrollBy({
+                left: -200,
+                behavior: 'smooth'
+            });
+        });
+
+        document.querySelector(".right-btn").addEventListener("click", () => {
+            document.getElementById("bookList").scrollBy({
+                left: 200,
+                behavior: 'smooth'
+            });
+        });
+    </script>
+
+
+
 </body>
+
 </html>
