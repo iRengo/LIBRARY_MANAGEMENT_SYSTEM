@@ -4,45 +4,47 @@ include '../homepage/db_connect.php';
 session_start(); // Start session to access logged-in user data
 
 // Check if the admin session exists
-    if (!isset($_SESSION['acc_no'])) {
-        // If not, show a SweetAlert notification and then redirect
-        echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+if (!isset($_SESSION['acc_no'])) {
+    // If not, show a SweetAlert notification and then redirect
+    echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
     window.onload = function() {
-    // Show SweetAlert notification
-    Swal.fire({
-    title: "You are not logged in!",
-    text: "Please log in to access the page.",
-    icon: "error",
-    confirmButtonText: "OK",
-    allowOutsideClick: false,
-    allowEscapeKey: false,
-    willClose: () => {
-    // Redirect to homepage after the notification is closed
-    window.location.href = "../homepage/homepage.php";
-    }
-    });
+        // Show SweetAlert notification
+        Swal.fire({
+            title: "You are not logged in!",
+            text: "Please log in to access the page.",
+            icon: "error",
+            confirmButtonText: "OK",
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            willClose: () => {
+                // Redirect to homepage after the notification is closed
+                window.location.href = "../homepage/homepage.php";
+            }
+        });
     }
     </script>';
-        exit(); // Stop further execution after showing the notification and redirect script
-    }
-
+    exit(); // Stop further execution after showing the notification and redirect script
+}
 
 $acc_no = $_SESSION['acc_no']; // Get logged-in user's acc_no
 
 // Get the selected month (if any)
 $selectedMonth = isset($_GET['month']) ? $_GET['month'] : '';
 
-// Initialize query
-$query = "SELECT * FROM collection_books WHERE acc_no = ?";
+// Initialize query with JOIN to get book_stocks from tbl_books
+$query = "SELECT cb.*, b.book_stocks 
+          FROM collection_books cb 
+          JOIN tbl_books b ON cb.book_id = b.book_id 
+          WHERE cb.acc_no = ?";
 
 // Add month filter if a month is selected
 if ($selectedMonth) {
-    $query .= " AND MONTH(added_at) = ? AND YEAR(added_at) = YEAR(CURDATE())";  // Filter by current year
+    $query .= " AND MONTH(cb.added_at) = ? AND YEAR(cb.added_at) = YEAR(CURDATE())";  // Filter by current year
 }
 
 // Order by newest first
-$query .= " ORDER BY added_at DESC";
+$query .= " ORDER BY cb.added_at DESC";
 
 // Prepare the query
 $stmt = $conn->prepare($query);
@@ -57,9 +59,22 @@ if ($selectedMonth) {
 $stmt->execute();
 $result = $stmt->get_result();
 
-// Fetch the first book separately
-$topBook = $result->fetch_assoc();
+// Fetch all books into array
+$books = [];
+while ($row = $result->fetch_assoc()) {
+    $books[] = $row;
+}
+
+// Separate top book and recent books
+if (count($books) > 0) {
+    $topBook = $books[0];
+    $recentBooks = array_slice($books, 1);
+} else {
+    $topBook = null;
+    $recentBooks = [];
+}
 ?>
+
 
 
 <!DOCTYPE html>
@@ -70,6 +85,72 @@ $topBook = $result->fetch_assoc();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhgj9UU2gEpeHXKuDjc8+aJBBZ/YYz7wkmP5zPpsjLh4RxJMfP5Jxs6t" crossorigin="anonymous">
     <title>USER COLLECTION</title>
+    <style>
+        /* Add your styles here */
+        .empty-collection-container {
+            text-align: center;
+            margin-top: 50px;
+        }
+        .browse-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #47423F;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .book-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding: 0 50px 30px;
+        }
+        .book-card {
+            cursor: pointer;
+            width: 150px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: box-shadow 0.3s ease;
+        }
+        .book-card:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .book-card img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+        }
+        .info {
+            padding: 10px;
+        }
+        .info h3 {
+            margin: 0 0 5px 0;
+            font-size: 1rem;
+        }
+        .info p {
+            margin: 0;
+            font-size: 0.85rem;
+            color: #555;
+        }
+        .btn-reserve {
+            background-color: #FFA500 !important; /* Yellow/Orange */
+            color: white !important;
+            padding: 10px 20px !important;
+            border-radius: 5px !important;
+            text-align: center !important;
+            text-decoration: none !important;
+            display: inline-block !important;
+            font-weight: bold !important;
+        }
+
+        .btn-reserve:hover {
+            background-color: #cc8400 !important; /* Darker yellow/orange */
+        }
+    </style>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Teachers:ital,wght@0,400..800;1,400..800&family=Viga&family=Zilla+Slab+Highlight:wght@400;700&display=swap" rel="stylesheet">
@@ -121,52 +202,58 @@ $topBook = $result->fetch_assoc();
         <p>You haven’t added any books to your collection yet. Start exploring and add your favorites here!</p>
         <a href="USER_CATALOG.php" class="browse-button">Browse Books</a>
     </div>
-    <?php else: ?>
+<?php else: ?>
     <div class="row mt-5" id="top-book">
-        <!-- Left Panel: Title, Description, Genre -->
         <div class="col-md-6">
-            <h2 id="top-title"><?= $topBook['book_title'] ?></h2>
-            <p><strong>Description:</strong> <span id="top-description"><?= $topBook['description'] ?></span></p>
+            <h2 id="top-title"><?= htmlspecialchars($topBook['book_title']) ?></h2>
+            <p><strong>Description:</strong> <span id="top-description"><?= htmlspecialchars($topBook['description']) ?></span></p>
             <p>2005 • 18+ • Romance • 13 chp</p>
 
             <div class="btn-group" role="group">
-                <a href="BOOK_BORROW.php" class="btn btn-borrow">Borrow</a>
+                <?php if ($topBook['book_stocks'] > 0): ?>
+                    <a id="top-borrow" href="BOOK-DETAILS.php?book_id=<?= $topBook['book_id'] ?>" class="btn btn-borrow">Borrow</a>
+                <?php else: ?>
+                    <a id="top-borrow" href="BOOK-DETAILS.php?book_id=<?= $topBook['book_id'] ?>" class="btn btn-reserve">Reserve</a>
+                <?php endif; ?>
+                
                 <a id="top-remove" href="remove_book.php?collection_id=<?= $topBook['collection_id'] ?>" class="btn btn-sneakpeek">Remove</a>
             </div>
+
+
         </div>
 
-        <!-- Right Panel: Image -->
         <div class="col-md-6">
-            <img id="top-image" src="<?= str_replace(' ', '%20', $topBook['image_path']) ?>" class="img-fluid" alt="Book Cover">
+            <img id="top-image" src="<?= htmlspecialchars(str_replace(' ', '%20', $topBook['image_path'])) ?>" class="img-fluid" alt="Book Cover">
         </div>
     </div>
-    <?php endif; ?>
 
     <br>
 
-    <!-- Recently Added Section -->
     <div class="container">
         <h1 style="margin-left: 50px;">RECENTLY ADDED</h1>
         <div class="book-grid">
-            <?php while ($row = $result->fetch_assoc()): ?>
-            <div class="book-card"
-                 data-title="<?= $row['book_title'] ?>"
-                 data-description="<?= $row['description'] ?>"
-                 data-image="<?= str_replace(' ', '%20', $row['image_path']) ?>"
-                 data-remove-link="remove_book.php?collection_id=<?= $row['collection_id'] ?>"
-                 onclick="moveToTop(this)">
-                <img src="<?= str_replace(' ', '%20', $row['image_path']) ?>" alt="<?= $row['book_title'] ?>">
-                <div class="info">
-                    <h3><?= $row['book_title'] ?></h3>
-                    <p><?= $row['author'] ?></p>
-                    <div class="colors">
-                        <div class="color-box color-purple"></div>
+            <?php foreach ($recentBooks as $row): ?>
+                <div class="book-card"
+                    data-title="<?= htmlspecialchars($row['book_title']) ?>"
+                    data-description="<?= htmlspecialchars($row['description']) ?>"
+                    data-image="<?= htmlspecialchars(str_replace(' ', '%20', $row['image_path'])) ?>"
+                    data-remove-link="remove_book.php?collection_id=<?= $row['collection_id'] ?>"
+                    data-book-id="<?= $row['book_id'] ?>"
+                    data-book-stocks="<?= $row['book_stocks'] ?>"
+                    onclick="moveToTop(this)">
+                    <img src="<?= htmlspecialchars(str_replace(' ', '%20', $row['image_path'])) ?>" alt="<?= htmlspecialchars($row['book_title']) ?>">
+                    <div class="info">
+                        <h3><?= htmlspecialchars($row['book_title']) ?></h3>
+                        <p><?= htmlspecialchars($row['author']) ?></p>
+                        <div class="colors">
+                            <div class="color-box color-purple"></div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <?php endwhile; ?>
+            <?php endforeach; ?>
         </div>
     </div>
+<?php endif; ?>
 
     <?php
     // Close the database connection
@@ -188,13 +275,35 @@ $topBook = $result->fetch_assoc();
 
     <!-- Scripts -->
     <script>
-        function moveToTop(clickedBook) {
-            document.getElementById("top-title").innerText = clickedBook.getAttribute("data-title");
-            document.getElementById("top-description").innerText = clickedBook.getAttribute("data-description");
-            document.getElementById("top-image").src = clickedBook.getAttribute("data-image");
-            document.getElementById("top-remove").href = clickedBook.getAttribute("data-remove-link");
-        }
-    </script>
+    function moveToTop(clickedBook) {
+        document.getElementById("top-title").innerText = clickedBook.getAttribute("data-title");
+        document.getElementById("top-description").innerText = clickedBook.getAttribute("data-description");
+        document.getElementById("top-image").src = clickedBook.getAttribute("data-image");
+        document.getElementById("top-remove").href = clickedBook.getAttribute("data-remove-link");
+    }
+
+    function moveToTop(clickedBook) {
+    document.getElementById("top-title").innerText = clickedBook.getAttribute("data-title");
+    document.getElementById("top-description").innerText = clickedBook.getAttribute("data-description");
+    document.getElementById("top-image").src = clickedBook.getAttribute("data-image");
+    document.getElementById("top-remove").href = clickedBook.getAttribute("data-remove-link");
+
+    const bookId = clickedBook.getAttribute("data-book-id");
+    const bookStocks = parseInt(clickedBook.getAttribute("data-book-stocks"));
+
+    const topBorrowBtn = document.getElementById("top-borrow");
+
+    topBorrowBtn.href = "BOOK-DETAILS.php?book_id=" + bookId;
+
+    if (bookStocks > 0) {
+        topBorrowBtn.textContent = "Borrow";
+        topBorrowBtn.className = "btn btn-borrow";
+    } else {
+        topBorrowBtn.textContent = "Reserve";
+        topBorrowBtn.className = "btn btn-reserve";
+    }
+}
+</script>
 
     <!-- External JS -->
     <script src="User_css/admin.js"></script>

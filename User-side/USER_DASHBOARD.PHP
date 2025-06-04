@@ -238,7 +238,7 @@ $overdue_count = count($overdue_books);
         <!-- ======= Styles ====== -->
         <link rel="stylesheet" href="USER_STYLE2.CSS">
         <link rel="stylesheet" href="User_css/ADMIN_MODAL.css">
-        <link rel="stylesheet" href="USER_DASHBOARD1.css">
+        <link rel="stylesheet" href="USER_DASHBOARD.css">
 
 
 
@@ -440,73 +440,38 @@ $overdue_count = count($overdue_books);
 </div>
 
 
-        <!-- Book Container Section -->
-        <div class="book-header">Upcoming Books </div> <!-- Moved outside book-container -->
-        <div class="book-container" id="upcomingBooksContainer">
+<div class="book-header">Upcoming Books</div>
+<div class="book-container" id="upcomingBooksContainer">
+<?php
+$query = "SELECT book_title, book_author, book_cover, book_genre FROM tbl_books WHERE status = 'upcoming'";
+$result = $conn->query($query);
+
+if ($result && $result->num_rows > 0) {
+    while ($book = $result->fetch_assoc()) {
+        // Genres split by comma, trimmed for safety
+        $genres = array_map('trim', explode(',', $book['book_genre']));
+        echo '<div class="book">';
+        echo '<img src="' . htmlspecialchars($book['book_cover']) . '" alt="Book Cover" class="book-cover">';
+        echo '<div class="book-info">';
+        echo '<h3 class="book-title">' . htmlspecialchars($book['book_title']) . '</h3>';
+        echo '<p class="book-author">by ' . htmlspecialchars($book['book_author']) . '</p>';
+        foreach ($genres as $genre) {
+            $genreClass = strtolower(str_replace(' ', '-', $genre)); // e.g. "Historical Fiction" => "historical-fiction"
+            echo '<div class="genre-btn ' . $genreClass . '">' . htmlspecialchars($genre) . '</div>';
+        }
+        echo '</div>'; // book-info
+        echo '</div>'; // book
+    }
+} else {
+        echo '<div class="no-upcoming-books">No upcoming books at the moment. Stay tuned!</div>';
+
+}
+?>
+</div>
 
 
-        <!-- Book 1 -->
-        <div class="book">
-        <img src="book-covers/gatsby.jpg" alt="Book Cover" class="book-cover">
-        <div class="book-info">
-        <h3 class="book-title">The Great Gatsby</h3>
-        <p class="book-author">by F. Scott Fitzgerald</p>
-        <div class="genre-btn action">Action</div>
-        <div class="genre-btn fiction">Fiction</div>
-        </div>
-        </div>
 
-        <!-- Book 2 -->
-        <div class="book">
-        <img src="book-covers/mockingbird.jpg" alt="Book Cover" class="book-cover">
-        <div class="book-info">
-        <h3 class="book-title">To Kill a Mockingbird</h3>
-        <p class="book-author">by Harper Lee</p>
-        <div class="genre-btn drama">Drama</div>
-        <div class="genre-btn historical">Historical</div>
-        </div>
-        </div>
 
-        <!-- Book 3 -->
-        <div class="book">
-        <img src="book-covers/1984.jpg" alt="Book Cover" class="book-cover">
-        <div class="book-info">
-        <h3 class="book-title">1984</h3>
-        <p class="book-author">by George Orwell</p>
-        <div class="genre-btn dystopia">Dystopia</div>
-        </div>
-        </div>
-
-        <!-- Book 4 -->
-        <div class="book">
-        <img src="book-covers/pride.jpg" alt="Book Cover" class="book-cover">
-        <div class="book-info">
-        <h3 class="book-title">Pride and Prejudice</h3>
-        <p class="book-author">by Jane Austen</p>
-        <div class="genre-btn romance">Romance</div>
-        </div>
-        </div>
-
-        <!-- Book 5 -->
-        <div class="book">
-        <img src="book-covers/moby.jpg" alt="Book Cover" class="book-cover">
-        <div class="book-info">
-        <h3 class="book-title">Moby-Dick</h3>
-        <p class="book-author">by Herman Melville</p>
-        <div class="genre-btn adventure">Adventure</div>
-        </div>
-        </div>
-
-        <!-- Book 6 -->
-        <div class="book">
-        <img src="book-covers/war.jpg" alt="Book Cover" class="book-cover">
-        <div class="book-info">
-        <h3 class="book-title">War and Peace</h3>
-        <p class="book-author">by Leo Tolstoy</p>
-        <div class="genre-btn historical">Historical</div>
-        </div>
-        </div>
-        </div>
 
 
          <!-- Recommended Books-->
