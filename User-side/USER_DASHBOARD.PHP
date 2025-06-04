@@ -233,6 +233,80 @@ $overdue_count = count($overdue_books);
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhgj9UU2gEpeHXKuDjc8+aJBBZ/YYz7wkmP5zPpsjLh4RxJMfP5Jxs6t" crossorigin="anonymous">
         <title> Admin Dashboard</title>
+        <style>
+            /* Shared modal overlay */
+            .custom-modal-overlay {
+              display: none;
+              position: fixed;
+              top: 0; left: 0;
+              width: 100%; height: 100%;
+              background: rgba(0, 0, 0, 0.6);
+              z-index: 999;
+            }
+
+            /* Modal box styling */
+            .custom-modal {
+              background: #fff;
+              max-width: 600px;
+              margin: 100px auto;
+              padding: 30px;
+              border-radius: 12px;
+              box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+              animation: fadeIn 0.3s ease-in-out;
+              font-family: 'Segoe UI', sans-serif;
+            }
+
+            .custom-modal h2 {
+              margin-top: 0;
+              color: #333;
+              border-bottom: 2px solid #007BFF;
+              padding-bottom: 10px;
+            }
+
+            .custom-modal table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-top: 15px;
+            }
+
+            .custom-modal th,
+            .custom-modal td {
+              padding: 12px 15px;
+              border: 1px solid #ddd;
+              text-align: center;
+            }
+
+            .custom-modal th {
+              background-color: #007BFF;
+              color: #fff;
+            }
+
+            .custom-modal tr:nth-child(even) {
+              background-color: #f9f9f9;
+            }
+
+            .custom-modal button {
+              margin-top: 20px;
+              background-color: #007BFF;
+              color: white;
+              padding: 10px 20px;
+              border: none;
+              border-radius: 6px;
+              cursor: pointer;
+              font-weight: bold;
+              transition: background 0.3s;
+            }
+
+            .custom-modal button:hover {
+              background-color: #0056b3;
+            }
+
+            @keyframes fadeIn {
+              from { opacity: 0; transform: translateY(-20px); }
+              to { opacity: 1; transform: translateY(0); }
+            }
+        </style>
+
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <!-- ======= Styles ====== -->
@@ -296,78 +370,61 @@ $overdue_count = count($overdue_books);
             </div>
         </div>
         </div>
+ 
 
-<!-- Modal (custom, not reusing .modal) -->
-<div id="borrowedModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#00000099;">
-  <div style="background:white; max-width:600px; margin:100px auto; padding:20px; border-radius:10px;">
+<!-- Modals -->
+<div id="borrowedModal" class="custom-modal-overlay">
+  <div class="custom-modal">
     <h2>Borrowed Books</h2>
-    <table border="1" width="100%">
+    <table>
       <thead>
-        <tr>
-          <th>Title</th>
-          <th>Status</th>
-          <th>Due Date</th>
-        </tr>
+        <tr><th>Title</th><th>Status</th><th>Due Date</th></tr>
       </thead>
       <tbody id="borrowedTableBody"></tbody>
     </table>
-    <br>
     <button onclick="document.getElementById('borrowedModal').style.display='none'">Close</button>
   </div>
 </div>
 
-<div id="reservedModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#00000099;">
-  <div style="background:white; max-width:600px; margin:100px auto; padding:20px; border-radius:10px;">
+<div id="reservedModal" class="custom-modal-overlay">
+  <div class="custom-modal">
     <h2>Reserved Books</h2>
-    <table border="1" width="100%">
+    <table>
       <thead>
-        <tr>
-          <th>Title</th>
-          <th>Reserved Date</th>
-        </tr>
+        <tr><th>Title</th><th>Reserved Date</th></tr>
       </thead>
       <tbody id="reservedTableBody"></tbody>
     </table>
-    <br>
     <button onclick="document.getElementById('reservedModal').style.display='none'">Close</button>
   </div>
 </div>
 
-<div id="dueModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#00000099;">
-  <div style="background:white; max-width:600px; margin:100px auto; padding:20px; border-radius:10px;">
+<div id="dueModal" class="custom-modal-overlay">
+  <div class="custom-modal">
     <h2>Due Date Books</h2>
-    <table border="1" width="100%">
+    <table>
       <thead>
-        <tr>
-          <th>Title</th>
-          <th>Status</th>
-          <th>Due Date</th>
-        </tr>
+        <tr><th>Title</th><th>Status</th><th>Due Date</th></tr>
       </thead>
       <tbody id="dueTableBody"></tbody>
     </table>
-    <br>
     <button onclick="document.getElementById('dueModal').style.display='none'">Close</button>
   </div>
 </div>
 
-<div id="overdueModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#00000099;">
-  <div style="background:white; max-width:600px; margin:100px auto; padding:20px; border-radius:10px;">
+<div id="overdueModal" class="custom-modal-overlay">
+  <div class="custom-modal">
     <h2>Overdue Books</h2>
-    <table border="1" width="100%">
+    <table>
       <thead>
-        <tr>
-          <th>Title</th>
-          <th>Status</th>
-          <th>Due Date</th>
-        </tr>
+        <tr><th>Title</th><th>Status</th><th>Due Date</th></tr>
       </thead>
       <tbody id="overdueTableBody"></tbody>
     </table>
-    <br>
     <button onclick="document.getElementById('overdueModal').style.display='none'">Close</button>
   </div>
 </div>
+
 
 <div class="table-container">
     <h2 class="table-header">TOP BOOKS RANKING</h2>
