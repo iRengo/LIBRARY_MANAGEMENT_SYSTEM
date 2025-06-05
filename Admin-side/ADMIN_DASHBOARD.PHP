@@ -128,10 +128,10 @@ if ($result && $result->num_rows > 0) {
     <div class="main-content">
         <!-- Shortcut buttons -->
         <div class="shortcut-buttons">
-            <a href="view_log.php" class="shortcut-btn view-log-btn">
+            <a href="admin_notifications.php" class="shortcut-btn view-log-btn">
                 <i class="fas fa-file-alt"></i> View Log
             </a>
-            <a href="add_librarian.php" class="shortcut-btn add-librarian-btn">
+            <a href="admin_users.php" class="shortcut-btn add-librarian-btn">
                 <i class="fas fa-user-plus"></i> Add Librarian
             </a>
         </div>

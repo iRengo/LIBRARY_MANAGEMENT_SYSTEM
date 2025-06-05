@@ -102,6 +102,14 @@ if (isset($_SESSION['admin_no'])) {
                         <span class="title">User Management</span>
                     </a>
                 </li>
+                <li>
+                    <a href="ADMIN_NOTIFICATIONS.PHP">
+                        <span class="icon">
+                            <ion-icon name="notifications-outline"></ion-icon>
+                        </span>
+                        <span class="title">Notifications</span>
+                    </a>
+                </li>
 
                 <li>
                     <a href="ADMIN_STAFF_TOOLS.PHP">
@@ -154,9 +162,6 @@ if (isset($_SESSION['admin_no'])) {
                         <ion-icon name="caret-down-outline" style="margin-left: 5px;margin-bottom:5px;"></ion-icon>
                     </button>
                     <div class="dropdown-content">
-                        <a href="#" id="toggleNotifications">
-                            <ion-icon name="notifications-outline"></ion-icon> Notifications
-                        </a>
                         <a href="#" id="logoutIcon">
                             <ion-icon name="log-out-outline"></ion-icon> Logout
                         </a>

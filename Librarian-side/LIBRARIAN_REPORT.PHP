@@ -91,11 +91,16 @@ function selectedIf($value, $selectedValue)
             <?php endforeach; ?>
         </div>
 
+        <form method="POST" action="LIBRARIAN_GENERATE_REPORTS.PHP" target="_blank" id="pdfForm" style="align-self: flex-start;">
+            <input type="hidden" name="month_filter" value="<?= htmlspecialchars($monthFilter) ?>">
+            <input type="hidden" name="student_no" value="<?= htmlspecialchars($selectedStudent ?? '') ?>">
+            <button type="submit" id="generatePdfBtn" class="btn-generate-pdf">Generate PDF</button>
+        </form>
 
         <form method="POST" class="student-select-form" id="studentForm">
             <label for="student_no" style="font-weight: 600;">Select Student:</label>
             <select name="student_no" id="student_no" required onchange="document.getElementById('studentForm').submit()">
-                <option value="">-- Choose Student --</option>
+                <option value="" aria-required="true">-- Choose Student --</option>
                 <?php
                 $students_sql = "SELECT DISTINCT student_no FROM borrowed_books ORDER BY student_no ASC";
                 $students_result = mysqli_query($conn, $students_sql);
@@ -340,11 +345,15 @@ function selectedIf($value, $selectedValue)
                 </div>
             </div>
         <?php endif; ?>
-        <form method="POST" action="LIBRARIAN_GENERATE_REPORTS.PHP" target="_blank" id="pdfForm">
-            <input type="hidden" name="month_filter" value="<?= htmlspecialchars($monthFilter) ?>">
-            <input type="hidden" name="student_no" value="<?= htmlspecialchars($selectedStudent ?? '') ?>">
-            <button type="submit" id="generatePdfBtn" class="btn-generate-pdf">Generate PDF</button>
+
+
+        <form method="POST" action="LIBRARIAN_GENERATE_STUDENT_REPORT.PHP" target="_blank" style="align-self: flex-end;">
+            <input type="hidden" name="student_no" value="<?= htmlspecialchars($selectedStudent) ?>">
+            <button type="submit" style="padding: 8px 16px;">Print Student Report</button>
         </form>
+
+
+
 
     </div>
 
