@@ -269,6 +269,13 @@ img.img-fluid {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+.book-card .info h3,
+.book-card .info p {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Optional: adds "..." when text is too long */
+}
+
 .book-card img {
     max-width: 100%;
     height: auto;
@@ -359,5 +366,36 @@ form {
     padding: 10px;
     background-color: #fff;
 }
+
+.recommended-book-genre.action {
+    background-color: #4CAF50; /* Green */
+    color: white;
+}
+
+.recommended-book-genre.fiction {
+    background-color: #FF9800; /* Orange */
+    color: white;
+}
+
+.recommended-book-genre.drama {
+    background-color: #2196F3; /* Blue */
+    color: white;
+}
+
+.recommended-book-genre.historical {
+    background-color: #FFC107; /* Amber */
+    color: white;
+}
+
+.recommended-book-genre.dystopia {
+    background-color: #9C27B0; /* Purple */
+    color: white;
+}
+
+.recommended-book-genre.adventure {
+    background-color: #4CAF50; /* Green */
+    color: white;
+}
+
 
 

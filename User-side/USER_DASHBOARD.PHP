@@ -312,7 +312,7 @@ $overdue_count = count($overdue_books);
         <!-- ======= Styles ====== -->
         <link rel="stylesheet" href="USER_STYLE2.CSS">
         <link rel="stylesheet" href="User_css/ADMIN_MODAL.css">
-        <link rel="stylesheet" href="USER_DASHBOARD.css">
+        <link rel="stylesheet" href="USER_DASHBOARD1.css">
 
 
 
@@ -497,61 +497,74 @@ $overdue_count = count($overdue_books);
 </div>
 
 
-<div class="book-header">Upcoming Books</div>
-<div class="book-container" id="upcomingBooksContainer">
-<?php
-$query = "SELECT book_title, book_author, book_cover, book_genre FROM tbl_books WHERE status = 'upcoming'";
-$result = $conn->query($query);
+          <div class="book-header">Upcoming Books</div>
+          <div class="book-container" id="upcomingBooksContainer">
+          <?php
+          $query = "SELECT book_title, book_author, book_cover, book_category FROM tbl_books WHERE status = 'upcoming'";
+          $result = $conn->query($query);
 
-if ($result && $result->num_rows > 0) {
-    while ($book = $result->fetch_assoc()) {
-        // Genres split by comma, trimmed for safety
-        $genres = array_map('trim', explode(',', $book['book_genre']));
-        echo '<div class="book">';
-        echo '<img src="' . htmlspecialchars($book['book_cover']) . '" alt="Book Cover" class="book-cover">';
-        echo '<div class="book-info">';
-        echo '<h3 class="book-title">' . htmlspecialchars($book['book_title']) . '</h3>';
-        echo '<p class="book-author">by ' . htmlspecialchars($book['book_author']) . '</p>';
-        foreach ($genres as $genre) {
-            $genreClass = strtolower(str_replace(' ', '-', $genre)); // e.g. "Historical Fiction" => "historical-fiction"
-            echo '<div class="genre-btn ' . $genreClass . '">' . htmlspecialchars($genre) . '</div>';
-        }
-        echo '</div>'; // book-info
-        echo '</div>'; // book
-    }
-} else {
-        echo '<div class="no-upcoming-books">No upcoming books at the moment. Stay tuned!</div>';
+          if ($result && $result->num_rows > 0) {
+              while ($book = $result->fetch_assoc()) {
+                  // Genres split by comma, trimmed for safety
+                  $genres = array_map('trim', explode(',', $book['book_category']));
+                  echo '<div class="book">';
+                  echo '<img src="' . htmlspecialchars($book['book_cover']) . '" alt="Book Cover" class="book-cover">';
+                  echo '<div class="book-info">';
+                  echo '<h3 class="book-title">' . htmlspecialchars($book['book_title']) . '</h3>';
+                  echo '<p class="book-author">by ' . htmlspecialchars($book['book_author']) . '</p>';
+                  foreach ($genres as $genre) {
+                      $genreClass = strtolower(str_replace(' ', '-', $genre)); // e.g. "Historical Fiction" => "historical-fiction"
+                      echo '<div class="genre-btn ' . $genreClass . '">' . htmlspecialchars($genre) . '</div>';
+                  }
+                  echo '</div>'; // book-info
+                  echo '</div>'; // book
+              }
+          } else {
+                  echo '<div class="no-upcoming-books">No upcoming books at the moment. Stay tuned!</div>';
 
-}
-?>
-</div>
-
-
+          }
+          ?>
+          </div>
 
 
 
 
-         <!-- Recommended Books-->
-         <Div class="recommended-header">
+
+
+                      <div class="recommended-header">
                 <h2> Recommended Books </h2>
-            </Div>
-            
-        <div class="recommended-books-container" id="recommendedBooksContainer">
-    <div class="recommended-books">
-        <?php while ($book = $recommended->fetch_assoc()): ?>
-            <a href="book-details.php?book_id=<?= $book['book_id'] ?>" class="recommended-book-link">
-                <div class="recommended-book">
-                    <img src="<?= htmlspecialchars($book['book_cover']) ?>" alt="Book Cover" class="recommended-book-cover">
-                    <div class="recommended-book-info">
-                        <h3 class="recommended-book-title"><?= htmlspecialchars($book['book_title']) ?></h3>
-                        <p class="recommended-book-author">by <?= htmlspecialchars($book['book_author']) ?></p>
-                        <p class="recommended-book-genre"><?= htmlspecialchars($book['book_genre']) ?></p>
-                    </div>
+            </div>
+
+            <div class="recommended-books-container" id="recommendedBooksContainer">
+                <!-- Left Chevron -->
+                <button class="chevron-btn left" onclick="slideBooks(-1)">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+
+                <!-- Book List -->
+                <div class="recommended-books">
+                    <?php while ($book = $recommended->fetch_assoc()): ?>
+                        <a href="book-details.php?book_id=<?= $book['book_id'] ?>" class="recommended-book-link">
+                            <div class="recommended-book">
+                                <img src="<?= htmlspecialchars($book['book_cover']) ?>" alt="Book Cover" class="recommended-book-cover">
+                                <div class="recommended-book-info">
+                                    <h3 class="recommended-book-title"><?= htmlspecialchars($book['book_title']) ?></h3>
+                                    <p class="recommended-book-author">by <?= htmlspecialchars($book['book_author']) ?></p>
+                                    <p class="recommended-book-genre <?= strtolower(str_replace(' ', '-', $book['book_category'])) ?>">
+                                        <?= htmlspecialchars($book['book_category']) ?>
+                                    </p>
+                                </div>
+                            </div>
+                        </a>
+                    <?php endwhile; ?>
                 </div>
-            </a>
-        <?php endwhile; ?>
-    </div>
-</div>
+
+                <!-- Right Chevron -->
+                <button class="chevron-btn right" onclick="slideBooks(1)">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+
 
 
 
@@ -692,6 +705,18 @@ if ($result && $result->num_rows > 0) {
     document.getElementById('overdueModal').style.display = 'block';
   });
 </script>
+
+<script>
+function slideBooks(direction) {
+    const container = document.getElementById('recommendedBooksContainer');
+    const scrollAmount = 300; // Adjust as needed
+    container.scrollBy({
+        left: direction * scrollAmount,
+        behavior: 'smooth'
+    });
+}
+</script>
+
 
 
         <!-- =========== Scripts ========= -->

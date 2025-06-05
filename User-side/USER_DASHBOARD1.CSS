@@ -229,7 +229,7 @@ body h1 {
 
 /* Fiction Genre Style */
 .genre-btn.fiction {
-    background-color: #FF5722; /* Orange color */
+    background-color: #FF9800; /* Orange color */
     color: white;
 }
 
@@ -263,18 +263,15 @@ body h1 {
 }
 
 .no-upcoming-books {
-    background: linear-gradient(135deg, #dcf0f7, #ffffff);
-    color: #1e3a5f;
-    padding: 65px 100px;
-    font-size: 20px;
+    color: #051638;
+    padding: 10px 100px;
+    font-size: 25px;
     font-weight: 600;
+    white-space: wrap;
     margin: 50px auto;
     margin-left: 150px;
-    border-radius: 12px;
     text-align: center;
     max-width: 500px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    border: 2px solid #a3d5f7;
     position: relative;
     animation: float 2.5s ease-in-out infinite;
     transition: all 0.3s ease-in-out;
@@ -304,8 +301,9 @@ body h1 {
 .recommended-books-container {
     width: 92%;
     height: auto;
-    overflow-x: auto;
-    overflow-y: hidden; /* prevents vertical scroll */
+    overflow-x: hidden;
+    overflow-y: hidden; 
+    scroll-behavior: smooth;
     white-space: nowrap;
     margin: 20px auto;
     padding: 20px;
@@ -316,13 +314,35 @@ body h1 {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-
-
-
 .recommended-books {
     display: flex;
     flex-wrap: nowrap;
     gap: 20px;
+}
+
+.chevron-btn {
+    background-color: rgba(0,0,0,0.6);
+    border: none;
+    color: white;
+    font-size: 2rem;
+    padding: 0.5rem;
+    cursor: pointer;
+    z-index: 10;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.chevron-btn.left {
+    left: 45px; /* Move it slightly inward */
+}
+
+.chevron-btn.right {
+    right: 45px; /* Move it slightly inward */
+}
+
+.chevron-btn i {
+    pointer-events: none;
 }
 
 .recommended-header {
@@ -341,8 +361,8 @@ body h1 {
 
 .recommended-book {
     flex: 0 0 auto; /* this is important: prevents shrinking */
-    min-width: 250px; /* adjust based on your preference */
-    max-width: 250px;
+    min-width: 150px; /* adjust based on your preference */
+    max-width: 150px;
     height: auto;
     border: 1px solid #ddd;
     border-radius: 5px;
@@ -350,6 +370,12 @@ body h1 {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
+}
+
+.recommended-books-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
 }
 
 

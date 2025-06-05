@@ -32,8 +32,7 @@ $acc_no = $_SESSION['acc_no']; // Get logged-in user's acc_no
 // Get the selected month (if any)
 $selectedMonth = isset($_GET['month']) ? $_GET['month'] : '';
 
-// Initialize query with JOIN to get book_stocks from tbl_books
-$query = "SELECT cb.*, b.book_stocks 
+$query = "SELECT cb.*, b.book_stocks, b.book_category, b.book_author 
           FROM collection_books cb 
           JOIN tbl_books b ON cb.book_id = b.book_id 
           WHERE cb.acc_no = ?";
@@ -108,7 +107,7 @@ if (count($books) > 0) {
         }
         .book-card {
             cursor: pointer;
-            width: 150px;
+            width: 200px;
             border: 1px solid #ccc;
             border-radius: 6px;
             overflow: hidden;
@@ -122,18 +121,6 @@ if (count($books) > 0) {
             width: 100%;
             height: 220px;
             object-fit: cover;
-        }
-        .info {
-            padding: 10px;
-        }
-        .info h3 {
-            margin: 0 0 5px 0;
-            font-size: 1rem;
-        }
-        .info p {
-            margin: 0;
-            font-size: 0.85rem;
-            color: #555;
         }
         .btn-reserve {
             background-color: #FFA500 !important; /* Yellow/Orange */
@@ -156,7 +143,7 @@ if (count($books) > 0) {
     <link href="https://fonts.googleapis.com/css2?family=Teachers:ital,wght@0,400..800;1,400..800&family=Viga&family=Zilla+Slab+Highlight:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="USER_STYLE2.CSS">
     <link rel="stylesheet" href="User_css/ADMIN_MODAL.css">
-    <link rel="stylesheet" href="USER_COLLECTION2.CSS">
+    <link rel="stylesheet" href="USER_COLLECTION.CSS">
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
@@ -207,7 +194,11 @@ if (count($books) > 0) {
         <div class="col-md-6">
             <h2 id="top-title"><?= htmlspecialchars($topBook['book_title']) ?></h2>
             <p><strong>Description:</strong> <span id="top-description"><?= htmlspecialchars($topBook['description']) ?></span></p>
-            <p>2005 • 18+ • Romance • 13 chp</p>
+            <p>
+                <span id="top-author"><?= htmlspecialchars($topBook['book_author']) ?></span> • 
+                <span id="top-category"><?= htmlspecialchars($topBook['book_category']) ?></span> • 
+                13 chp
+            </p>
 
             <div class="btn-group" role="group">
                 <?php if ($topBook['book_stocks'] > 0): ?>
@@ -240,14 +231,18 @@ if (count($books) > 0) {
                     data-remove-link="remove_book.php?collection_id=<?= $row['collection_id'] ?>"
                     data-book-id="<?= $row['book_id'] ?>"
                     data-book-stocks="<?= $row['book_stocks'] ?>"
+                    data-author="<?= htmlspecialchars($row['book_author']) ?>"
+                    data-category="<?= htmlspecialchars($row['book_category']) ?>"
                     onclick="moveToTop(this)">
+
                     <img src="<?= htmlspecialchars(str_replace(' ', '%20', $row['image_path'])) ?>" alt="<?= htmlspecialchars($row['book_title']) ?>">
                     <div class="info">
                         <h3><?= htmlspecialchars($row['book_title']) ?></h3>
-                        <p><?= htmlspecialchars($row['author']) ?></p>
+                        <p><?= htmlspecialchars($row['book_author']) ?></p>
                         <div class="colors">
-                            <div class="color-box color-purple"></div>
+                            <div class="color-box recommended-book-genre <?= strtolower($row['book_category']) ?>"></div>
                         </div>
+
                     </div>
                 </div>
             <?php endforeach; ?>
@@ -276,13 +271,6 @@ if (count($books) > 0) {
     <!-- Scripts -->
     <script>
     function moveToTop(clickedBook) {
-        document.getElementById("top-title").innerText = clickedBook.getAttribute("data-title");
-        document.getElementById("top-description").innerText = clickedBook.getAttribute("data-description");
-        document.getElementById("top-image").src = clickedBook.getAttribute("data-image");
-        document.getElementById("top-remove").href = clickedBook.getAttribute("data-remove-link");
-    }
-
-    function moveToTop(clickedBook) {
     document.getElementById("top-title").innerText = clickedBook.getAttribute("data-title");
     document.getElementById("top-description").innerText = clickedBook.getAttribute("data-description");
     document.getElementById("top-image").src = clickedBook.getAttribute("data-image");
@@ -290,9 +278,14 @@ if (count($books) > 0) {
 
     const bookId = clickedBook.getAttribute("data-book-id");
     const bookStocks = parseInt(clickedBook.getAttribute("data-book-stocks"));
+    const bookAuthor = clickedBook.getAttribute("data-author");
+    const bookCategory = clickedBook.getAttribute("data-category");
+
+    // Update author and category dynamically
+    document.getElementById("top-author").innerText = bookAuthor;
+    document.getElementById("top-category").innerText = bookCategory;
 
     const topBorrowBtn = document.getElementById("top-borrow");
-
     topBorrowBtn.href = "BOOK-DETAILS.php?book_id=" + bookId;
 
     if (bookStocks > 0) {
@@ -303,6 +296,7 @@ if (count($books) > 0) {
         topBorrowBtn.className = "btn btn-reserve";
     }
 }
+
 </script>
 
     <!-- External JS -->
