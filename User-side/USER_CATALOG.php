@@ -58,9 +58,16 @@ window.location.href = "../homepage/homepage.php";
             <!-- Add Book Button & Search Bar -->
 
 
-            <!-- Search Bar -->
-            <div class="search-bar">
-                <input type="text" class="form-control" placeholder="Search books..." id="searchInput">
+            <div class="search-bar-container">
+                <div class="search-bar">
+                    <div class="search-input-wrapper">
+                        <input type="text" class="form-control" placeholder="Search books..." id="searchInput">
+                        <ion-icon name="search-outline" class="search-icon"></ion-icon>
+                    </div>
+                    <button id="voiceSearchBtn" title="Voice Search">
+                        <ion-icon name="mic-outline"></ion-icon>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -188,6 +195,70 @@ window.location.href = "../homepage/homepage.php";
 
         // Initial load of books
         document.addEventListener('DOMContentLoaded', () => loadBooks());
+
+
+    const voiceBtn = document.getElementById('voiceSearchBtn');
+const searchInput = document.getElementById('searchInput');
+
+if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    voiceBtn.addEventListener('click', () => {
+        Swal.fire({
+            title: 'Listening...',
+            text: 'Speak now',
+            icon: 'info',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        recognition.start();
+    });
+
+    recognition.onresult = function(event) {
+        const transcript = event.results[0][0].transcript.trim().toLowerCase();
+
+        if (transcript === "clear") {
+            searchInput.value = "";
+        } else {
+            searchInput.value = transcript;
+        }
+
+        // Trigger the input event to perform the search or clear
+        const inputEvent = new Event('input');
+        searchInput.dispatchEvent(inputEvent);
+
+        Swal.close();
+    };
+
+    recognition.onerror = function(event) {
+        console.error("Speech recognition error:", event.error);
+        Swal.close();
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Speech recognition error: ' + event.error,
+        });
+    };
+
+    recognition.onend = function() {
+        Swal.close();
+    };
+} else {
+    voiceBtn.disabled = true;
+    Swal.fire({
+        icon: 'warning',
+        title: 'Not supported',
+        text: 'Voice search is not supported in this browser.'
+    });
+}
+
     </script>
 
 

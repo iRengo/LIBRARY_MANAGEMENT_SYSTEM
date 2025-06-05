@@ -10,6 +10,8 @@ include '../Homepage/db_connect.php';
     <title>Librarian Catalog</title>
     <link rel="stylesheet" href="LIBRARIAN_CATALOG.CSS">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet">
+
 
 
 </head>
@@ -39,9 +41,12 @@ include '../Homepage/db_connect.php';
                 </button>
             </div>
 
-            <!-- Search Bar -->
             <div class="search-bar">
-                <input type="text" class="form-control" placeholder="Search available books..." id="searchAvailableInput">
+                <i class="ion-ios-search search-icon"></i>
+                <input type="text" class="form-control" placeholder="Search available books..." id="searchAvailableInput" />
+                <button type="button" id="voiceBtn" class="voice-btn" aria-label="Voice Search">
+                    <i class="ion-ios-mic"></i>
+                </button>
             </div>
         </div>
     </div>
@@ -150,9 +155,9 @@ include '../Homepage/db_connect.php';
     </div>
 
     <!-- Upcoming Book List -->
-<div class="book-list" id="upcoming-book-list">
-    <?php
-    $query_upcoming = "
+    <div class="book-list" id="upcoming-book-list">
+        <?php
+        $query_upcoming = "
         SELECT 
             b.book_id, 
             b.book_cover, 
@@ -171,198 +176,68 @@ include '../Homepage/db_connect.php';
         ORDER BY borrow_count DESC
     ";
 
-    $result_upcoming = mysqli_query($conn, $query_upcoming);
+        $result_upcoming = mysqli_query($conn, $query_upcoming);
 
-    if (mysqli_num_rows($result_upcoming) > 0) {
-        while ($row = mysqli_fetch_assoc($result_upcoming)) {
-            $book_id = $row['book_id'];
-            $book_cover = $row['book_cover'];
-            $book_title = $row['book_title'];
-            $author = $row['book_author'];
-            $borrow_count = $row['borrow_count'];
-            $book_stocks = (int)$row['book_stocks'];
-            $isbn = $row['ISBN'];
-            $publisher = $row['publisher'];
-            $publication_date = $row['publication_date'];
-            $description = $row['book_description'];
+        if (mysqli_num_rows($result_upcoming) > 0) {
+            while ($row = mysqli_fetch_assoc($result_upcoming)) {
+                $book_id = $row['book_id'];
+                $book_cover = $row['book_cover'];
+                $book_title = $row['book_title'];
+                $author = $row['book_author'];
+                $borrow_count = $row['borrow_count'];
+                $book_stocks = (int)$row['book_stocks'];
+                $isbn = $row['ISBN'];
+                $publisher = $row['publisher'];
+                $publication_date = $row['publication_date'];
+                $description = $row['book_description'];
 
-            // Determine stock badge class
-            if ($book_stocks >= 21 && $book_stocks <= 30) {
-                $stock_class = 'stock-high';
-            } elseif ($book_stocks >= 11 && $book_stocks <= 20) {
-                $stock_class = 'stock-medium';
-            } else {
-                $stock_class = 'stock-low';
-            }
-    ?>
-            <div class="book-main-container">
-                <a 
-                    href="#" 
-                    class="book-link"
-                    data-book-id="<?php echo htmlspecialchars($book_id); ?>"
-                    data-book-cover="<?php echo htmlspecialchars($book_cover); ?>"
-                    data-book-title="<?php echo htmlspecialchars($book_title); ?>"
-                    data-book-author="<?php echo htmlspecialchars($author); ?>"
-                    data-book-stocks="<?php echo htmlspecialchars($book_stocks); ?>"
-                    data-borrow-count="<?php echo htmlspecialchars($borrow_count); ?>"
-                    data-book-isbn="<?php echo htmlspecialchars($isbn); ?>"
-               data-book-language="English"
-                    data-book-publisher="<?php echo htmlspecialchars($publisher); ?>"
-                    data-book-date="<?php echo htmlspecialchars($publication_date); ?>"
-                    data-book-description="<?php echo htmlspecialchars($description); ?>"
-                >
-                    <div class="book-container">
-                        <img src="<?php echo htmlspecialchars($book_cover); ?>" class="book-cover" alt="Book Cover">
-                    </div>
-                    <div class="book-details">
-                        <div>
-                            <span class="borrow-count"><?php echo $borrow_count; ?> borrows</span>
-                            <span class="stock-badge <?php echo $stock_class; ?>"><?php echo $book_stocks; ?> left</span>
-                        </div>
-                        <h5><?php echo htmlspecialchars($book_title); ?></h5>
-                        <p><?php echo htmlspecialchars($author); ?></p>
-                    </div>
-                </a>
-            </div>
-    <?php
-        }
-    } else {
-        echo "<p>No upcoming books found.</p>";
-    }
-    ?>
-</div>
-
-
-    <!-- JavaScript Search -->
-    <script>
-        const searchInput = document.getElementById('searchAvailableInput');
-        const bookList1 = document.getElementById('available-book-list');
-
-        // Updated search event for Available Books
-        searchInput.addEventListener('input', function() {
-            const query = this.value.trim();
-
-            if (query.length === 0) {
-                // If empty, revert view
-                if (showingAll && allBooks.length > 0) {
-                    renderBooks(allBooks);
+                // Determine stock badge class
+                if ($book_stocks >= 21 && $book_stocks <= 30) {
+                    $stock_class = 'stock-high';
+                } elseif ($book_stocks >= 11 && $book_stocks <= 20) {
+                    $stock_class = 'stock-medium';
                 } else {
-                    fetch('fetch_more_books.php?all=true')
-                        .then(res => res.json())
-                        .then(data => {
-                            renderBooks(data.slice(0, limit));
-                        })
-                        .catch(err => console.error('Error restoring limited books:', err));
+                    $stock_class = 'stock-low';
                 }
-                return;
+        ?>
+                <div class="book-main-container">
+                    <a
+                        href="#"
+                        class="book-link"
+                        data-book-id="<?php echo htmlspecialchars($book_id); ?>"
+                        data-book-cover="<?php echo htmlspecialchars($book_cover); ?>"
+                        data-book-title="<?php echo htmlspecialchars($book_title); ?>"
+                        data-book-author="<?php echo htmlspecialchars($author); ?>"
+                        data-book-stocks="<?php echo htmlspecialchars($book_stocks); ?>"
+                        data-borrow-count="<?php echo htmlspecialchars($borrow_count); ?>"
+                        data-book-isbn="<?php echo htmlspecialchars($isbn); ?>"
+                        data-book-language="English"
+                        data-book-publisher="<?php echo htmlspecialchars($publisher); ?>"
+                        data-book-date="<?php echo htmlspecialchars($publication_date); ?>"
+                        data-book-description="<?php echo htmlspecialchars($description); ?>">
+                        <div class="book-container">
+                            <img src="<?php echo htmlspecialchars($book_cover); ?>" class="book-cover" alt="Book Cover">
+                        </div>
+                        <div class="book-details">
+                            <div>
+                                <span class="borrow-count"><?php echo $borrow_count; ?> borrows</span>
+                                <span class="stock-badge <?php echo $stock_class; ?>"><?php echo $book_stocks; ?> left</span>
+                            </div>
+                            <h5><?php echo htmlspecialchars($book_title); ?></h5>
+                            <p><?php echo htmlspecialchars($author); ?></p>
+                        </div>
+                    </a>
+                </div>
+        <?php
             }
-
-            fetch(`librarian_catalog_search.php?query=${encodeURIComponent(query)}`)
-                .then(res => res.json())
-                .then(data => {
-                    bookList1.innerHTML = '';
-
-                    if (data.length > 0) {
-                        renderBooks(data);
-                    } else {
-                        bookList1.innerHTML = '<p>No available books found matching your search.</p>';
-                    }
-                })
-                .catch(err => console.error('Search error:', err));
-        });
-
-        // Search for Upcoming Books
-        document.getElementById('searchUpcomingInput').addEventListener('input', function() {
-            let searchQuery = this.value.trim();
-
-            if (searchQuery.length > 0) {
-                fetch(`search_books.php?query=${encodeURIComponent(searchQuery)}&status=upcoming`)
-                    .then(response => response.json())
-                    .then(data => {
-                        const bookList = document.getElementById('upcoming-book-list');
-                        bookList.innerHTML = '';
-
-                        if (data.length > 0) {
-                            data.forEach(book => {
-                                const bookContainer = document.createElement('div');
-                                bookContainer.classList.add('book-main-container');
-
-                                let stockClass = 'stock-low';
-                                if (book.book_stocks >= 21 && book.book_stocks <= 30) stockClass = 'stock-high';
-                                else if (book.book_stocks >= 11 && book.book_stocks <= 20) stockClass = 'stock-medium';
-
-                                bookContainer.innerHTML = `
-<a href="BOOK-DETAILS.PHP?book_id=${encodeURIComponent(book.book_id)}" class="book-link">
-    <div class="book-container">
-        <img src="${book.book_cover}" class="book-cover" alt="Book Cover">
-    </div>
-    <div class="book-details">
-        <div>
-            <span class="borrow-count">${book.borrow_count} borrows</span>
-            <span class="stock-badge ${stockClass}">${book.book_stocks} left</span>
-        </div>
-        <h5>${book.book_title}</h5>
-        <p>${book.book_author}</p>
-    </div>
-</a>`;
-                                bookList.appendChild(bookContainer);
-                            });
-                        } else {
-                            bookList.innerHTML = '<p>No upcoming books found matching your search.</p>';
-                        }
-                    })
-                    .catch(err => console.error('Error:', err));
-            } else {
-                loadBooks('upcoming');
-            }
-        });
-
-        // Load books by status
-        function loadBooks(status = 'available') {
-            fetch(`search_books.php?status=${encodeURIComponent(status)}`)
-                .then(response => response.json())
-                .then(data => {
-                    const listId = status === 'available' ? 'available-book-list' : 'upcoming-book-list';
-                    const bookList = document.getElementById(listId);
-                    bookList.innerHTML = '';
-
-                    if (data.length > 0) {
-                        data.forEach(book => {
-                            const bookContainer = document.createElement('div');
-                            bookContainer.classList.add('book-main-container');
-
-                            let stockClass = 'stock-low';
-                            if (book.book_stocks >= 21 && book.book_stocks <= 30) stockClass = 'stock-high';
-                            else if (book.book_stocks >= 11 && book.book_stocks <= 20) stockClass = 'stock-medium';
-
-                            bookContainer.innerHTML = `
-<a href="BOOK-DETAILS.PHP?book_id=${encodeURIComponent(book.book_id)}" class="book-link">
-    <div class="book-container">
-        <img src="${book.book_cover}" class="book-cover" alt="Book Cover">
-    </div>
-    <div class="book-details">
-        <div>
-            <span class="borrow-count">${book.borrow_count} borrows</span>
-            <span class="stock-badge ${stockClass}">${book.book_stocks} left</span>
-        </div>
-        <h5>${book.book_title}</h5>
-        <p>${book.book_author}</p>
-    </div>
-</a>
-`;
-                            bookList.appendChild(bookContainer);
-                        });
-                    } else {
-                        bookList.innerHTML = `<p>No ${status} books found.</p>`;
-                    }
-                });
+        } else {
+            echo "<p>No upcoming books found.</p>";
         }
+        ?>
+    </div>
 
-        document.addEventListener('DOMContentLoaded', () => {
-            loadBooks('available');
-            loadBooks('upcoming');
-        });
-    </script>
+
+
     <script>
         function openAddBookForm() {
             Swal.fire({
@@ -445,7 +320,107 @@ include '../Homepage/db_connect.php';
             });
         }
 
-         document.addEventListener('DOMContentLoaded', () => {
+
+        // Live Search
+        document.getElementById('searchAvailableInput').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const books = document.querySelectorAll('#available-book-list .book-main-container');
+
+            books.forEach(book => {
+                const title = book.querySelector('h5').textContent.toLowerCase();
+                const author = book.querySelector('p').textContent.toLowerCase();
+
+                if (title.includes(searchTerm) || author.includes(searchTerm)) {
+                    book.style.display = 'block';
+                } else {
+                    book.style.display = 'none';
+                }
+            });
+        });
+
+           // Live Search
+    document.getElementById('searchAvailableInput').addEventListener('input', function () {
+        const searchTerm = this.value.toLowerCase();
+        const books = document.querySelectorAll('#available-book-list .book-main-container');
+
+        books.forEach(book => {
+            const title = book.querySelector('h5').textContent.toLowerCase();
+            const author = book.querySelector('p').textContent.toLowerCase();
+
+            if (title.includes(searchTerm) || author.includes(searchTerm)) {
+                book.style.display = 'block';
+            } else {
+                book.style.display = 'none';
+            }
+        });
+    });
+
+        // Live Search
+    document.getElementById('searchAvailableInput').addEventListener('input', function () {
+        const searchTerm = this.value.toLowerCase();
+        const books = document.querySelectorAll('#available-book-list .book-main-container');
+
+        books.forEach(book => {
+            const title = book.querySelector('h5').textContent.toLowerCase();
+            const author = book.querySelector('p').textContent.toLowerCase();
+
+            if (title.includes(searchTerm) || author.includes(searchTerm)) {
+                book.style.display = 'block';
+            } else {
+                book.style.display = 'none';
+            }
+        });
+    });
+
+    // Voice Search with SweetAlert and silent "clear"
+    const voiceBtn = document.getElementById('voiceBtn');
+    const searchInput = document.getElementById('searchAvailableInput');
+
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'en-US';
+        recognition.continuous = false;
+        recognition.interimResults = false;
+
+        voiceBtn.addEventListener('click', () => {
+            Swal.fire({
+                title: 'Listening...',
+                text: 'Speak now',
+                icon: 'info',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                    recognition.start();
+                }
+            });
+        });
+
+        recognition.onresult = (event) => {
+            Swal.close(); // Close the "Listening..." alert
+            const transcript = event.results[0][0].transcript.trim().toLowerCase();
+
+            if (transcript === 'clear') {
+                searchInput.value = '';
+                searchInput.dispatchEvent(new Event('input')); // Clear field silently
+            } else {
+                searchInput.value = transcript;
+                searchInput.dispatchEvent(new Event('input')); // Trigger live search
+            }
+        };
+
+        recognition.onerror = (event) => {
+            Swal.close();
+            console.error('Speech recognition error:', event.error);
+            Swal.fire('Error', 'Voice recognition failed: ' + event.error, 'error');
+        };
+    } else {
+        voiceBtn.disabled = true;
+        voiceBtn.title = "Voice search not supported in this browser.";
+    }
+
+        document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.book-link').forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -566,7 +541,6 @@ include '../Homepage/db_connect.php';
                 });
             });
         });
-
     </script>
 </body>
 

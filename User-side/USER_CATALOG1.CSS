@@ -2,39 +2,77 @@ a {
   text-decoration: none;
   color: gray;
   }
-  .search-bar {
-  display: flex !important; /* Flex for layout control */
-  align-items: center !important; /* Align vertically */
-  }
-  
-  .search-bar input {
-  width: 100% !important; /* Ensure responsive width */
-  max-width: 400px !important; /* Set a max width for better responsiveness */
-  padding: 15px 50px !important;
-  font-size: 16px !important;
-  border: 2px solid #ddd !important;
-  border-radius: 25px !important;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
-  transition: all 0.3s ease !important;
-  outline: none !important;
-  background: #fff url('https://cdn-icons-png.flaticon.com/512/622/622669.png') no-repeat 15px center !important; /* Add a search icon */
-  background-size: 18px !important;
-  padding-left: 40px !important; /* Add space for the icon */
-  }
-  
-  .search-bar input::placeholder {
-  color: #999 !important;
-  font-size: 14px !important;
-  }
-  
-  .search-bar input:focus {
-  border-color: #ff7a7a !important;
-  box-shadow: 0 6px 12px rgba(255, 77, 77, 0.2) !important;
-  }
-  
-  .search-bar input:hover {
-  border-color: #ff4d4d !important;
-  }
+.search-bar-container {
+    float: right;
+    margin-top: -50px;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.search-input-wrapper {
+    position: relative;
+    width: 250px;
+}
+
+#searchInput {
+    width: 100%;
+    padding: 12px 18px 7px 30px;
+    font-size: 16px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    outline: none;
+    background-color: #fff;
+}
+
+#searchInput:focus {
+    border-color: #021b6e;
+    box-shadow: 0 6px 12px rgba(255, 77, 77, 0.2);
+}
+
+#searchInput:hover {
+    border-color: #535353;
+}
+
+.search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+    color: #888;
+    pointer-events: none;
+}
+
+#voiceSearchBtn {
+    background-color: #1C2E5C; /* deep blue */
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    cursor: pointer;
+    margin-left: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+
+#voiceSearchBtn ion-icon {
+    color: #fff; /* white icon */
+    font-size: 20px;
+}
+
+#voiceSearchBtn:hover {
+    background-color: #e0e0e0;
+    border-color: #999;
+}
   .titles-container {
   display: flex; /* Aligns children in a row */
   justify-content: space-between; /* Space between items */
