@@ -5,12 +5,12 @@ include '../Homepage/db_connect.php';
 
 $student_no = $_SESSION['student_no'];
 
-$borrowed_query = $conn->prepare("SELECT borrow_id, ISBN, book_title, preferred_date, due_date, status FROM borrowed_books WHERE student_no = ?");
+$borrowed_query = $conn->prepare("SELECT borrow_id, ISBN, book_title, preferred_date, due_date, status FROM borrowed_books WHERE student_no = ? order by update_datetime desc");
 $borrowed_query->bind_param("s", $student_no);
 $borrowed_query->execute();
 $borrowed_result = $borrowed_query->get_result();
 
-$reserved_query = $conn->prepare("SELECT reserve_id, ISBN, book_title, reserve_date, preferred_date FROM reserved_books WHERE student_no = ?");
+$reserved_query = $conn->prepare("SELECT reserve_id, ISBN, book_title, reserve_date, preferred_date FROM reserved_books WHERE student_no = ? order by reserve_id desc");
 $reserved_query->bind_param("s", $student_no);
 $reserved_query->execute();
 $reserved_result = $reserved_query->get_result();
