@@ -2,62 +2,43 @@
 session_start();
 include '../homepage/db_connect.php';
 
-
-
-// Check if the admin session exists
 if (!isset($_SESSION['acc_no'])) {
-    // If not, show a SweetAlert notification and then redirect
     echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-window.onload = function() {
-// Show SweetAlert notification
-Swal.fire({
-title: "You are not logged in!",
-text: "Please log in to access the page.",
-icon: "error",
-confirmButtonText: "OK",
-allowOutsideClick: false,
-allowEscapeKey: false,
-willClose: () => {
-// Redirect to homepage after the notification is closed
-window.location.href = "../homepage/homepage.php";
-}
-});
-}
-</script>';
-    exit(); // Stop further execution after showing the notification and redirect script
+    <script>
+    window.onload = function() {
+        Swal.fire({
+            title: "You are not logged in!",
+            text: "Please log in to access the page.",
+            icon: "error",
+            confirmButtonText: "OK",
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            willClose: () => {
+                window.location.href = "../homepage/homepage.php";
+            }
+        });
+    }
+    </script>';
+    exit();
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <title> User Catalog</title>
+    <title>User Catalog</title>
     <link rel="stylesheet" href="USER_STYLE2.CSS">
     <link rel="stylesheet" href="User_css/ADMIN_MODAL.css">
     <link rel="stylesheet" href="USER_CATALOG1.CSS">
-
-
-
-
 </head>
-
 <body>
-    <!-- =============== Navigation ================ -->
     <?php include 'HEADER-NAVBAR.PHP' ?>
-    <!-- Content HERE -->
 
     <div class="titles-container">
         <div class="header-container">
-            <!-- Available Books -->
             <div class="titles">
                 <div class="available">Available Books</div>
             </div>
-
-            <!-- Add Book Button & Search Bar -->
-
-
             <div class="search-bar-container">
                 <div class="search-bar">
                     <div class="search-input-wrapper">
@@ -72,41 +53,46 @@ window.location.href = "../homepage/homepage.php";
         </div>
     </div>
 
-    <!--content-->
-    <!-- Book List -->
     <div class="book-list">
         <?php
-        // Fetch books from the database
-        $query = "SELECT book_id, book_cover, book_title, book_author FROM tbl_books WHERE status = 'Available'  or status = 'Upcoming'";
+        $query = "SELECT book_id, book_cover, book_title, book_category, book_author FROM tbl_books WHERE status = 'Available' OR status = 'Upcoming'";
         $result = mysqli_query($conn, $query);
 
         if (mysqli_num_rows($result) > 0) {
             while ($row = mysqli_fetch_assoc($result)) {
-                $book_id = $row['book_id'];
-                $book_cover = $row['book_cover'];
-                $book_title = $row['book_title'];
-                $author = $row['book_author'];
-        ?>
+                                   $category = strtolower(trim($row['book_category']));
 
-
+                    if ($category === 'fiction') {
+                        $categoryClass = 'genre-fiction';
+                    } else if ($category === 'non-fiction' || $category === 'non fiction') {
+                        $categoryClass = 'genre-nonfiction';
+                    } else if ($category === 'biography') {
+                        $categoryClass = 'genre-biography';
+                    } else if ($category === 'mystery') {
+                        $categoryClass = 'genre-mystery';
+                    } else if ($category === 'science') {
+                        $categoryClass = 'genre-science';
+                    } else if ($category === 'history') {
+                        $categoryClass = 'genre-history';
+                    } else if ($category === 'others' || $category === 'other') {
+                        $categoryClass = 'genre-others';
+                    }
+                ?>
                 <div class="book-main-container">
-                    <a href="../Homepage/BOOK-DETAILS.PHP?echo urlencode($book_id); ?>" class="book-link">
+                    <a href="BOOK-DETAILS.PHP?book_id=<?= urlencode($row['book_id']) ?>" class="book-link">
                         <div class="book-container">
-                            <!-- Book Cover -->
-                            <img src="<?php echo htmlspecialchars($book_cover); ?>" class="book-cover" alt="Book Cover">
+                            <img src="<?= htmlspecialchars($row['book_cover']) ?>" class="book-cover" alt="Book Cover">
                         </div>
-
-                        <!-- Book Title and Author -->
                         <div class="book-details">
-                            <h5><?php echo htmlspecialchars($book_title); ?></h5>
-                            <p><?php echo htmlspecialchars($author); ?></p>
+                            <h5><?= htmlspecialchars($row['book_title']) ?></h5>
+                            <p><?= htmlspecialchars($row['book_author']) ?></p>
+                            <span class="book-category <?= $categoryClass ?>">
+                                <?= htmlspecialchars($row['book_category']) ?>
+                            </span>
                         </div>
                     </a>
                 </div>
-
-
-
-        <?php
+                <?php
             }
         } else {
             echo "<p>No available books found.</p>";
@@ -114,161 +100,72 @@ window.location.href = "../homepage/homepage.php";
         ?>
     </div>
 
-    </div>
-
-
-
-    </div>
-    <!-- ========================= Main END ==================== -->
-
     <script>
-        // Improved search handling
-        document.getElementById('searchInput').addEventListener('input', function() {
-            let searchQuery = this.value.trim();
-
-            if (searchQuery.length > 0) {
-                fetch(`search_books.php?query=${encodeURIComponent(searchQuery)}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        const bookList = document.querySelector('.book-list');
-                        bookList.innerHTML = '';
-
-                        if (data.length > 0) {
-                            data.forEach(book => {
-                                const bookContainer = document.createElement('div');
-                                bookContainer.classList.add('book-main-container');
-
-                                bookContainer.innerHTML = `
-<a href="BOOK-DETAILS.PHP?book_id=${encodeURIComponent(book.book_id)}" class="book-link">
-<div class="book-container">
-<img src="${book.book_cover}" class="book-cover" alt="Book Cover">
-</div>
-<div class="book-details">
-<h5>${book.book_title}</h5>
-<p>${book.book_author}</p>
-</div>
-</a>
-`;
-                                bookList.appendChild(bookContainer);
-                            });
-                        } else {
-                            bookList.innerHTML = '<p>No books found matching your search.</p>';
-                        }
-                    })
-                    .catch(err => console.error('Error:', err));
-            } else {
-                loadBooks();
-            }
-        });
-
-        // Function to load books (initial + search fallback)
-        function loadBooks(query = '') {
-            fetch(`search_books.php?query=${encodeURIComponent(query)}`)
-                .then(response => response.json())
-                .then(data => {
-                    const bookList = document.querySelector('.book-list');
-                    bookList.innerHTML = '';
-
-                    if (data.length > 0) {
-                        data.forEach(book => {
-                            const bookContainer = document.createElement('div');
-                            bookContainer.classList.add('book-main-container');
-
-                            bookContainer.innerHTML = `
-<a href="BOOK-DETAILS.PHP?book_id=${encodeURIComponent(book.book_id)}" class="book-link">
-<div class="book-container">
-<img src="${book.book_cover}" class="book-cover" alt="Book Cover">
-</div>
-<div class="book-details">
-<h5>${book.book_title}</h5>
-<p>${book.book_author}</p>
-</div>
-</a>
-`;
-                            bookList.appendChild(bookContainer);
-                        });
-                    } else {
-                        bookList.innerHTML = '<p>No available books found.</p>';
-                    }
-                });
-        }
-
-        // Initial load of books
-        document.addEventListener('DOMContentLoaded', () => loadBooks());
-
-
+    const searchInput = document.getElementById('searchInput');
     const voiceBtn = document.getElementById('voiceSearchBtn');
-const searchInput = document.getElementById('searchInput');
+    const books = document.querySelectorAll('.book-main-container');
 
-if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = new SpeechRecognition();
-    recognition.lang = 'en-US';
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
-
-    voiceBtn.addEventListener('click', () => {
-        Swal.fire({
-            title: 'Listening...',
-            text: 'Speak now',
-            icon: 'info',
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-            didOpen: () => {
-                Swal.showLoading();
-            }
+    searchInput.addEventListener('input', () => {
+        const searchTerm = searchInput.value.toLowerCase().trim();
+        books.forEach(book => {
+            const title = book.querySelector('h5').textContent.toLowerCase();
+            const author = book.querySelector('p').textContent.toLowerCase();
+            const category = book.querySelector('.book-category')?.textContent.toLowerCase() || '';
+            book.style.display = (title.includes(searchTerm) || author.includes(searchTerm) || category.includes(searchTerm)) ? 'block' : 'none';
         });
-        recognition.start();
     });
 
-    recognition.onresult = function(event) {
-        const transcript = event.results[0][0].transcript.trim().toLowerCase();
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'en-US';
+        recognition.continuous = false;
+        recognition.interimResults = false;
 
-        if (transcript === "clear") {
-            searchInput.value = "";
-        } else {
-            searchInput.value = transcript;
-        }
-
-        // Trigger the input event to perform the search or clear
-        const inputEvent = new Event('input');
-        searchInput.dispatchEvent(inputEvent);
-
-        Swal.close();
-    };
-
-    recognition.onerror = function(event) {
-        console.error("Speech recognition error:", event.error);
-        Swal.close();
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Speech recognition error: ' + event.error,
-        });
-    };
-
-    recognition.onend = function() {
-        Swal.close();
-    };
-} else {
-    voiceBtn.disabled = true;
+        voiceBtn.addEventListener('click', () => {
     Swal.fire({
-        icon: 'warning',
-        title: 'Not supported',
-        text: 'Voice search is not supported in this browser.'
+        title: 'Listening...',
+        text: 'Speak now',
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonText: 'Stop',
+        cancelButtonText: 'Cancel',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        didOpen: () => {
+            Swal.showLoading();
+            recognition.start();
+        }
+    }).then((result) => {
+        if (result.dismiss === Swal.DismissReason.cancel) {
+            recognition.stop();
+        }
+        if (result.isConfirmed) {
+            recognition.stop();
+        }
     });
-}
+});
 
+
+        recognition.onresult = event => {
+            Swal.close();
+            const transcript = event.results[0][0].transcript.trim().toLowerCase();
+            searchInput.value = transcript === 'clear' ? '' : transcript;
+            searchInput.dispatchEvent(new Event('input'));
+        };
+
+        recognition.onerror = event => {
+            Swal.close();
+            Swal.fire('Error', 'Voice recognition failed: ' + event.error, 'error');
+        };
+    } else {
+        voiceBtn.disabled = true;
+        voiceBtn.title = "Voice search not supported in this browser.";
+    }
     </script>
 
-
-
-    <!-- ====== ionicons ======= -->
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-
 </body>
-
 </html>

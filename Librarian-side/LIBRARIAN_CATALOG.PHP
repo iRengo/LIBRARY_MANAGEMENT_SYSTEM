@@ -100,6 +100,25 @@ include '../Homepage/db_connect.php';
                 } else {
                     $stock_class = 'stock-low';
                 }
+
+                 $categoryClass = 'genre-default'; // default fallback
+                    $category = strtolower(trim($row['book_category']));
+
+                    if ($category === 'fiction') {
+                        $categoryClass = 'genre-fiction';
+                    } else if ($category === 'non-fiction' || $category === 'non fiction') {
+                        $categoryClass = 'genre-nonfiction';
+                    } else if ($category === 'biography') {
+                        $categoryClass = 'genre-biography';
+                    } else if ($category === 'mystery') {
+                        $categoryClass = 'genre-mystery';
+                    } else if ($category === 'science') {
+                        $categoryClass = 'genre-science';
+                    } else if ($category === 'history') {
+                        $categoryClass = 'genre-history';
+                    } else if ($category === 'others' || $category === 'other') {
+                        $categoryClass = 'genre-others';
+                    }
         ?>
                 <div class="book-main-container">
                     <a href="#" class="book-link"
@@ -127,10 +146,12 @@ include '../Homepage/db_connect.php';
                             </div>
                             <h5><?php echo htmlspecialchars($book_title); ?></h5>
                             <p><?php echo htmlspecialchars($author); ?></p>
+                            <span class="book-category <?php echo $categoryClass; ?>">
+                                <?php echo htmlspecialchars($category); ?>
+                            </span>
                         </div>
                     </a>
                 </div>
-
         <?php
             }
         } else {
@@ -138,10 +159,6 @@ include '../Homepage/db_connect.php';
         }
         ?>
     </div>
-
-
-
-
     </script>
 
 
@@ -265,6 +282,20 @@ include '../Homepage/db_connect.php';
                     <label>ISBN:</label>
                     <input type="text" name="isbn" class="swal2-input" required>
                 </div>
+
+                <div style="flex: 1; min-width: 48%; display: flex; flex-direction: column;">
+    <label for="bookCategory">Book Category:</label>
+    <select id="bookCategory" name="book_category" class="swal2-select" required>
+        <option value="" disabled selected>Select category</option>
+        <option value="Fiction">Fiction</option>
+        <option value="Non-Fiction">Non-Fiction</option>
+        <option value="Biography">Biography</option>
+        <option value="Mystery">Mystery</option>
+        <option value="Science">Science</option>
+        <option value="History">History</option>
+        <option value="Others">Others</option>
+    </select>
+</div>
                 <div style="flex: 1 1 48%;">
                     <label>Genre:</label>
                     <input type="text" name="book_genre" class="swal2-input" required>
@@ -338,87 +369,97 @@ include '../Homepage/db_connect.php';
             });
         });
 
-           // Live Search
-    document.getElementById('searchAvailableInput').addEventListener('input', function () {
-        const searchTerm = this.value.toLowerCase();
-        const books = document.querySelectorAll('#available-book-list .book-main-container');
-
-        books.forEach(book => {
-            const title = book.querySelector('h5').textContent.toLowerCase();
-            const author = book.querySelector('p').textContent.toLowerCase();
-
-            if (title.includes(searchTerm) || author.includes(searchTerm)) {
-                book.style.display = 'block';
-            } else {
-                book.style.display = 'none';
-            }
-        });
-    });
-
         // Live Search
-    document.getElementById('searchAvailableInput').addEventListener('input', function () {
-        const searchTerm = this.value.toLowerCase();
-        const books = document.querySelectorAll('#available-book-list .book-main-container');
+        document.getElementById('searchAvailableInput').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const books = document.querySelectorAll('#available-book-list .book-main-container');
 
-        books.forEach(book => {
-            const title = book.querySelector('h5').textContent.toLowerCase();
-            const author = book.querySelector('p').textContent.toLowerCase();
+            books.forEach(book => {
+                const title = book.querySelector('h5').textContent.toLowerCase();
+                const author = book.querySelector('p').textContent.toLowerCase();
 
-            if (title.includes(searchTerm) || author.includes(searchTerm)) {
-                book.style.display = 'block';
-            } else {
-                book.style.display = 'none';
-            }
-        });
-    });
-
-    // Voice Search with SweetAlert and silent "clear"
-    const voiceBtn = document.getElementById('voiceBtn');
-    const searchInput = document.getElementById('searchAvailableInput');
-
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        const recognition = new SpeechRecognition();
-        recognition.lang = 'en-US';
-        recognition.continuous = false;
-        recognition.interimResults = false;
-
-        voiceBtn.addEventListener('click', () => {
-            Swal.fire({
-                title: 'Listening...',
-                text: 'Speak now',
-                icon: 'info',
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                    recognition.start();
+                if (title.includes(searchTerm) || author.includes(searchTerm)) {
+                    book.style.display = 'block';
+                } else {
+                    book.style.display = 'none';
                 }
             });
         });
 
-        recognition.onresult = (event) => {
-            Swal.close(); // Close the "Listening..." alert
-            const transcript = event.results[0][0].transcript.trim().toLowerCase();
+        // Live Search
+        document.getElementById('searchAvailableInput').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const books = document.querySelectorAll('#available-book-list .book-main-container');
 
-            if (transcript === 'clear') {
-                searchInput.value = '';
-                searchInput.dispatchEvent(new Event('input')); // Clear field silently
-            } else {
-                searchInput.value = transcript;
-                searchInput.dispatchEvent(new Event('input')); // Trigger live search
-            }
-        };
+            books.forEach(book => {
+                const title = book.querySelector('h5').textContent.toLowerCase();
+                const author = book.querySelector('p').textContent.toLowerCase();
 
-        recognition.onerror = (event) => {
-            Swal.close();
-            console.error('Speech recognition error:', event.error);
-            Swal.fire('Error', 'Voice recognition failed: ' + event.error, 'error');
-        };
-    } else {
-        voiceBtn.disabled = true;
-        voiceBtn.title = "Voice search not supported in this browser.";
-    }
+                if (title.includes(searchTerm) || author.includes(searchTerm)) {
+                    book.style.display = 'block';
+                } else {
+                    book.style.display = 'none';
+                }
+            });
+        });
+
+        // Voice Search with SweetAlert and silent "clear"
+        const voiceBtn = document.getElementById('voiceBtn');
+        const searchInput = document.getElementById('searchAvailableInput');
+
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'en-US';
+            recognition.continuous = false;
+            recognition.interimResults = false;
+
+            voiceBtn.addEventListener('click', () => {
+                Swal.fire({
+                    title: 'Listening...',
+                    text: 'Speak now',
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonText: 'Stop',
+                    cancelButtonText: 'Cancel',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                        recognition.start();
+                    }
+                }).then((result) => {
+                    if (result.dismiss === Swal.DismissReason.cancel) {
+                        recognition.stop();
+                    }
+                    if (result.isConfirmed) {
+                        recognition.stop();
+                    }
+                });
+            });
+
+            recognition.onresult = (event) => {
+                Swal.close(); // Close the "Listening..." alert
+                const transcript = event.results[0][0].transcript.trim().toLowerCase();
+
+                if (transcript === 'clear') {
+                    searchInput.value = '';
+                    searchInput.dispatchEvent(new Event('input')); // Clear field silently
+                } else {
+                    searchInput.value = transcript;
+                    searchInput.dispatchEvent(new Event('input')); // Trigger live search
+                }
+            };
+
+            recognition.onerror = (event) => {
+                Swal.close();
+                console.error('Speech recognition error:', event.error);
+                Swal.fire('Error', 'Voice recognition failed: ' + event.error, 'error');
+            };
+        } else {
+            voiceBtn.disabled = true;
+            voiceBtn.title = "Voice search not supported in this browser.";
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.book-link').forEach(link => {

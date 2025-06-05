@@ -41,12 +41,12 @@ function timeAgo($timestamp)
     $seconds = $time_difference;
 
     // Seconds, minutes, hours, days, weeks, months, years
-    $minutes      = round($seconds / 60);          
-    $hours        = round($seconds / 3600);        
-    $days         = round($seconds / 86400);        
-    $weeks        = round($seconds / 604800);      
-    $months       = round($seconds / 2629440);      
-    $years        = round($seconds / 31553280);    
+    $minutes      = round($seconds / 60);
+    $hours        = round($seconds / 3600);
+    $days         = round($seconds / 86400);
+    $weeks        = round($seconds / 604800);
+    $months       = round($seconds / 2629440);
+    $years        = round($seconds / 31553280);
 
     // Now, we need to display appropriate relative time:
     if ($seconds <= 60) {
@@ -90,7 +90,6 @@ function timeAgo($timestamp)
     }
 }
 
-// Initialize counts
 $totalAdmins = $totalLibrarians = $totalStudents = 0;
 
 // Get total Admins
@@ -115,32 +114,34 @@ if ($studentResult && $studentRow = $studentResult->fetch_assoc()) {
 }
 
 // Total Users
-$totalUsers =  $totalLibrarians + $totalStudents;
+$totalUsers = $totalLibrarians + $totalStudents;
 
 // Fetch Student Accounts
-$sql_students = "SELECT student_no AS user_id, first_name, last_name, email, last_logged_in, 'Student' AS role FROM stud_acc";
+$sql_students = "SELECT acc_no, first_name, last_name, email, last_logged_in FROM stud_acc";
 $result_students = $conn->query($sql_students);
 
 // Fetch Librarian Accounts
-$sql_librarian = "SELECT librarian_no AS user_id, first_name, last_name, email, last_logged_in, 'Librarian' AS role FROM librarian_acc";
+$sql_librarian = "SELECT librarian_no, first_name, last_name, email, last_logged_in FROM librarian_acc";
 $result_librarian = $conn->query($sql_librarian);
-
 
 // Merge results into a unified array
 $all_users = [];
 
 if ($result_students->num_rows > 0) {
     while ($row = $result_students->fetch_assoc()) {
+        $row['user_id'] = $row['acc_no'];
+        $row['role'] = 'Student';
         $all_users[] = $row;
     }
 }
 
 if ($result_librarian->num_rows > 0) {
     while ($row = $result_librarian->fetch_assoc()) {
+        $row['user_id'] = $row['librarian_no'];
+        $row['role'] = 'Librarian';
         $all_users[] = $row;
     }
 }
-
 
 $conn->close();
 
@@ -170,106 +171,104 @@ $users_on_page = array_slice($all_users, $start_index, $users_per_page);
 
 <body>
 
-   <?php include 'HEADER-NAVBAR.PHP'; ?>
+    <?php include 'HEADER-NAVBAR.PHP'; ?>
 
-            <!-- Content HERE -->
-            <div class="content" style="display: flex; align-items: flex-start;">
-                <div class="table-container" style="flex: 2; margin-right: 20px;">
-                    <h2 class="table-title">User Management</h2>
-                    <h4 style="margin-top: -0.5%; font-weight:200; color:gray;"> Manage overall Users </h4>
-                    <Br>
-                    <div style="margin-top" style="margin-top: 3%;"> Total Accounts : <b> <?php echo $totalUsers ?> </b></div>
-                    <br>
+    <!-- Content HERE -->
+    <div class="content" style="display: flex; align-items: flex-start;">
+        <div class="table-container" style="flex: 2; margin-right: 20px;">
+            <h2 class="table-title">User Management</h2>
+            <h4 style="margin-top: -0.5%; font-weight:200; color:gray;"> Manage overall Users </h4>
+            <Br>
+            <div style="margin-top" style="margin-top: 3%;"> Total Accounts : <b> <?php echo $totalUsers ?> </b></div>
+            <br>
 
-                    <!-- Search Bar -->
-                    <div class="search-container" style="margin-bottom: 20px; display: flex; align-items: center;">
-                        <input type="text" id="searchInput" placeholder="Search users..." style="padding: 8px; width: 100%; border-radius: 5px; border: 1px solid #ddd; font-size: 0.95rem;">
-                        <button type="button" style="background-color: #1C2E5C; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; margin-left: 5px;">
-                            <ion-icon name="search-outline" style="color: white; font-size: 1.2rem;"></ion-icon>
-                        </button>
-                    </div>
-                    <table class="user-table">
-                        <thead>
-                            <tr>
-                                <th>User ID</th>
-                                <th>First Name</th>
-                                <th>Last Name</th>
-                                <th>Role</th>
-                                <th>Email</th>
-                                <th>Last Logged In</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="userTableBody">
-                            <?php foreach ($users_on_page as $user): ?>
-
-                                <tr>
-                                    <td><?= htmlspecialchars($user['user_id'] ?? 'N/A'); ?></td>
-                                    <td><?= htmlspecialchars($user['first_name'] ?? 'N/A'); ?></td>
-                                    <td><?= htmlspecialchars($user['last_name'] ?? 'N/A'); ?></td>
-                                    <td><?= htmlspecialchars($user['role'] ?? 'N/A'); ?></td>
-                                    <td><?= htmlspecialchars($user['email'] ?? 'N/A'); ?></td>
-                                    <td>
-                                        <?php
-                                        // Convert last_logged_in to relative time format
-                                        echo timeAgo($user['last_logged_in']);
-                                        ?>
-                                    </td>
-                                    <td>
-                                        <button class="btn-action delete" data-id="<?= $user['user_id']; ?>" data-role="<?= $user['role']; ?>">Delete</button>
-                                        <button class="btn-action archive">Archive</button>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+            <!-- Search Bar -->
+            <div class="search-container" style="margin-bottom: 20px; display: flex; align-items: center;">
+                <input type="text" id="searchInput" placeholder="Search users..." style="padding: 8px; width: 100%; border-radius: 5px; border: 1px solid #ddd; font-size: 0.95rem;">
+                <button type="button" style="background-color: #1C2E5C; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; margin-left: 5px;">
+                    <ion-icon name="search-outline" style="color: white; font-size: 1.2rem;"></ion-icon>
+                </button>
+            </div>
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th>User ID</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Role</th>
+                        <th>Email</th>
+                        <th>Last Logged In</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="userTableBody">
+                    <?php foreach ($users_on_page as $user): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($user['user_id'] ?? 'N/A'); ?></td>
+                            <td><?= htmlspecialchars($user['first_name'] ?? 'N/A'); ?></td>
+                            <td><?= htmlspecialchars($user['last_name'] ?? 'N/A'); ?></td>
+                            <td><?= htmlspecialchars($user['role'] ?? 'N/A'); ?></td>
+                            <td><?= htmlspecialchars($user['email'] ?? 'N/A'); ?></td>
+                            <td><?= timeAgo($user['last_logged_in']); ?></td>
+                            <td>
+                                <button class="btn-action delete" data-id="<?= $user['user_id']; ?>" data-role="<?= $user['role']; ?>">Delete</button>
+                                <button class="btn-action archive"
+                                    data-id="<?= htmlspecialchars($user['user_id'] ?? ''); ?>"
+                                    data-role="<?= htmlspecialchars($user['role'] ?? ''); ?>">
+                                    Archive
+                                </button>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
 
 
-                    <!-- Pagination Controls -->
-                    <div class="pagination-container">
-                        <p style="color:gray;">Page <?= $current_page ?> of <?= $total_pages ?></p>
-                        <div class="custom-pagination">
-                            <?php if ($current_page > 1): ?>
-                                <a class="pagination-btn" href="?page=<?= $current_page - 1 ?>">Previous</a>
-                            <?php endif; ?>
+            <!-- Pagination Controls -->
+            <div class="pagination-container">
+                <p style="color:gray;">Page <?= $current_page ?> of <?= $total_pages ?></p>
+                <div class="custom-pagination">
+                    <?php if ($current_page > 1): ?>
+                        <a class="pagination-btn" href="?page=<?= $current_page - 1 ?>">Previous</a>
+                    <?php endif; ?>
 
-                            <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                                <a class="pagination-btn <?= ($i == $current_page) ? 'active' : '' ?>" href="?page=<?= $i ?>"><?= $i ?></a>
-                            <?php endfor; ?>
+                    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                        <a class="pagination-btn <?= ($i == $current_page) ? 'active' : '' ?>" href="?page=<?= $i ?>"><?= $i ?></a>
+                    <?php endfor; ?>
 
-                            <?php if ($current_page < $total_pages): ?>
-                                <a class="pagination-btn" href="?page=<?= $current_page + 1 ?>">Next</a>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-
+                    <?php if ($current_page < $total_pages): ?>
+                        <a class="pagination-btn" href="?page=<?= $current_page + 1 ?>">Next</a>
+                    <?php endif; ?>
                 </div>
-                <!-- Sidebar for Actions -->
-                <div class="sidebar" style="flex: 1; max-width: 250px;">
-                    <div class="sidebar-tools" style="background-color: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-                        <h4 style="margin-bottom: 15px; color: #333;">Actions</h4>
-                        <button style="background-color: #1C2E5C; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-size: 0.95rem; width: 100%; margin-bottom: 15px;" id="addUserBtn" class="btn-action">Add New User</button>
-                        <hr>
-                        <h5 style="margin-bottom: 10px;">Filter by Role:</h5>
-                        <div>
-                            <input type="checkbox" id="filterLibrarian" name="role" value="Librarian">
-                            <label for="filterLibrarian">Librarian</label>
-                        </div>
+            </div>
 
-                        <div>
-                            <input type="checkbox" id="filterUser" name="role" value="Student">
-                            <label for="filterUser">Student</label>
-                        </div>
-
-
-
-                        <!-- New Archived Button -->
-                        <button style="background-color: #ff5733; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-size: 0.95rem; width: 100%; margin-top: 15px; border:2px solid gray; color:black; background-color:white;" id="viewArchivedBtn">View Archived</button>
-                    </div>
+        </div>
+        <!-- Sidebar for Actions -->
+        <div class="sidebar" style="flex: 1; max-width: 250px;">
+            <div class="sidebar-tools" style="background-color: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                <h4 style="margin-bottom: 15px; color: #333;">Actions</h4>
+                <button style="background-color: #1C2E5C; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-size: 0.95rem; width: 100%; margin-bottom: 15px;" id="addUserBtn" class="btn-action">Add New User</button>
+                <hr>
+                <h5 style="margin-bottom: 10px;">Filter by Role:</h5>
+                <div>
+                    <input type="checkbox" id="filterLibrarian" name="role" value="Librarian">
+                    <label for="filterLibrarian">Librarian</label>
                 </div>
 
+                <div>
+                    <input type="checkbox" id="filterUser" name="role" value="Student">
+                    <label for="filterUser">Student</label>
+                </div>
+
+
+
+                <!-- New Archived Button -->
+                <button style="background-color: #ff5733; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-size: 0.95rem; width: 100%; margin-top: 15px; border:2px solid gray; color:black; background-color:white;" id="viewArchivedBtn">View Archived</button>
             </div>
         </div>
+
+    </div>
+    </div>
     </div>
     </div>
     </div>
@@ -479,6 +478,48 @@ $users_on_page = array_slice($all_users, $start_index, $users_per_page);
                     });
                 });
         }
+
+        document.querySelectorAll('.btn-action.archive').forEach(button => {
+            button.addEventListener('click', function() {
+                const userId = this.getAttribute('data-id');
+                const role = this.getAttribute('data-role');
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: 'This account will be archived!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, archive it!',
+                    cancelButtonText: 'Cancel',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch('archive_user.php', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded',
+                                },
+                                body: `user_id=${userId}&role=${role}`
+                            })
+                            .then(response => response.text())
+                            .then(result => {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Archived!',
+                                    text: result,
+                                    confirmButtonText: 'OK' // Enables OK button
+                                }).then(() => {
+                                    location.reload(); // Refresh after user clicks OK
+                                });
+                            })
+                            .catch(error => {
+                                console.error('Error archiving user:', error);
+                                Swal.fire('Error', 'An error occurred while archiving the user.', 'error');
+                            });
+                    }
+                });
+            });
+        });
     </script>
 
 
@@ -605,73 +646,56 @@ $users_on_page = array_slice($all_users, $start_index, $users_per_page);
         const userTableBody = document.getElementById('userTableBody');
         const filterLibrarian = document.getElementById('filterLibrarian');
         const filterStudent = document.getElementById('filterUser');
-        const filterAdmin = document.getElementById('filterAdmin'); // Admin filter
 
         function filterUsers() {
             const searchTerm = searchInput.value.toLowerCase();
             const rows = userTableBody.getElementsByTagName('tr');
-            let noResultsFound = true; // Flag to track if there are any results
+            let noResultsFound = true;
 
-            // Capture checkbox states
             const showLibrarian = filterLibrarian.checked;
             const showStudent = filterStudent.checked;
-            const showAdmin = filterAdmin.checked; // Admin filter
 
-            // Loop through each row
             for (const row of rows) {
                 const cells = row.getElementsByTagName('td');
-
-                // Ensure we have the right index for the role
                 const role = (cells.length >= 4) ? cells[3].textContent.trim() : '';
-
-                // Get all cell contents for search matching
                 const text = Array.from(cells).map(cell => cell.textContent.toLowerCase()).join(' ');
 
-                // Check if the row matches search and the selected roles
                 const matchesSearch = text.includes(searchTerm);
-                const matchesRole = (!showLibrarian && !showStudent && !showAdmin) ||
+                const matchesRole = (!showLibrarian && !showStudent) ||
                     (showLibrarian && role === 'Librarian') ||
-                    (showStudent && role === 'Student') ||
-                    (showAdmin && role === 'Admin'); // Added Admin check
+                    (showStudent && role === 'Student');
 
-                // Display the row if both search and role match
                 if (matchesSearch && matchesRole) {
-                    row.style.display = ''; // Show row
-                    noResultsFound = false; // At least one row is visible
+                    row.style.display = '';
+                    noResultsFound = false;
                 } else {
-                    row.style.display = 'none'; // Hide row
+                    row.style.display = 'none';
                 }
             }
 
-            // Check if no rows are visible
+            // Handle "No results found"
+            const noResultsRow = document.getElementById('noResultsRow');
             if (noResultsFound) {
-                // Create a new row for "No results found" message
-                const noResultsRow = document.createElement('tr');
-                const noResultsCell = document.createElement('td');
-                noResultsCell.colSpan = 7; // Adjust colspan based on the number of columns in your table
-                noResultsCell.style.textAlign = 'center';
-                noResultsCell.textContent = 'No results found';
-                noResultsRow.appendChild(noResultsCell);
-
-                // If there isn't already a "No results" row, add it
-                if (!document.getElementById('noResultsRow')) {
-                    noResultsRow.id = 'noResultsRow';
-                    userTableBody.appendChild(noResultsRow);
+                if (!noResultsRow) {
+                    const row = document.createElement('tr');
+                    row.id = 'noResultsRow';
+                    const cell = document.createElement('td');
+                    cell.colSpan = 7;
+                    cell.style.textAlign = 'center';
+                    cell.textContent = 'No results found';
+                    row.appendChild(cell);
+                    userTableBody.appendChild(row);
                 }
             } else {
-                // If there are results, remove the "No results" row if it exists
-                const noResultsRow = document.getElementById('noResultsRow');
                 if (noResultsRow) {
                     noResultsRow.remove();
                 }
             }
         }
 
-        // Attach event listeners for live search and role filters
         searchInput.addEventListener('input', filterUsers);
         filterLibrarian.addEventListener('change', filterUsers);
         filterStudent.addEventListener('change', filterUsers);
-        filterAdmin.addEventListener('change', filterUsers); // Admin checkbox
     </script>
 
 </body>

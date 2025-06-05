@@ -248,3 +248,55 @@ body {
   background-color: #F44336; /* Red */
 }
  
+.book-category {
+    display: inline-block;
+    margin-top: 5px;
+    padding: 3px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+    text-transform: uppercase;
+
+  
+}
+
+.genre-fiction {
+    background-color: #007bff; /* Blue */
+    color: white;
+}
+
+.genre-nonfiction {
+    background-color: #28a745; /* Green */
+    color: white;
+}
+
+.genre-biography {
+    background-color: #fd7e14; /* Orange */
+    color: white;
+}
+
+.genre-mystery {
+    background-color: #6f42c1; /* Purple */
+    color: white;
+}
+
+.genre-science {
+    background-color: #17a2b8; /* Teal */
+    color: white;
+}
+
+.genre-history {
+    background-color: #ffc107; /* Yellow */
+    color: rgb(255, 255, 255);
+}
+
+.genre-others {
+    background-color: #6c757d; 
+    color: white;
+}
+
+.genre-default {
+    background-color: #343a40; 
+    color: white;
+}

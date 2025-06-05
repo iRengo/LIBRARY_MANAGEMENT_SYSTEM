@@ -15,6 +15,7 @@ if (isset($_SESSION['archive_success'])) {
 <head>
     <!-- ======= Styles ====== -->
     <link rel="stylesheet" href="ADMIN_CATALOG.CSS">
+    <link href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet">
 </head>
 
 <body>
@@ -40,36 +41,63 @@ if (isset($_SESSION['archive_success'])) {
                 </div>
 
 
-                <div class="search-bar" id="searchBar">
-                    <input type="text" class="form-control" placeholder="Search books..." id="searchInput">
+                <div>
+                    <div class="search-bar" id="searchBar">
+                        <i class="ion-ios-search search-icon"></i>
+                        <input type="search" class="form-control" placeholder="Search books..." id="searchInput">
+                        <button type="button" id="voiceBtn" class="voice-btn" aria-label="Voice Search">
+                            <i class="ion-ios-mic"></i>
+                        </button>
+                    </div>
+
                 </div>
+
             </div>
         </div>
     </div>
 
-
-    <!-- Book List -->
     <!-- Available Books Section -->
     <div id="availableBooksSection" class="book-section">
         <div class="book-list">
             <?php
-            $query = "SELECT book_id, book_cover, book_title, book_author FROM tbl_books WHERE status = 'available'";
+            $query = "SELECT book_id, book_cover, book_title,book_category, book_author FROM tbl_books WHERE status = 'available' or status = 'upcoming'";
             $result = mysqli_query($conn, $query);
 
             if (mysqli_num_rows($result) > 0) {
                 while ($row = mysqli_fetch_assoc($result)) {
+                    $categoryClass = 'genre-default'; // default fallback
+                    $category = strtolower(trim($row['book_category']));
+
+                    if ($category === 'fiction') {
+                        $categoryClass = 'genre-fiction';
+                    } else if ($category === 'non-fiction' || $category === 'non fiction') {
+                        $categoryClass = 'genre-nonfiction';
+                    } else if ($category === 'biography') {
+                        $categoryClass = 'genre-biography';
+                    } else if ($category === 'mystery') {
+                        $categoryClass = 'genre-mystery';
+                    } else if ($category === 'science') {
+                        $categoryClass = 'genre-science';
+                    } else if ($category === 'history') {
+                        $categoryClass = 'genre-history';
+                    } else if ($category === 'others' || $category === 'other') {
+                        $categoryClass = 'genre-others';
+                    }
+
             ?>
                     <div class="book-main-container">
                         <div class="book-container">
                             <img src="<?= htmlspecialchars($row['book_cover']); ?>" class="book-cover" alt="Book Cover">
                             <div class="overlay">
                                 <button class="archive-btn" onclick="archiveBook(<?= $row['book_id']; ?>)">ARCHIVE</button>
-                                <!-- <button class="edit-btn" onclick="editBook(<?= $row['book_id']; ?>)">EDIT</button> -->
                             </div>
                         </div>
                         <div class="book-details">
                             <h5><?= htmlspecialchars($row['book_title']); ?></h5>
                             <p><?= htmlspecialchars($row['book_author']); ?></p>
+                            <span class="book-category <?= $categoryClass ?>">
+                                <?= htmlspecialchars($row['book_category']) ?>
+                            </span>
                         </div>
                     </div>
             <?php
@@ -85,11 +113,29 @@ if (isset($_SESSION['archive_success'])) {
     <div id="archivedBooksSection" class="book-section" style="display: none;">
         <div class="book-list">
             <?php
-            $archivedQuery = "SELECT book_id, book_cover, book_title, book_author FROM tbl_archived_books";
+            $archivedQuery = "SELECT book_id, book_cover, book_title,book_category, book_author FROM tbl_archived_books";
             $archivedResult = mysqli_query($conn, $archivedQuery);
 
             if (mysqli_num_rows($archivedResult) > 0) {
                 while ($row = mysqli_fetch_assoc($archivedResult)) {
+                    $categoryClass = 'genre-default'; // default fallback
+                    $category = strtolower(trim($row['book_category']));
+
+                    if ($category === 'fiction') {
+                        $categoryClass = 'genre-fiction';
+                    } else if ($category === 'non-fiction' || $category === 'non fiction') {
+                        $categoryClass = 'genre-nonfiction';
+                    } else if ($category === 'biography') {
+                        $categoryClass = 'genre-biography';
+                    } else if ($category === 'mystery') {
+                        $categoryClass = 'genre-mystery';
+                    } else if ($category === 'science') {
+                        $categoryClass = 'genre-science';
+                    } else if ($category === 'history') {
+                        $categoryClass = 'genre-history';
+                    } else if ($category === 'others' || $category === 'other') {
+                        $categoryClass = 'genre-others';
+                    }
             ?>
                     <div class="book-main-container">
                         <div class="book-container">
@@ -103,6 +149,9 @@ if (isset($_SESSION['archive_success'])) {
                         <div class="book-details">
                             <h5><?= htmlspecialchars($row['book_title']); ?></h5>
                             <p><?= htmlspecialchars($row['book_author']); ?></p>
+                            <span class="book-category <?= $categoryClass ?>">
+                                <?= htmlspecialchars($row['book_category']) ?>
+                            </span>
                         </div>
                     </div>
             <?php
@@ -183,11 +232,10 @@ if (isset($_SESSION['archive_success'])) {
 
 
     <script>
-        // Open SweetAlert2 form for adding a book
         function openAddBookForm() {
             Swal.fire({
                 title: 'Add New Book',
-                width: '50vw', // Makes the form 80% of the viewport width
+                width: '50vw',
                 html: `
         <style>
         * {
@@ -225,6 +273,20 @@ if (isset($_SESSION['archive_success'])) {
                     <label for="genre">Genre</label>
                     <input type="text" id="genre" name="book_genre" class="swal2-input" required>
                 </div>
+
+                <div style="flex: 1; min-width: 48%; display: flex; flex-direction: column;">
+    <label for="bookCategory">Book Category:</label>
+    <select id="bookCategory" name="book_category" class="swal2-select" required>
+        <option value="" disabled selected>Select category</option>
+        <option value="Fiction">Fiction</option>
+        <option value="Non-Fiction">Non-Fiction</option>
+        <option value="Biography">Biography</option>
+        <option value="Mystery">Mystery</option>
+        <option value="Science">Science</option>
+        <option value="History">History</option>
+        <option value="Others">Others</option>
+    </select>
+</div>
 
                 <!-- Stocks and Status -->
                 <div style="flex: 1; min-width: 48%; display: flex; flex-direction: column;">
@@ -379,102 +441,7 @@ if (isset($_SESSION['archive_success'])) {
                 });
         }
     </script>
-    <script>
-        document.getElementById('searchInput').addEventListener('input', function() {
-            let searchQuery = this.value; // Get the value from the search input field
 
-            if (searchQuery.length > 0) {
-                // Send AJAX request to search_books.php with the search query
-                fetch(`search_books.php?query=${encodeURIComponent(searchQuery)}`)
-                    .then(response => response.json()) // Parse the response as JSON
-                    .then(data => {
-                        // Clear the current book list
-                        const bookList = document.querySelector('.book-list');
-                        bookList.innerHTML = '';
-
-                        // Check if any books were found
-                        if (data.length > 0) {
-                            // Loop through the books and display them
-                            data.forEach(book => {
-                                const bookContainer = document.createElement('div');
-                                bookContainer.classList.add('book-main-container');
-
-                                bookContainer.innerHTML = `
-                            <div class="book-container">
-                                <!-- Book Cover -->
-                                <img src="${book.book_cover}" class="book-cover" alt="Book Cover">
-
-                                <!-- Overlay Buttons -->
-                                <div class="overlay">
-                                    <button class="archive-btn" onclick="archiveBook(${book.book_id})">ARCHIVE</button>
-                        
-                                </div>
-                            </div>
-
-                            <!-- Book Title and Author -->
-                            <div class="book-details">
-                                <h5>${book.book_title}</h5>
-                                <p>${book.book_author}</p>
-                            </div>
-                        `;
-                                bookList.appendChild(bookContainer); // Add the book to the list
-                            });
-                        } else {
-                            bookList.innerHTML = '<p>No books found matching your search.</p>';
-                        }
-                    })
-                    .catch(err => {
-                        console.error('Error:', err);
-                        alert('Something went wrong. Please try again.');
-                    });
-            } else {
-                // If the search query is empty, reload the books list
-                loadBooks();
-            }
-        });
-
-        // Function to load all books initially (if needed when search is empty)
-        function loadBooks() {
-            fetch('search_books.php?query=')
-                .then(response => response.json())
-                .then(data => {
-                    const bookList = document.querySelector('.book-list');
-                    bookList.innerHTML = ''; // Clear the book list
-
-                    if (data.length > 0) {
-                        data.forEach(book => {
-                            const bookContainer = document.createElement('div');
-                            bookContainer.classList.add('book-main-container');
-
-                            bookContainer.innerHTML = `
-                        <div class="book-container">
-                            <!-- Book Cover -->
-                            <img src="${book.book_cover}" class="book-cover" alt="Book Cover">
-
-                            <!-- Overlay Buttons -->
-                            <div class="overlay">
-                                <button class="archive-btn" onclick="archiveBook(${book.book_id})">ARCHIVE</button>
-                            
-                            </div>
-                        </div>
-
-                        <!-- Book Title and Author -->
-                        <div class="book-details">
-                            <h5>${book.book_title}</h5>
-                            <p>${book.book_author}</p>
-                        </div>
-                    `;
-                            bookList.appendChild(bookContainer);
-                        });
-                    } else {
-                        bookList.innerHTML = '<p>No available books found.</p>';
-                    }
-                });
-        }
-
-        // Initial load of books
-        loadBooks();
-    </script>
     <?php if (!empty($successMessage)) : ?>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
@@ -515,6 +482,77 @@ if (isset($_SESSION['archive_success'])) {
                 });
             }
         });
+
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const query = this.value.trim().toLowerCase();
+            const books = document.querySelectorAll('.book-main-container');
+
+            books.forEach(book => {
+                const title = book.querySelector('.book-details h5')?.textContent.toLowerCase() || '';
+                const author = book.querySelector('.book-details p')?.textContent.toLowerCase() || '';
+
+                if (title.includes(query) || author.includes(query)) {
+                    book.style.display = '';
+                } else {
+                    book.style.display = 'none';
+                }
+            });
+        });
+
+        // Voice Search using SpeechRecognition + SweetAlert
+        const voiceBtn = document.getElementById('voiceBtn');
+        const searchInput = document.getElementById('searchInput');
+
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'en-US';
+            recognition.continuous = false;
+            recognition.interimResults = false;
+
+            voiceBtn.addEventListener('click', () => {
+                Swal.fire({
+                    title: 'Listening...',
+                    text: 'Speak now',
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonText: 'Stop',
+                    cancelButtonText: 'Cancel',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                        recognition.start();
+                    }
+                }).then((result) => {
+                    if (result.dismiss === Swal.DismissReason.cancel || result.isConfirmed) {
+                        recognition.stop();
+                    }
+                });
+            });
+
+            recognition.onresult = (event) => {
+                Swal.close();
+                const transcript = event.results[0][0].transcript.trim().toLowerCase();
+
+                if (transcript === 'clear') {
+                    searchInput.value = '';
+                } else {
+                    searchInput.value = transcript;
+                }
+
+                searchInput.dispatchEvent(new Event('input')); // Trigger live search
+            };
+
+            recognition.onerror = (event) => {
+                Swal.close();
+                console.error('Speech recognition error:', event.error);
+                Swal.fire('Error', 'Voice recognition failed: ' + event.error, 'error');
+            };
+        } else {
+            voiceBtn.disabled = true;
+            voiceBtn.title = "Voice search not supported in this browser.";
+        }
     </script>
 
 </body>

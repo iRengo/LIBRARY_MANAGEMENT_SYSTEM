@@ -14,6 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $bookGenreId = $_POST['book_genre'];
     $bookStocks = $_POST['book_stocks'];
     $status = $_POST['status'];
+    $bookCategory = $_POST['book_category'];
 
     // Handle Book Cover Upload
     if (isset($_FILES['bookCover']) && $_FILES['bookCover']['error'] == 0) {
@@ -30,10 +31,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit;
     }
 
-    // Insert into Database (Include book_author column)
-    $stmt = $conn->prepare("INSERT INTO tbl_books (book_cover, book_title, book_author, book_description, publisher, publication_date, isbn, book_genre, book_stocks, status) 
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("ssssssssis", $targetFilePath, $bookTitle, $bookAuthor, $bookDescription, $publisherId, $publicationDate, $isbn, $bookGenreId, $bookStocks, $status);
+    $stmt = $conn->prepare("INSERT INTO tbl_books (book_cover, book_title, book_author, book_description, publisher, publication_date, isbn, book_genre, book_category, book_stocks, status) 
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+$stmt->bind_param("sssssssssis", $targetFilePath, $bookTitle, $bookAuthor, $bookDescription, $publisherId, $publicationDate, $isbn, $bookGenreId, $bookCategory, $bookStocks, $status);
 
     if ($stmt->execute()) {
         echo json_encode(["success" => true, "message" => "Book added successfully."]);

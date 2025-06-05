@@ -14,11 +14,11 @@ if (isset($_GET['book_id'])) {
 
     if ($book) {
         // Insert into the books table
-        $insert_query = "INSERT INTO tbl_books (book_id, book_cover, book_title, book_author, book_description, publisher, publication_date, ISBN, book_genre, book_stocks, status) 
-                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $insert_query = "INSERT INTO tbl_books (book_id, book_cover, book_title, book_author, book_description, publisher, publication_date, ISBN, book_genre,book_category, book_stocks, status) 
+                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt_insert = $conn->prepare($insert_query);
         $stmt_insert->bind_param(
-            "issssssssis",
+            "isssssssssis",
             $book['book_id'],
             $book['book_cover'],
             $book['book_title'],
@@ -28,6 +28,7 @@ if (isset($_GET['book_id'])) {
             $book['publication_date'],
             $book['ISBN'],
             $book['book_genre'],
+            $book['book_category'],
             $book['book_stocks'],
             $book['status']
         );

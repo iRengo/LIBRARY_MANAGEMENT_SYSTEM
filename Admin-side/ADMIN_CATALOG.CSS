@@ -20,49 +20,64 @@
   color: #0f0f0f;
 }
 .search-bar {
-  display: relative !important;
-  justify-content: center !important;
-  align-items: center !important;
+  position: relative !important;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 400px;
   margin: 20px 0 !important;
 }
 
+.search-bar .search-icon {
+  position: absolute;
+  top: 50%;
+  left: 15px;
+  transform: translateY(-50%);
+  color: #999;
+  font-size: 18px;
+  pointer-events: none;
+}
+
 .search-bar input {
-  width: 100%;
-  max-width: 350px; /* Ensure responsiveness */
-  padding: 12px 40px; /* Space for the icon */
+  flex: 1;
+  padding: 12px 40px;
+
   font-size: 16px;
   border: 2px solid #ddd;
-  border-radius: 25px;
+  border-radius: 15px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   outline: none;
   transition: all 0.3s ease;
-  background: #fff url('https://cdn-icons-png.flaticon.com/512/622/622669.png') no-repeat 15px center;
-  background-size: 18px;
-  padding-left: 40px; /* Space for the icon */
 }
-
-.search-container {
-  display: flex;
-  margin-right: 5%;
-  flex-direction: column; /* Stack items vertically */
-  align-items: flex-end; /* Align to the right side */
-  gap: 10px; /* Space between button and search bar */
-
-}
-
 .search-bar input::placeholder {
   color: #999 !important;
   font-size: 14px !important;
 }
 
-.search-bar input:focus {
-  border-color: #ff7a7a !important;
-  box-shadow: 0 6px 12px rgba(255, 77, 77, 0.2) !important;
+/* 🎤 Mic Icon Button Styling */
+.voice-btn {
+  background-color: #020356;
+  border: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
-.search-bar input:hover {
-  border-color: #ff4d4d !important;
+.voice-btn i {
+  color: #fff;
+  font-size: 20px;
 }
+
+.voice-btn:hover {
+  background-color: #010355;
+}
+
 .book-main-container {
   background: white;
   padding: 10px;
@@ -350,4 +365,55 @@
       /* Smaller size on small screens */
       height: 200px;
   }
+}
+.book-category {
+    display: inline-block;
+    margin-top: 5px;
+    padding: 3px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+    text-transform: uppercase;
+    margin-left: 5px;
+    margin-top: 10px;
+}
+.genre-fiction {
+    background-color: #007bff; /* Blue */
+    color: white;
+}
+
+.genre-nonfiction {
+    background-color: #28a745; /* Green */
+    color: white;
+}
+
+.genre-biography {
+    background-color: #fd7e14; /* Orange */
+    color: white;
+}
+
+.genre-mystery {
+    background-color: #6f42c1; /* Purple */
+    color: white;
+}
+
+.genre-science {
+    background-color: #17a2b8; /* Teal */
+    color: white;
+}
+
+.genre-history {
+    background-color: #ffc107; /* Yellow */
+    color: black;
+}
+
+.genre-others {
+    background-color: #6c757d; /* Gray */
+    color: white;
+}
+
+.genre-default {
+    background-color: #343a40; /* Dark fallback */
+    color: white;
 }

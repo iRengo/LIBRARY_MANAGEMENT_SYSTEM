@@ -21,26 +21,27 @@ if (isset($_GET['book_id'])) {
             throw new Exception("Book not found.");
         }
 
-       
+
         $book_cover = $book['book_cover'];
         $book_title = $book['book_title'];
         $book_author = $book['book_author'];
         $book_description = $book['book_description'];
         $publisher = $book['publisher'];
-        $publication_date = $book['publication_date']; 
-        $isbn = $book['ISBN']; 
+        $publication_date = $book['publication_date'];
+        $isbn = $book['ISBN'];
         $book_genre = $book['book_genre'];
-        $book_stocks = $book['book_stocks']; 
+        $book_category = $book['book_category'];
+        $book_stocks = $book['book_stocks'];
         $status = $book['status'];
 
 
         $insert_query = "INSERT INTO tbl_archived_books 
-            (book_id, book_cover, book_title, book_author, book_description, publisher, publication_date, ISBN, book_genre, book_stocks, status) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            (book_id, book_cover, book_title, book_author, book_description, publisher, publication_date, ISBN, book_genre,book_category,book_stocks, status) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         $stmt_insert = $conn->prepare($insert_query);
         $stmt_insert->bind_param(
-            "issssssssis", 
+            "isssssssssis",
             $book_id,
             $book_cover,
             $book_title,
@@ -50,6 +51,7 @@ if (isset($_GET['book_id'])) {
             $publication_date,
             $isbn,
             $book_genre,
+            $book_category,
             $book_stocks,
             $status
         );
@@ -94,7 +96,6 @@ if (isset($_GET['book_id'])) {
         $_SESSION['archive_success'] = "Book archived successfully.";
         header("Location: admin_catalog.php");
         exit();
-
     } catch (Exception $e) {
         $conn->rollback();
         echo "Error: " . $e->getMessage();
@@ -103,4 +104,3 @@ if (isset($_GET['book_id'])) {
 } else {
     echo "Invalid request.";
 }
-?>

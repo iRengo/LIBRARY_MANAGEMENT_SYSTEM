@@ -55,7 +55,6 @@ foreach ($data['results'] as $book) {
     $book_genre = $conn->real_escape_string($book_genre);
     $category = $conn->real_escape_string($category);
 
-    // Insert into database with category
     $sql = "INSERT INTO tbl_books 
         (book_cover, book_title, book_author, book_description, publisher, publication_date, isbn, book_genre, book_category, book_stocks, status) 
         VALUES 

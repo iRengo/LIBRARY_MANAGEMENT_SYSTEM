@@ -11,6 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $publicationDate = $_POST['publication_date'];
     $isbn = $_POST['isbn'];
     $bookGenreId = $_POST['book_genre'];
+    $bookCategory = $_POST['book_category'];
     $bookStocks = $_POST['book_stocks'];
     $status = $_POST['status'];
 
@@ -35,10 +36,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit;
     }
 
-    // Insert into Database
-    $stmt = $conn->prepare("INSERT INTO tbl_books (book_cover, book_title, book_author, book_description, publisher, publication_date, isbn, book_genre, book_stocks, status) 
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("ssssssssis", $targetFilePath, $bookTitle, $bookAuthor, $bookDescription, $publisherId, $publicationDate, $isbn, $bookGenreId, $bookStocks, $status);
+    $stmt = $conn->prepare("INSERT INTO tbl_books (book_cover, book_title, book_author, book_description, publisher, publication_date, isbn, book_category, book_genre, book_stocks, status) 
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("sssssssssis", $targetFilePath, $bookTitle, $bookAuthor, $bookDescription, $publisherId, $publicationDate, $isbn, $bookCategory, $bookGenreId, $bookStocks, $status);
 
     if ($stmt->execute()) {
         echo json_encode(["success" => true, "message" => "Book added successfully."]);
