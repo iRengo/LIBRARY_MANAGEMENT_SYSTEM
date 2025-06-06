@@ -5,7 +5,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user_id = $_POST['user_id'];
     $role = $_POST['role'];
 
-    // Determine source table and ID column
     if ($role === 'Librarian') {
         $sourceTable = 'librarian_acc';
         $idColumn = 'librarian_no';
@@ -25,17 +24,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = $result->fetch_assoc();
 
     if ($user) {
+        // Handle student_no (only for Student role)
+        $student_no = ($role === 'Student') ? $user['student_no'] : null;
+        $contact = $user['contact'] ?? '';
+        $verified = $user['verified'] ?? 0;
+
         // Insert into archived_acc
         $insert = $conn->prepare("INSERT INTO archived_acc 
-            (user_id, password, first_name, last_name, email, contact, role, archived_at, verified) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), ?)");
-
-        $contact = $user['contact'] ?? '';
-        $verified = $user['verified'] ?? 'No';
+            (user_id, student_no, password, first_name, last_name, email, contact, role, archived_at, verified) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?)");
 
         $insert->bind_param(
-            "ssssssss",
+            "ssssssssi",
             $user_id,
+            $student_no,
             $user['password'],
             $user['first_name'],
             $user['last_name'],

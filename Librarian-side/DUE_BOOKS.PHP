@@ -211,6 +211,7 @@ Returned</button> </td>
                                     formData.append("book_id", book_id);
                                     formData.append("borrow_id", borrow_id);
                                     formData.append("proof_image", proof_image);
+                                    formData.append("damage_description", "Damage reported upon return.");
                                     fetch('LIBRARIAN_INSERT_STUDENT_FINE.php', {
                                             method: 'POST',
                                             body: formData

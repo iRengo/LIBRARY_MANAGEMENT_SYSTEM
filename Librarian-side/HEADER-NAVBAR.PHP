@@ -57,6 +57,9 @@ $unpaidFinesCount = $conn->query("SELECT COUNT(*) AS total FROM student_fines WH
 // Borrowed Books
 $borrowedBooksCount = $conn->query("SELECT COUNT(*) AS total FROM borrowed_books WHERE status = 'Borrowed'")->fetch_assoc()['total'];
 
+// Under Repaired Books
+$underRepairCount = $conn->query("SELECT COUNT(*) AS total FROM under_repair_books WHERE status = 'Under Repair'")->fetch_assoc()['total'];
+
 ?>
 
 
@@ -149,6 +152,7 @@ $borrowedBooksCount = $conn->query("SELECT COUNT(*) AS total FROM borrowed_books
                         <li><a href="OVERDUE_BOOKS.PHP">Overdue Books <span class="badge"><?php echo $overdueBooksCount; ?></span></a></li>
                         <li><a href="RETURNED_BOOKS.PHP">Returned Books <span class="badge"><?php echo $returnedBooksCount; ?></span></a></li>
                         <li><a href="UNPAID_FINES.PHP">Unpaid Fines <span class="badge"><?php echo $unpaidFinesCount; ?></span></a></li>
+                        <li><a href="UNDER_REPAIRED_BOOKS.PHP">Under Repair Books <span class="badge"><?php echo $underRepairCount; ?></span></a></li>
 
                     </ul>
                 </li>

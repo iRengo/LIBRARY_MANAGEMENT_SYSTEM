@@ -56,17 +56,17 @@ $loggedInUser = $_SESSION['librarian_no'];
                 <tbody>
                     <?php
 
-                    
-$today = date('Y-m-d');
-$overdue_sql = "SELECT bb.*, b.book_cover, b.book_author
+
+                    $today = date('Y-m-d');
+                    $overdue_sql = "SELECT bb.*, b.book_cover, b.book_author
                 FROM borrowed_books bb
                 JOIN tbl_books b ON bb.book_id = b.book_id
                 WHERE bb.status = 'Borrowed' AND bb.due_date < '$today'
                 ORDER BY bb.due_date ASC";
 
-$overdue_result = mysqli_query($conn, $overdue_sql);
+                    $overdue_result = mysqli_query($conn, $overdue_sql);
 
-$total_overdue = $overdue_result ? mysqli_num_rows($overdue_result) : 0;
+                    $total_overdue = $overdue_result ? mysqli_num_rows($overdue_result) : 0;
 
                     if ($overdue_result && $total_overdue > 0) {
                         while ($row = mysqli_fetch_assoc($overdue_result)) {
@@ -236,6 +236,7 @@ $total_overdue = $overdue_result ? mysqli_num_rows($overdue_result) : 0;
                                     formData.append("book_id", book_id);
                                     formData.append("borrow_id", borrow_id);
                                     formData.append("proof_image", proof_image);
+                                    formData.append("damage_description", "Damage reported upon return."); 
                                     fetch('LIBRARIAN_INSERT_STUDENT_FINE.php', {
                                             method: 'POST',
                                             body: formData

@@ -153,7 +153,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $update_stmt->execute();
 
         if ($update_stmt->affected_rows > 0) {
-            // 2. Insert into returned_books
             $insert_sql = "INSERT INTO returned_books 
                        (borrow_id, book_id, book_title, student_no, return_date, book_condition, handled_by)
                        VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -177,7 +176,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo "Failed to update return status.";
         }
 
-        // 4. Increment book stock by 1
         $update_stock = $conn->prepare("UPDATE tbl_books SET book_stocks = book_stocks + 1 WHERE book_id = ?");
         $update_stock->bind_param("i", $book_id);
         $update_stock->execute();
