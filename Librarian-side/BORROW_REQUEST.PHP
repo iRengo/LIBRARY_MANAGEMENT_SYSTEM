@@ -36,7 +36,7 @@ if (isset($conn)) {
 
 
     <div class="page-header">
-        <h2>Student Borrow Requests</h2>
+        <h2>Student Pending Requests</h2>
         <p class="page-subtitle">Manage pending borrow requests efficiently.</p>
 
         <div class="search-bar-container">
@@ -60,72 +60,79 @@ if (isset($conn)) {
                         <th>Book Title</th>
                         <th>Preferred Date</th>
                         <th>Status</th>
-                        <th>Actions</th>
+                        <!-- <th>Actions</th> -->
                     </tr>
                 </thead>
 
                 <?php
-                $borrow_sql = "SELECT bb.*, b.book_cover, b.book_author, b.book_title 
-                   FROM borrowed_books bb
-                   JOIN tbl_books b ON bb.book_id = b.book_id
-                   WHERE bb.status = 'Pending'
-                   ORDER BY bb.borrow_id DESC";
+$borrow_sql = "SELECT bb.*, b.book_cover, b.book_author, b.book_title 
+               FROM borrowed_books bb
+               JOIN tbl_books b ON bb.book_id = b.book_id
+               WHERE bb.status = 'Pending'
+               ORDER BY bb.borrow_id DESC";
 
-                $borrow_result = mysqli_query($conn, $borrow_sql);
+$borrow_result = mysqli_query($conn, $borrow_sql);
 
-                if ($borrow_result && mysqli_num_rows($borrow_result) > 0) {
-                    while ($row = mysqli_fetch_assoc($borrow_result)) {
-                        $imageURL = htmlspecialchars($row['book_cover']);
-                        $bookTitle = htmlspecialchars($row['book_title']);
-                        $author = htmlspecialchars($row['book_author']);
+if ($borrow_result && mysqli_num_rows($borrow_result) > 0) {
+    while ($row = mysqli_fetch_assoc($borrow_result)) {
+        $imageURL = htmlspecialchars($row['book_cover']);
+        $bookTitle = htmlspecialchars($row['book_title']);
+        $author = htmlspecialchars($row['book_author']);
+        $borrowId = $row['borrow_id'];
+        $studentNo = $row['student_no'];
+        $email = $row['email'];
+        $contact = $row['contact'];
+        $preferredDate = $row['preferred_date'];
+        $status = $row['status'];
 
-                        echo "<tr>
-                <td class='book-icon-cell'>
-                    <button 
-                        class='book-details-btn' 
-                        data-title='{$bookTitle}' 
-                        data-author='{$author}' 
-                        data-cover='{$imageURL}' 
-                        style='background:none; border:none; cursor:pointer; font-size: 24px; color:#1C2E5C;' 
-                        title='View Book Details'>
-                        <ion-icon name='book-outline'></ion-icon>
-                    </button>
-                </td>
-                                <td>{$row['borrow_id']}</td>
-                                <td>{$row['student_no']}</td>
-                                <td>{$row['book_title']}</td>
-                                <td>{$row['preferred_date']}</td>
-                                <td>{$row['status']}</td>
-                               <td class='action-icons'>
-    <ion-icon 
-        name='checkmark-circle-outline' 
-        class='accept' 
-        onclick='acceptRequest({$row['borrow_id']})' 
-        style='cursor:pointer; font-size:18px; color:green;'>
-    </ion-icon>
+        echo <<<HTML
+<tr>
+    <td class='book-icon-cell'>
+        <button 
+            class='book-details-btn' 
+            data-title="{$bookTitle}" 
+            data-author="{$author}" 
+            data-cover="{$imageURL}" 
+            style='background:none; border:none; cursor:pointer; font-size: 24px; color:#1C2E5C;' 
+            title='View Book Details'>
+            <ion-icon name='book-outline'></ion-icon>
+        </button>
+    </td>
+    <td>{$borrowId}</td>
+    <td>{$studentNo}</td>
+    <td>{$bookTitle}</td>
+    <td>{$preferredDate}</td>
+    <td>{$status}</td>
+    <td class='action-icons'>
+        <!-- <ion-icon 
+            name='checkmark-circle-outline' 
+            class='accept' 
+            onclick='acceptRequest({$borrowId})' 
+            style='cursor:pointer; font-size:18px; color:green;'>
+        </ion-icon>
 
-    <ion-icon 
-        name='close-circle-outline' 
-        class='decline' 
-        onclick='declineRequest(
-            " . json_encode($row['borrow_id']) . ", 
-            " . json_encode($row['student_no']) . ", 
-            " . json_encode($row['email']) . ", 
-            " . json_encode($bookTitle) . ", 
-            " . json_encode($row['contact']) . ", 
-            " . json_encode($row['preferred_date']) . "
-        )' 
-        style='cursor:pointer; font-size:18px; color:red;'>
-    </ion-icon>
-</td>
+        <ion-icon 
+            name='close-circle-outline' 
+            class='decline' 
+            onclick='declineRequest(
+                {$borrowId}, 
+                "{$studentNo}", 
+                "{$email}", 
+                "{$bookTitle}", 
+                "{$contact}", 
+                "{$preferredDate}"
+            )' 
+            style='cursor:pointer; font-size:18px; color:red;'>
+        </ion-icon> -->
+    </td>
+</tr>
+HTML;
+    }
+} else {
+    echo "<tr id='noDataRow'><td colspan='7' style='text-align:center; color:#666; font-style: italic;'>No borrow requests found.</td></tr>";
+}
+?>
 
-                              </tr>";
-                    }
-                } else {
-
-                    echo "<tr id='noDataRow'><td colspan='7' style='text-align:center; color:#666; font-style: italic;'>No borrow requests found.</td></tr>";
-                }
-                ?>
 
 
                 <tr id="noResultsRow" style="display:none;">
