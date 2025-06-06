@@ -256,7 +256,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $mail->Subject = 'Reserved Book Now Available';
                 $mail->Body    = "Hello {$reservation['first_name']},<br><br>"
                     . "Your reserved book <strong>{$book_title}</strong> is now available and has been automatically borrowed for you.<br>"
-                    . "Please pick it up by <strong>{$preferred_date}</strong>.<br><br>"
+                    . "Please pick it up by <strong>{$preferred_date} you only have 24 HOURS or it will be automatically cancelled</strong>.<br><br>"
                     . "Thank you,<br>Library Team";
 
                 $mail->send();

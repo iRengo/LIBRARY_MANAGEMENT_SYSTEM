@@ -1,51 +1,79 @@
 <?php
-include '../homepage/db_connect.php';
 session_start();
+include '../homepage/db_connect.php';
+
+// Setup error handling
+ini_set('display_errors', 0); // Hide errors from frontend
+ini_set('log_errors', 1);
+ini_set('error_log', __DIR__ . '/php-error.log'); // Logs errors
+error_reporting(E_ALL);
+
+// Ensure JSON output only
+header('Content-Type: application/json');
+
+// Check if session exists
+if (!isset($_SESSION['librarian_no'])) {
+    echo json_encode(["success" => false, "message" => "Unauthorized access."]);
+    exit;
+}
 
 $librarian_id = $_SESSION['librarian_no'];
 
-$librarian_query = "SELECT first_name FROM librarian_acc WHERE librarian_no = '$librarian_id'";
-$librarian_result = mysqli_query($conn, $librarian_query);
+// Get librarian name
+$librarian_query = "SELECT first_name FROM librarian_acc WHERE librarian_no = ?";
+$stmt = $conn->prepare($librarian_query);
+$stmt->bind_param("s", $librarian_id);
+$stmt->execute();
+$result = $stmt->get_result();
 
-if ($librarian_result && mysqli_num_rows($librarian_result) > 0) {
-    $librarian_row = mysqli_fetch_assoc($librarian_result);
-    $handled_by = $librarian_row['first_name'];
+if ($result && $result->num_rows > 0) {
+    $handled_by = $result->fetch_assoc()['first_name'];
 } else {
     echo json_encode(["success" => false, "message" => "Librarian not found."]);
     exit;
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $borrow_id = $_POST['borrow_id'];
-    $student_no = $_POST['student_no'];
-    $book_id = $_POST['book_id'];
-    $book_condition = $_POST['book_condition'];
+    $borrow_id = $_POST['borrow_id'] ?? '';
+    $student_no = $_POST['student_no'] ?? '';
+    $book_id = $_POST['book_id'] ?? '';
+    $book_condition = $_POST['book_condition'] ?? '';
     $return_date = date('Y-m-d H:i:s');
 
-    // Fetch the book title
-    $book_query = "SELECT book_title FROM tbl_books WHERE book_id = '$book_id'";
-    $book_result = mysqli_query($conn, $book_query);
-    if ($book_result && mysqli_num_rows($book_result) > 0) {
-        $book_row = mysqli_fetch_assoc($book_result);
-        $book_title = $book_row['book_title'];
+    if (!$borrow_id || !$student_no || !$book_id || !$book_condition) {
+        echo json_encode(["success" => false, "message" => "Missing required fields."]);
+        exit;
+    }
+
+    // Get book title
+    $book_query = "SELECT book_title FROM tbl_books WHERE book_id = ?";
+    $stmt = $conn->prepare($book_query);
+    $stmt->bind_param("s", $book_id);
+    $stmt->execute();
+    $book_result = $stmt->get_result();
+
+    if ($book_result && $book_result->num_rows > 0) {
+        $book_title = $book_result->fetch_assoc()['book_title'];
     } else {
         echo json_encode(["success" => false, "message" => "Book not found."]);
         exit;
     }
 
-    // Insert into returned_books (only the existing fields)
-    $sql = "INSERT INTO returned_books 
-            (borrow_id, book_id, book_title, student_no, return_date, book_condition, handled_by)
-            VALUES 
-            ('$borrow_id', '$book_id', '$book_title', '$student_no', '$return_date', '$book_condition', '$handled_by')";
+    // Insert into returned_books
+    $insert_query = "INSERT INTO returned_books (borrow_id, book_id, book_title, student_no, return_date, book_condition, handled_by)
+                     VALUES (?, ?, ?, ?, ?, ?, ?)";
+    $stmt = $conn->prepare($insert_query);
+    $stmt->bind_param("sssssss", $borrow_id, $book_id, $book_title, $student_no, $return_date, $book_condition, $handled_by);
 
-    if (mysqli_query($conn, $sql)) {
-        // Update status in borrowed_books
-        $update_sql = "UPDATE borrowed_books SET status='Returned' WHERE borrow_id='$borrow_id'";
-        mysqli_query($conn, $update_sql);
+    if ($stmt->execute()) {
+        // Update borrowed_books status
+        $update = $conn->prepare("UPDATE borrowed_books SET status = 'Returned' WHERE borrow_id = ?");
+        $update->bind_param("s", $borrow_id);
+        $update->execute();
+
         echo json_encode(["success" => true, "message" => "Book return recorded successfully!"]);
     } else {
-        echo json_encode(["success" => false, "message" => "Database error: " . mysqli_error($conn)]);
+        echo json_encode(["success" => false, "message" => "Database error: " . $stmt->error]);
     }
 }
 ?>
