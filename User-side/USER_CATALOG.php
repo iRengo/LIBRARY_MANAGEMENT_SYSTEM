@@ -55,7 +55,7 @@ if (!isset($_SESSION['acc_no'])) {
 
     <div class="book-list">
         <?php
-        $query = "SELECT book_id, book_cover, book_title, book_category, book_author FROM tbl_books WHERE status = 'Available' OR status = 'Upcoming'";
+        $query = "SELECT book_id, book_cover, book_title, book_category, book_author FROM tbl_books WHERE status = 'Available'";
         $result = mysqli_query($conn, $query);
 
         if (mysqli_num_rows($result) > 0) {
@@ -95,8 +95,75 @@ if (!isset($_SESSION['acc_no'])) {
                 <?php
             }
         } else {
-            echo "<p>No available books found.</p>";
-        }
+    echo '
+    <div class="no-books-container">
+        <img src="../public/images/no-found.jpg" alt="No books">
+    </div>';
+}
+
+        ?>
+    </div>
+
+
+        <!-- Upcoming Books Section -->
+    <div class="titles-container">
+        <div class="header-container">
+            <div class="titles">
+                <div class="available">Upcoming Books</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="book-list">
+        <?php
+        $upcomingQuery = "SELECT book_id, book_cover, book_title, book_category, book_author FROM tbl_books WHERE status = 'Upcoming'";
+        $upcomingResult = mysqli_query($conn, $upcomingQuery);
+
+        if (mysqli_num_rows($upcomingResult) > 0) {
+            while ($row = mysqli_fetch_assoc($upcomingResult)) {
+                $category = strtolower(trim($row['book_category']));
+
+                if ($category === 'fiction') {
+                    $categoryClass = 'genre-fiction';
+                } else if ($category === 'non-fiction' || $category === 'non fiction') {
+                    $categoryClass = 'genre-nonfiction';
+                } else if ($category === 'biography') {
+                    $categoryClass = 'genre-biography';
+                } else if ($category === 'mystery') {
+                    $categoryClass = 'genre-mystery';
+                } else if ($category === 'science') {
+                    $categoryClass = 'genre-science';
+                } else if ($category === 'history') {
+                    $categoryClass = 'genre-history';
+                } else if ($category === 'others' || $category === 'other') {
+                    $categoryClass = 'genre-others';
+                } else {
+                    $categoryClass = '';
+                }
+        ?>
+            <div class="book-main-container">
+                <a href="BOOK-DETAILS.PHP?book_id=<?= urlencode($row['book_id']) ?>" class="book-link">
+                    <div class="book-container">
+                        <img src="<?= htmlspecialchars($row['book_cover']) ?>" class="book-cover" alt="Book Cover">
+                    </div>
+                    <div class="book-details">
+                        <h5><?= htmlspecialchars($row['book_title']) ?></h5>
+                        <p><?= htmlspecialchars($row['book_author']) ?></p>
+                        <span class="book-category <?= $categoryClass ?>">
+                            <?= htmlspecialchars($row['book_category']) ?>
+                        </span>
+                    </div>
+                </a>
+            </div>
+        <?php
+            }
+        } else {
+    echo '
+    <div class="no-books-container">
+        <img src="../public/images/no-found.jpg" alt="No books">
+    </div>';
+}
+
         ?>
     </div>
 

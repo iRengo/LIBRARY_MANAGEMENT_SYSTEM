@@ -48,13 +48,15 @@ $summary_overall['Fines Issued'] = $row['count'] ?? 0;
 
 
 $sql_total_fines = "
-    SELECT IFNULL(SUM(f.price), 0) AS total 
-    FROM student_fines sf 
+    SELECT IFNULL(SUM(f.price + sf.overdue_amount), 0) AS total
+    FROM student_fines sf
     LEFT JOIN fines_table f ON sf.fine_id = f.fine_id
+    WHERE sf.status = 'Paid'
 ";
 $result = mysqli_query($conn, $sql_total_fines);
 $row = mysqli_fetch_assoc($result);
 $summary_overall['Total Fines'] = number_format($row['total'] ?? 0, 2);
+
 
 
 function selectedIf($value, $selectedValue)
@@ -258,53 +260,71 @@ function selectedIf($value, $selectedValue)
                 </div>
 
                 <!-- Fines Issued -->
-                <div class="fines-issued">
-                    <div class="section-title">Fines Issued</div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Fine Type</th>
-                                <th>Amount</th>
-                                <th>Date Issued</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                            $totalFines = 0;
-                            $fines_sql = "
-            SELECT f.fine_name, f.price, sf.date_issued, sf.status
-            FROM student_fines sf
-            LEFT JOIN fines_table f ON sf.fine_id = f.fine_id
-            WHERE sf.student_no = '$selectedStudent'
-            ORDER BY sf.date_issued DESC
+<div class="fines-issued">
+    <div class="section-title">Fines Issued</div>
+    <table>
+        <thead>
+            <tr>
+                <th>Fine Type</th>
+                <th>Fine Amount</th>
+                <th>Overdue Amount</th>
+                <th>Total</th>
+                <th>Date Issued</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            $totalFineAmount = 0;
+            $totalOverdueAmount = 0;
+            $totalOverall = 0;
+
+            $fines_sql = "
+                SELECT f.fine_name, f.price, sf.overdue_amount, sf.date_issued, sf.status
+                FROM student_fines sf
+                LEFT JOIN fines_table f ON sf.fine_id = f.fine_id
+                WHERE sf.student_no = '$selectedStudent'
+                ORDER BY sf.date_issued DESC
             ";
-                            $fines_result = mysqli_query($conn, $fines_sql);
-                            if (mysqli_num_rows($fines_result) > 0) {
-                                while ($row = mysqli_fetch_assoc($fines_result)) {
-                                    $statusColor = strtolower($row['status']) === 'paid' ? '#28a745' : '#dc3545';
-                                    $amount = (float)$row['price'];
-                                    $totalFines += $amount;
-                                    echo "<tr>
+            $fines_result = mysqli_query($conn, $fines_sql);
+
+            if (mysqli_num_rows($fines_result) > 0) {
+                while ($row = mysqli_fetch_assoc($fines_result)) {
+                    $statusColor = strtolower($row['status']) === 'paid' ? '#28a745' : '#dc3545';
+
+                    $fineAmount = (float)$row['price'];
+                    $overdueAmount = (float)$row['overdue_amount'];
+                    $rowTotal = $fineAmount + $overdueAmount;
+
+                    $totalFineAmount += $fineAmount;
+                    $totalOverdueAmount += $overdueAmount;
+                    $totalOverall += $rowTotal;
+
+                    echo "<tr>
                         <td>" . htmlspecialchars($row['fine_name']) . "</td>
-                        <td>₱" . number_format($amount, 2) . "</td>
+                        <td>₱" . number_format($fineAmount, 2) . "</td>
+                        <td>₱" . number_format($overdueAmount, 2) . "</td>
+                        <td>₱" . number_format($rowTotal, 2) . "</td>
                         <td>" . htmlspecialchars($row['date_issued']) . "</td>
                         <td style='color: $statusColor; font-weight: bold;'>" . htmlspecialchars($row['status']) . "</td>
                     </tr>";
-                                }
-                                // Print total row
-                                echo "<tr style='font-weight:bold; background:#f0f0f0;'>
+                }
+                // Print total row
+                echo "<tr style='font-weight:bold; background:#f0f0f0;'>
                     <td>Total</td>
-                    <td>₱" . number_format($totalFines, 2) . "</td>
+                    <td>₱" . number_format($totalFineAmount, 2) . "</td>
+                    <td>₱" . number_format($totalOverdueAmount, 2) . "</td>
+                    <td>₱" . number_format($totalOverall, 2) . "</td>
                     <td colspan='2'></td>
                 </tr>";
-                            } else {
-                                echo "<tr><td colspan='4' style='text-align:center;'>No fines issued.</td></tr>";
-                            }
-                            ?>
-                        </tbody>
-                    </table>
-                </div>
+            } else {
+                echo "<tr><td colspan='6' style='text-align:center;'>No fines issued.</td></tr>";
+            }
+            ?>
+        </tbody>
+    </table>
+</div>
+
 
 
                 <!-- Rejected Requests -->

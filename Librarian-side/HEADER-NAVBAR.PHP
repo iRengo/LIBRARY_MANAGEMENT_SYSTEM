@@ -4,6 +4,7 @@ include '../Homepage/db_connect.php';
 include '../Homepage/automatic_borrowing_process.php';
 include '../Homepage/due_overdue_checkr.php';
 include '../Homepage/archiver.php';
+include '../Homepage/release_upcoming_books.php';
 include '../Homepage/UNCLAIMED_BOOK_CHECKER.PHP';
 
 if (isset($_SESSION['librarian_no'])) {
@@ -223,9 +224,6 @@ $underRepairCount = $conn->query("SELECT COUNT(*) AS total FROM under_repair_boo
                         <ion-icon name="caret-down-outline" style="margin-left: 5px;margin-bottom:5px;"></ion-icon>
                     </button>
                     <div class="dropdown-content">
-                        <a href="#" id="toggleNotifications">
-                            <ion-icon name="notifications-outline"></ion-icon> Notifications
-                        </a>
                         <a href="#" id="logoutIcon">
                             <ion-icon name="log-out-outline"></ion-icon> Logout
                         </a>

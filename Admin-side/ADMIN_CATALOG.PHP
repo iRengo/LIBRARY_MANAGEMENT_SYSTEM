@@ -60,7 +60,66 @@ if (isset($_SESSION['archive_success'])) {
     <div id="availableBooksSection" class="book-section">
         <div class="book-list">
             <?php
-            $query = "SELECT book_id, book_cover, book_title,book_category, book_author FROM tbl_books WHERE status = 'available' or status = 'upcoming'";
+            $query = "SELECT book_id, book_cover, book_title,book_category, book_author FROM tbl_books WHERE status = 'available'";
+            $result = mysqli_query($conn, $query);
+
+            if (mysqli_num_rows($result) > 0) {
+                while ($row = mysqli_fetch_assoc($result)) {
+                    $categoryClass = 'genre-default'; // default fallback
+                    $category = strtolower(trim($row['book_category']));
+
+                    if ($category === 'fiction') {
+                        $categoryClass = 'genre-fiction';
+                    } else if ($category === 'non-fiction' || $category === 'non fiction') {
+                        $categoryClass = 'genre-nonfiction';
+                    } else if ($category === 'biography') {
+                        $categoryClass = 'genre-biography';
+                    } else if ($category === 'mystery') {
+                        $categoryClass = 'genre-mystery';
+                    } else if ($category === 'science') {
+                        $categoryClass = 'genre-science';
+                    } else if ($category === 'history') {
+                        $categoryClass = 'genre-history';
+                    } else if ($category === 'others' || $category === 'other') {
+                        $categoryClass = 'genre-others';
+                    }
+
+            ?>
+                    <div class="book-main-container">
+                        <div class="book-container">
+                            <img src="<?= htmlspecialchars($row['book_cover']); ?>" class="book-cover" alt="Book Cover">
+                            <div class="overlay">
+                                <button class="archive-btn" onclick="archiveBook(<?= $row['book_id']; ?>)">ARCHIVE</button>
+                            </div>
+                        </div>
+                        <div class="book-details">
+                            <h5><?= htmlspecialchars($row['book_title']); ?></h5>
+                            <p><?= htmlspecialchars($row['book_author']); ?></p>
+                            <span class="book-category <?= $categoryClass ?>">
+                                <?= htmlspecialchars($row['book_category']) ?>
+                            </span>
+                        </div>
+                    </div>
+            <?php
+                }
+            }else {
+    echo '
+    <div class="no-books-container">
+        <img src="../public/images/no-found.jpg" alt="No books">
+    </div>';
+}
+            ?>
+        </div>
+    </div>
+
+            <div class="titles">
+                <div class="available" id="bookSectionTitle">Upcoming Books</div>
+            </div>
+    <!-- Upcoming Books Section -->
+    <div id="availableBooksSection" class="book-section">
+        <div class="book-list">
+            <?php
+            $query = "SELECT book_id, book_cover, book_title,book_category, book_author FROM tbl_books WHERE status = 'Upcoming'";
             $result = mysqli_query($conn, $query);
 
             if (mysqli_num_rows($result) > 0) {
@@ -103,11 +162,15 @@ if (isset($_SESSION['archive_success'])) {
             <?php
                 }
             } else {
-                echo "<p>No available books found.</p>";
-            }
+    echo '
+    <div class="no-books-container">
+        <img src="../public/images/no-found.jpg" alt="No books">
+    </div>';
+}
             ?>
         </div>
     </div>
+    
 
     <!-- Archived Books Section (initially hidden) -->
     <div id="archivedBooksSection" class="book-section" style="display: none;">
@@ -157,8 +220,11 @@ if (isset($_SESSION['archive_success'])) {
             <?php
                 }
             } else {
-                echo "<p>No archived books found.</p>";
-            }
+    echo '
+    <div class="no-books-container">
+        <img src="../public/images/no-found.jpg" alt="No books">
+    </div>';
+}
             ?>
         </div>
     </div>

@@ -178,8 +178,12 @@ if ($setting_result) {
         <?php
             }
         } else {
-            echo "<p>No available books found.</p>";
-        }
+    echo '
+    <div class="no-books-container">
+        <img src="../public/images/no-found.jpg" alt="No books">
+    </div>';
+}
+
         ?>
     </div>
     </script>
@@ -271,8 +275,12 @@ if ($setting_result) {
         <?php
             }
         } else {
-            echo "<p>No upcoming books found.</p>";
-        }
+    echo '
+    <div class="no-books-container">
+        <img src="../public/images/no-found.jpg" alt="No books">
+    </div>';
+}
+
         ?>
     </div>
 

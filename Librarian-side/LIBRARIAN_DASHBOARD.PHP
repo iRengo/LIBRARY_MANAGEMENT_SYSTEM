@@ -47,11 +47,12 @@ $borrowed_books_result = $conn->query($borrowed_books_query);
 $borrowed_books_count = $borrowed_books_result->fetch_assoc()['total'] ?? 0;
 
 
-
 $fines_query = "
 SELECT 
-    DATE_FORMAT(sf.date_issued, '%b') AS month_short,  -- Jan, Feb, etc.
-    SUM(ft.price) AS total_fines
+    DATE_FORMAT(sf.date_issued, '%b') AS month_short,
+    SUM(ft.price) AS total_fines,
+    SUM(sf.overdue_amount) AS total_overdue_amount,
+    SUM(ft.price) + SUM(sf.overdue_amount) AS total_combined
 FROM student_fines sf
 JOIN fines_table ft ON sf.fine_id = ft.fine_id
 WHERE sf.status = 'Paid'
@@ -62,12 +63,16 @@ ORDER BY MONTH(sf.date_issued)
 $fines_result = $conn->query($fines_query);
 
 $months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
 $fines_data_assoc = [];
 while ($row = $fines_result->fetch_assoc()) {
-    $fines_data_assoc[$row['month_short']] = (float)$row['total_fines'];
+    // Store the combined total (base fine + overdue amount) per month
+    $fines_data_assoc[$row['month_short']] = (float)$row['total_combined'];
 }
+
 $fines_data = [];
 foreach ($months as $month) {
+    // Fill with 0 if no data for that month
     $fines_data[] = $fines_data_assoc[$month] ?? 0;
 }
 

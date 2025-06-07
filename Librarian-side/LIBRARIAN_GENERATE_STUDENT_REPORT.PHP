@@ -159,37 +159,63 @@ ob_start();
         <thead>
             <tr>
                 <th>Fine Type</th>
-                <th>Amount</th>
+                <th>Fine Amount</th>
+                <th>Overdue Amount</th>
+                <th>Total</th>
                 <th>Date Issued</th>
                 <th>Status</th>
             </tr>
         </thead>
         <tbody>
             <?php
+            $totalFineAmount = 0;
+            $totalOverdueAmount = 0;
+            $totalOverall = 0;
+
             $fines_sql = "
-                SELECT f.fine_name, f.price, sf.date_issued, sf.status
+                SELECT f.fine_name, f.price, sf.overdue_amount, sf.date_issued, sf.status
                 FROM student_fines sf
                 LEFT JOIN fines_table f ON sf.fine_id = f.fine_id
                 WHERE sf.student_no = '$selectedStudent'
                 ORDER BY sf.date_issued DESC
             ";
             $fines_result = mysqli_query($conn, $fines_sql);
+
             if (mysqli_num_rows($fines_result) > 0) {
                 while ($row = mysqli_fetch_assoc($fines_result)) {
+                    $fineAmount = (float)$row['price'];
+                    $overdueAmount = (float)$row['overdue_amount'];
+                    $rowTotal = $fineAmount + $overdueAmount;
+
+                    $totalFineAmount += $fineAmount;
+                    $totalOverdueAmount += $overdueAmount;
+                    $totalOverall += $rowTotal;
+
                     echo "<tr>
                         <td>" . htmlspecialchars($row['fine_name']) . "</td>
-                        <td>₱" . number_format((float)$row['price'], 2) . "</td>
+                        <td>₱" . number_format($fineAmount, 2) . "</td>
+                        <td>₱" . number_format($overdueAmount, 2) . "</td>
+                        <td>₱" . number_format($rowTotal, 2) . "</td>
                         <td>" . htmlspecialchars($row['date_issued']) . "</td>
                         <td>" . htmlspecialchars($row['status']) . "</td>
                     </tr>";
                 }
+                // Total row
+                echo "<tr style='font-weight:bold; background:#f0f0f0;'>
+                    <td>Total</td>
+                    <td>₱" . number_format($totalFineAmount, 2) . "</td>
+                    <td>₱" . number_format($totalOverdueAmount, 2) . "</td>
+                    <td>₱" . number_format($totalOverall, 2) . "</td>
+                    <td colspan='2'></td>
+                </tr>";
             } else {
-                echo "<tr><td colspan='4'>No fines found.</td></tr>";
+                echo "<tr><td colspan='6'>No fines found.</td></tr>";
             }
             ?>
         </tbody>
     </table>
 </div>
+
 
 </body>
 </html>

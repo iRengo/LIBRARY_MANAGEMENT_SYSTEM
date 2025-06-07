@@ -417,3 +417,16 @@
     background-color: #343a40; /* Dark fallback */
     color: white;
 }
+.no-books-container {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.no-books-container img {
+    width: 700px;
+    opacity: 0.6;
+    display: block;
+    margin: 0 auto;
+    margin-left: 50%;
+}
+

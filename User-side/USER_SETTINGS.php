@@ -109,6 +109,7 @@ $fines_query = "
         rb.return_date,
         ft.fine_name,
         ft.price,
+        sf.overdue_amount,
         sf.proof,
         sf.date_issued,
         sf.status,
@@ -118,11 +119,12 @@ $fines_query = "
     JOIN tbl_books b ON sf.book_id = b.book_id
     LEFT JOIN borrowed_books bb ON sf.book_id = bb.book_id AND sf.student_no = bb.student_no
     LEFT JOIN returned_books rb ON sf.book_id = rb.book_id AND sf.student_no = rb.student_no
-    WHERE sf.student_no = ? ORDER BY violation_id desc;
+    WHERE sf.student_no = ?
+    ORDER BY (sf.status = 'unpaid') DESC, sf.violation_id DESC
 ";
 
 $fine_stmt = $conn->prepare($fines_query);
-$fine_stmt->bind_param("s", $student_no);  // Use 's' if student_no is string
+$fine_stmt->bind_param("s", $student_no);
 $fine_stmt->execute();
 $fine_result = $fine_stmt->get_result();
 
@@ -130,9 +132,6 @@ $fines_data = [];
 while ($fine_row = $fine_result->fetch_assoc()) {
     $fines_data[] = $fine_row;
 }
-
-
-
 
 ?>
 
@@ -239,23 +238,50 @@ while ($fine_row = $fine_result->fetch_assoc()) {
                         <th>Borrow Date</th>
                         <th>Remark</th>
                         <th>Fine Amount</th>
+                        <th>Overdue Amount</th>
+                        <th>Total</th>
                         <th>Proof</th>
                         <th>Date Issued</th>
                         <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php if (empty($fines_data)): ?>
+                    <?php
+                    $totalFineAmount = 0;
+                    $totalOverdueAmount = 0;
+                    $totalOverall = 0;
+
+                    if (empty($fines_data)):
+                    ?>
                         <tr>
-                            <td colspan="8">No fines found.</td>
+                            <td colspan="9">No fines found.</td>
                         </tr>
                     <?php else: ?>
                         <?php foreach ($fines_data as $fine): ?>
+                            <?php
+                            $fineAmount = (float)$fine['price'];
+                            $overdueAmount = (float)$fine['overdue_amount'];
+                            $rowTotal = $fineAmount + $overdueAmount;
+
+                            $totalFineAmount += $fineAmount;
+                            $totalOverdueAmount += $overdueAmount;
+                            $totalOverall += $rowTotal;
+
+                            $status = strtolower($fine['status']);
+                            $class = '';
+                            if ($status === 'paid') {
+                                $class = 'status-paid';
+                            } else if (in_array($status, ['unpaid', 'pending', 'due'])) {
+                                $class = 'status-unpaid';
+                            }
+                            ?>
                             <tr>
                                 <td><?= htmlspecialchars($fine['book_title']) ?></td>
                                 <td><?= htmlspecialchars(date("F d, Y", strtotime($fine['preferred_date']))) ?></td>
                                 <td><?= htmlspecialchars($fine['fine_name']) ?></td>
-                                <td>$<?= number_format($fine['price'], 2) ?></td>
+                                <td>₱<?= number_format($fineAmount, 2) ?></td>
+                                <td>₱<?= number_format($overdueAmount, 2) ?></td>
+                                <td>₱<?= number_format($rowTotal, 2) ?></td>
                                 <td>
                                     <?php if (!empty($fine['proof'])): ?>
                                         <button class="view-proof-btn" data-img-src="../public/proofs/<?= htmlspecialchars($fine['proof']) ?>">
@@ -265,30 +291,22 @@ while ($fine_row = $fine_result->fetch_assoc()) {
                                         N/A
                                     <?php endif; ?>
                                 </td>
-
-
-
                                 <td><?= htmlspecialchars(date("F d, Y", strtotime($fine['date_issued']))) ?></td>
-                                <?php
-                                $status = strtolower($fine['status']);
-                                $class = '';
-                                if ($status === 'paid') {
-                                    $class = 'status-paid';
-                                } else if ($status === 'unpaid' || $status === 'pending' || $status === 'due') {
-                                    $class = 'status-unpaid';
-                                }
-                                ?>
-                                <td class="<?= $class ?>">
-                                    <?= htmlspecialchars(ucfirst($status)) ?>
-                                </td>
-
-
+                                <td class="<?= $class ?>"><?= htmlspecialchars(ucfirst($status)) ?></td>
                             </tr>
                         <?php endforeach; ?>
+
+                        <!-- Totals row -->
+                        <tr style="font-weight:bold; background:#f0f0f0;">
+                            <td colspan="3">Totals</td>
+                            <td>₱<?= number_format($totalFineAmount, 2) ?></td>
+                            <td>₱<?= number_format($totalOverdueAmount, 2) ?></td>
+                            <td>₱<?= number_format($totalOverall, 2) ?></td>
+                            <td colspan="3"></td>
+                        </tr>
                     <?php endif; ?>
                 </tbody>
             </table>
-
         </div>
 
     </div>

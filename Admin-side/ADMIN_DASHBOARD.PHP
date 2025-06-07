@@ -45,7 +45,9 @@ $total_books = $result->fetch_assoc()['total'] ?? 0;
 
 $fines_query = "
 SELECT 
-    SUM(ft.price) AS total_fines
+    SUM(ft.price) AS total_fines,
+    SUM(sf.overdue_amount) AS total_overdue_amount,
+    (SUM(ft.price) + SUM(sf.overdue_amount)) AS total_collected
 FROM student_fines sf
 JOIN fines_table ft ON sf.fine_id = ft.fine_id
 WHERE sf.status = 'Paid'
@@ -54,9 +56,13 @@ WHERE sf.status = 'Paid'
 $fines_result = $conn->query($fines_query);
 
 $fines_collected = 0;
+$overdue_collected = 0;
+$total_collected = 0;
 
 if ($fines_result && $row = $fines_result->fetch_assoc()) {
-    $fines_collected = $row['total_fines'] ?? 0;
+    $fines_collected = (float) ($row['total_fines'] ?? 0);
+    $overdue_collected = (float) ($row['total_overdue_amount'] ?? 0);
+    $total_collected = (float) ($row['total_collected'] ?? 0);
 }
 
 // Fetch top users: student_no, first_name, last_name, borrow_count (only counting returned books)
@@ -150,7 +156,7 @@ if ($result && $result->num_rows > 0) {
             </div>
             <div class="dashboard-card">
                 <h4>Fines Collected</h4>
-                <p>₱<?php echo number_format($fines_collected, 2); ?></p>
+                <p>₱<?php echo number_format($total_collected, 2); ?></p>
             </div>
         </div>
 
