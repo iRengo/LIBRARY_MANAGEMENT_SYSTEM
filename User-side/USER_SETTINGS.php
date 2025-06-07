@@ -118,7 +118,7 @@ $fines_query = "
     JOIN tbl_books b ON sf.book_id = b.book_id
     LEFT JOIN borrowed_books bb ON sf.book_id = bb.book_id AND sf.student_no = bb.student_no
     LEFT JOIN returned_books rb ON sf.book_id = rb.book_id AND sf.student_no = rb.student_no
-    WHERE sf.student_no = ?
+    WHERE sf.student_no = ? ORDER BY violation_id desc;
 ";
 
 $fine_stmt = $conn->prepare($fines_query);

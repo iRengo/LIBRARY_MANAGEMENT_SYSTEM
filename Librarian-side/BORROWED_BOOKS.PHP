@@ -2,23 +2,25 @@
 session_start();
 include '../Homepage/db_connect.php';
 
-$borrow_sql = "SELECT bb.*, b.book_cover 
+// Only fetch books with status 'Borrowed' and due_date in the future
+$borrow_sql = "SELECT bb.*, b.book_cover, b.book_author 
     FROM borrowed_books bb
     JOIN tbl_books b ON bb.book_id = b.book_id
-    WHERE bb.status = 'Borrowed'
+    WHERE bb.status = 'Borrowed' AND bb.due_date > CURDATE()
     ORDER BY bb.borrow_id DESC";
 
 $borrow_result = mysqli_query($conn, $borrow_sql);
 
-
-$total_borrowed_sql = "SELECT COUNT(*) AS total FROM borrowed_books WHERE status = 'Borrowed'";
+// Count only valid borrowed books (not overdue)
+$total_borrowed_sql = "SELECT COUNT(*) AS total 
+    FROM borrowed_books 
+    WHERE status = 'Borrowed' AND due_date > CURDATE()";
 $total_borrowed_result = mysqli_query($conn, $total_borrowed_sql);
 $total_borrowed = 0;
 if ($total_borrowed_result && mysqli_num_rows($total_borrowed_result) > 0) {
     $row_total = mysqli_fetch_assoc($total_borrowed_result);
     $total_borrowed = $row_total['total'];
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -66,70 +68,58 @@ if ($total_borrowed_result && mysqli_num_rows($total_borrowed_result) > 0) {
 
                 <tbody>
                     <?php
-                    $borrow_sql = "SELECT bb.*, b.book_cover, b.book_author 
-            FROM borrowed_books bb
-            JOIN tbl_books b ON bb.book_id = b.book_id
-            WHERE bb.status = 'Borrowed'
-            ORDER BY bb.borrow_id DESC";
+if ($borrow_result && mysqli_num_rows($borrow_result) > 0) {
+    while ($row = mysqli_fetch_assoc($borrow_result)) {
+        $imageURL = htmlspecialchars($row['book_cover']);
+        $bookTitle = htmlspecialchars($row['book_title']);
+        $author = htmlspecialchars($row['book_author']);
 
-                    $borrow_result = mysqli_query($conn, $borrow_sql);
-
-                    if ($borrow_result && mysqli_num_rows($borrow_result) > 0) {
-                        while ($row = mysqli_fetch_assoc($borrow_result)) {
-                            $imageURL = htmlspecialchars($row['book_cover']);
-                            $bookTitle = htmlspecialchars($row['book_title']);
-                            $author = htmlspecialchars($row['book_author']);
-
-                            echo "<tr>
-                    <td class='book-icon-cell'>
-                        <button 
-                            class='book-details-btn' 
-                            data-title='{$bookTitle}' 
-                            data-author='{$author}' 
-                            data-cover='{$imageURL}' 
-                            style='background:none; border:none; cursor:pointer; font-size: 24px; color:#1C2E5C;' 
-                            title='View Book Details'>
-                            <ion-icon name='book-outline'></ion-icon>
-                        </button>
-                    </td>
-                    <td>{$row['borrow_id']}</td>
-                    <td>{$row['student_no']}</td>
-                    <td>{$bookTitle}</td>
-                    <td>{$row['due_date']}</td>
-                    <td>{$row['status']}</td>
-                    <td class='action-icons'>
-                        <button 
-    class='return-btn' 
-    data-borrow-id='{$row['borrow_id']}'
-    data-student-no='{$row['student_no']}'
-    data-book-id='{$row['book_id']}'
-    data-book-title='{$bookTitle}'
-    style='
-        padding: 6px 12px; 
-        background-color: #007bff; 
-        color: white; 
-        border: none; 
-        border-radius: 4px; 
-        cursor: pointer; 
-        display: inline-flex; 
-        align-items: center; 
-        gap: 6px;
-        font-size: 14px;
-    '
-    title='Mark as Returned'
->
-    <ion-icon name='arrow-undo-outline' style='font-size: 18px; vertical-align: middle;'></ion-icon>
-    Returned
-</button>
-
-                    </td>
-                </tr>";
-                        }
-                    } else {
-                        // No records from DB, show this row
-                        echo "<tr id='noDataRow'><td colspan='7' style='text-align:center; color:#666; font-style: italic;'>No borrow requests found.</td></tr>";
-                    }
-                    ?>
+        echo "<tr>
+            <td class='book-icon-cell'>
+                <button 
+                    class='book-details-btn' 
+                    data-title='{$bookTitle}' 
+                    data-author='{$author}' 
+                    data-cover='{$imageURL}' 
+                    style='background:none; border:none; cursor:pointer; font-size: 24px; color:#1C2E5C;' 
+                    title='View Book Details'>
+                    <ion-icon name='book-outline'></ion-icon>
+                </button>
+            </td>
+            <td>{$row['borrow_id']}</td>
+            <td>{$row['student_no']}</td>
+            <td>{$bookTitle}</td>
+            <td>{$row['due_date']}</td>
+            <td>{$row['status']}</td>
+            <td class='action-icons'>
+                <button 
+                    class='return-btn' 
+                    data-borrow-id='{$row['borrow_id']}'
+                    data-student-no='{$row['student_no']}'
+                    data-book-id='{$row['book_id']}'
+                    data-book-title='{$bookTitle}'
+                    style='
+                        padding: 6px 12px; 
+                        background-color: #007bff; 
+                        color: white; 
+                        border: none; 
+                        border-radius: 4px; 
+                        cursor: pointer; 
+                        display: inline-flex; 
+                        align-items: center; 
+                        gap: 6px;
+                        font-size: 14px;'
+                    title='Mark as Returned'>
+                    <ion-icon name='arrow-undo-outline' style='font-size: 18px; vertical-align: middle;'></ion-icon>
+                    Returned
+                </button>
+            </td>
+        </tr>";
+    }
+} else {
+    echo "<tr id='noDataRow'><td colspan='7' style='text-align:center; color:#666; font-style: italic;'>No borrow requests found.</td></tr>";
+}
+?>
 
                     <!-- Initially hidden, show on search filter no matches -->
                     <tr id="noResultsRow" style="display:none;">

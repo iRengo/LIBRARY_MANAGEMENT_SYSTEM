@@ -16,10 +16,10 @@ if (isset($_SESSION['error'])) {
     unset($_SESSION['error']); 
 }
 
-// Initialize variables to avoid undefined warnings
+
 $first_name = $last_name = $student_no = $book_title = $book_author = $ISBN = "";
 $borrow_date = date("Y-m-d"); // Set borrow date to today
-$due_date = date("Y-m-d", strtotime("+3 day")); // Set due date to tomorrow
+$due_date = date("Y-m-d", strtotime("+3 day")); 
 
 // Get student details based on logged-in user
 if (isset($_SESSION['acc_no'])) {
@@ -251,19 +251,37 @@ $borrow_blocked = $has_overdue_books || $has_unpaid_fines;
 
 $max_borrow_reached = false;
 
-// Check if student has 3 borrowed books
-$borrow_count_query = "SELECT COUNT(*) AS borrowed_count FROM borrowed_books 
-                       WHERE student_no = ? AND status = 'Borrowed'";
-$borrow_count_stmt = $conn->prepare($borrow_count_query);
-$borrow_count_stmt->bind_param("s", $student_no);
-$borrow_count_stmt->execute();
-$borrow_count_result = $borrow_count_stmt->get_result();
-$borrowed_count = $borrow_count_result->fetch_assoc()['borrowed_count'] ?? 0;
-$borrow_count_stmt->close();
+// Fetch max allowed books per user from lms_settings
+$settings_query = "SELECT setting_value FROM lms_settings WHERE setting_key = 'max_books_per_user'";
+$settings_result = $conn->query($settings_query);
+$max_books_allowed = 3; // fallback default
 
-if ($borrowed_count >= 3) {
-    $max_borrow_reached = true;
+if ($settings_result && $settings_result->num_rows > 0) {
+    $row = $settings_result->fetch_assoc();
+    $max_books_allowed = (int)$row['setting_value'];
 }
+
+// Check how many books the student has currently borrowed
+$borrow_count_query = "
+    SELECT COUNT(*) AS borrowed_count 
+    FROM borrowed_books 
+    WHERE student_no = ? AND status = 'Borrowed'
+";
+
+if ($borrow_count_stmt = $conn->prepare($borrow_count_query)) {
+    $borrow_count_stmt->bind_param("s", $student_no);
+    $borrow_count_stmt->execute();
+    $borrow_count_stmt->bind_result($borrowed_count);
+    $borrow_count_stmt->fetch();
+    $borrow_count_stmt->close();
+
+    // Compare against the dynamic setting
+    $max_borrow_reached = ($borrowed_count >= $max_books_allowed);
+} else {
+    // Optional: log or handle error
+    error_log("Failed to prepare borrow count statement: " . $conn->error);
+}
+
 
 
 // 2. Get latest borrow status for the book and student
@@ -313,6 +331,21 @@ $check_return_query->close();
 // Flags for UI logic
 $already_borrowed = ($borrow_status === 'Borrowed');
 $borrow_pending = ($borrow_status === 'Pending');
+
+
+
+
+$borrowing_period_days = 3; // fallback default
+
+$setting_query = "SELECT setting_value FROM lms_settings WHERE setting_key = 'borrowing_period_days'";
+$result = mysqli_query($conn, $setting_query);
+
+if ($result && mysqli_num_rows($result) > 0) {
+    $row = mysqli_fetch_assoc($result);
+    $borrowing_period_days = (int)$row['setting_value'];
+}
+
+
 ?>
 
 
@@ -355,7 +388,7 @@ $borrow_pending = ($borrow_status === 'Pending');
 
             <?php elseif ($max_borrow_reached): ?>
                 <button class="borrow-button blocked" disabled>
-                    Maximum Borrow Limit Reached (3 Books)
+                    Maximum Borrow Limit Reached
                 </button>
 
             <?php elseif ($borrow_status === 'Approved'): ?>
@@ -696,39 +729,25 @@ $borrow_pending = ($borrow_status === 'Pending');
     </script>
 
     <script>
-        function formatDate(date) {
-            let year = date.getFullYear();
-            let month = (date.getMonth() + 1).toString().padStart(2, '0');
-            let day = date.getDate().toString().padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        }
+    const BORROWING_PERIOD_DAYS = <?= $borrowing_period_days ?>;
 
-        window.onload = function() {
-            let today = new Date();
-            let formattedDate = formatDate(today);
-            let input = document.getElementById('preferred_date');
-            input.setAttribute('min', formattedDate);
+    function formatDate(date) {
+        let year = date.getFullYear();
+        let month = (date.getMonth() + 1).toString().padStart(2, '0');
+        let day = date.getDate().toString().padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
 
+    window.onload = function() {
+        let today = new Date();
+        let formattedDate = formatDate(today);
+        let input = document.getElementById('preferred_date');
+        input.setAttribute('min', formattedDate);
 
-            input.addEventListener('input', function() {
-                let selectedDate = new Date(this.value);
-                let dayOfWeek = selectedDate.getDay();
-                if (dayOfWeek === 6 || dayOfWeek === 0) {
-                    Swal.fire({
-                        title: 'Weekend Not Allowed!',
-                        text: 'The library is closed on weekends. Please select a weekday (Monday to Friday).',
-                        icon: 'warning',
-                        confirmButtonText: 'Okay'
-                    });
-                    this.value = '';
-                }
-            });
-        };
-
-        document.getElementById('preferred_date').addEventListener('change', function() {
-            let preferredDate = new Date(this.value);
-
-            if (preferredDate.getDay() === 6 || preferredDate.getDay() === 0) {
+        input.addEventListener('input', function() {
+            let selectedDate = new Date(this.value);
+            let dayOfWeek = selectedDate.getDay();
+            if (dayOfWeek === 6 || dayOfWeek === 0) {
                 Swal.fire({
                     title: 'Weekend Not Allowed!',
                     text: 'The library is closed on weekends. Please select a weekday (Monday to Friday).',
@@ -736,27 +755,38 @@ $borrow_pending = ($borrow_status === 'Pending');
                     confirmButtonText: 'Okay'
                 });
                 this.value = '';
-                return;
             }
-
-            let dueDate = new Date(preferredDate);
-            dueDate.setDate(preferredDate.getDate() + 3);
-
-
-            if (dueDate.getDay() === 6) {
-                dueDate.setDate(dueDate.getDate() + 2);
-            } else if (dueDate.getDay() === 0) {
-                dueDate.setDate(dueDate.getDate() + 1);
-            }
-
-            let year = dueDate.getFullYear();
-            let month = (dueDate.getMonth() + 1).toString().padStart(2, '0');
-            let day = dueDate.getDate().toString().padStart(2, '0');
-
-
-            document.getElementById('due_date').value = `${year}-${month}-${day}`;
         });
-    </script>
+    };
+
+    document.getElementById('preferred_date').addEventListener('change', function() {
+        let preferredDate = new Date(this.value);
+
+        if (preferredDate.getDay() === 6 || preferredDate.getDay() === 0) {
+            Swal.fire({
+                title: 'Weekend Not Allowed!',
+                text: 'The library is closed on weekends. Please select a weekday (Monday to Friday).',
+                icon: 'warning',
+                confirmButtonText: 'Okay'
+            });
+            this.value = '';
+            return;
+        }
+
+        let dueDate = new Date(preferredDate);
+        dueDate.setDate(preferredDate.getDate() + BORROWING_PERIOD_DAYS);
+
+        // Adjust if due date falls on weekend
+        if (dueDate.getDay() === 6) {
+            dueDate.setDate(dueDate.getDate() + 2);
+        } else if (dueDate.getDay() === 0) {
+            dueDate.setDate(dueDate.getDate() + 1);
+        }
+
+        document.getElementById('due_date').value = formatDate(dueDate);
+    });
+</script>
+
 
 
 

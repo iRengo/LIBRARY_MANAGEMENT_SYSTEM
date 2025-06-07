@@ -334,3 +334,23 @@ td {
     background-color: #45a049;
     transform: scale(1.05);
 }
+.pagination {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.pagination a {
+    color: #333;
+    padding: 8px 12px;
+    text-decoration: none;
+    border: 1px solid #ccc;
+    margin: 0 4px;
+    border-radius: 4px;
+    background: #f9f9f9;
+}
+
+.pagination a.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}

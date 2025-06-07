@@ -1,7 +1,28 @@
 <?php
 session_start();
 include '../Homepage/db_connect.php';
+
+// Default flags
+$allow_add_book = false;
+$allow_librarian_edit_book = false;
+
+// Fetch setting for adding books (setting_id = 4)
+$setting_sql = "SELECT setting_id, setting_value FROM lms_settings WHERE setting_id IN (4,5)";
+$setting_result = mysqli_query($conn, $setting_sql);
+
+if ($setting_result) {
+    while ($row = mysqli_fetch_assoc($setting_result)) {
+        if ($row['setting_id'] == 4) {
+            $allow_add_book = ($row['setting_value'] === '1');
+        } elseif ($row['setting_id'] == 5) {
+            $allow_librarian_edit_book = ($row['setting_value'] === '1');
+        }
+    }
+} else {
+    error_log("Database query failed: " . mysqli_error($conn));
+}
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -27,18 +48,20 @@ include '../Homepage/db_connect.php';
             <div class="titles" style="display: flex; align-items: center; gap: 20px;">
                 <div class="available" style="font-size: 1.5rem; font-weight: bold;">Available Books</div>
 
-                <!-- Add Book Button -->
-                <button onclick="openAddBookForm()" style="
-                background-color: #4CAF50;
-                color: white;
-                padding: 8px 16px;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-                font-size: 0.9rem;
-            ">
-                    + Add Book
-                </button>
+                <!-- Add Book Button (Visible only if allowed) -->
+                <?php if ($allow_add_book): ?>
+                    <button onclick="openAddBookForm()" style="
+        background-color: #4CAF50;
+        color: white;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 0.9rem;
+    ">
+                        + Add Book
+                    </button>
+                <?php endif; ?>
             </div>
 
             <div class="search-bar">
@@ -101,24 +124,24 @@ include '../Homepage/db_connect.php';
                     $stock_class = 'stock-low';
                 }
 
-                 $categoryClass = 'genre-default'; // default fallback
-                    $category = strtolower(trim($row['book_category']));
+                $categoryClass = 'genre-default'; // default fallback
+                $category = strtolower(trim($row['book_category']));
 
-                    if ($category === 'fiction') {
-                        $categoryClass = 'genre-fiction';
-                    } else if ($category === 'non-fiction' || $category === 'non fiction') {
-                        $categoryClass = 'genre-nonfiction';
-                    } else if ($category === 'biography') {
-                        $categoryClass = 'genre-biography';
-                    } else if ($category === 'mystery') {
-                        $categoryClass = 'genre-mystery';
-                    } else if ($category === 'science') {
-                        $categoryClass = 'genre-science';
-                    } else if ($category === 'history') {
-                        $categoryClass = 'genre-history';
-                    } else if ($category === 'others' || $category === 'other') {
-                        $categoryClass = 'genre-others';
-                    }
+                if ($category === 'fiction') {
+                    $categoryClass = 'genre-fiction';
+                } else if ($category === 'non-fiction' || $category === 'non fiction') {
+                    $categoryClass = 'genre-nonfiction';
+                } else if ($category === 'biography') {
+                    $categoryClass = 'genre-biography';
+                } else if ($category === 'mystery') {
+                    $categoryClass = 'genre-mystery';
+                } else if ($category === 'science') {
+                    $categoryClass = 'genre-science';
+                } else if ($category === 'history') {
+                    $categoryClass = 'genre-history';
+                } else if ($category === 'others' || $category === 'other') {
+                    $categoryClass = 'genre-others';
+                }
         ?>
                 <div class="book-main-container">
                     <a href="#" class="book-link"
@@ -461,10 +484,21 @@ include '../Homepage/db_connect.php';
             voiceBtn.title = "Voice search not supported in this browser.";
         }
 
+        const allowLibrarianEditBook = <?php echo json_encode($allow_librarian_edit_book); ?>;
+
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.book-link').forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
+
+                    if (!allowLibrarianEditBook) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Editing Disabled',
+                            text: 'Editing books is currently disabled by admin settings.'
+                        });
+                        return; // stop showing the edit modal
+                    }
 
                     const bookId = this.dataset.bookId;
                     const bookTitle = this.dataset.bookTitle;

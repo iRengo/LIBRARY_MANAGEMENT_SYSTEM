@@ -7,14 +7,18 @@
 
 .library-settings {
   width: 260px;
-  height: 83%; /* Adjust height to fit content */
+  height: 83%;
+  /* Adjust height to fit content */
   background-color: #fff;
   border-right: 1px solid #ccc;
   padding: 20px;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-  align-self: flex-start; /* Align to the top-left of the container */
-  margin-top: 40px; /* Add space below the header navbar */ 
-  margin-left: 20px; /* Add space to the left of the header navbar */
+  align-self: flex-start;
+  /* Align to the top-left of the container */
+  margin-top: 40px;
+  /* Add space below the header navbar */
+  margin-left: 20px;
+  /* Add space to the left of the header navbar */
 }
 
 .library-settings h2 {
@@ -33,7 +37,8 @@
   margin-bottom: 5px;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s ease, color 0.3s ease; /* Smooth hover transition */
+  transition: background-color 0.3s ease, color 0.3s ease;
+  /* Smooth hover transition */
 }
 
 .library-settings li.active {
@@ -42,8 +47,10 @@
 }
 
 .library-settings li:hover {
-  background-color: #234078; /* Match the active color */
-  color: #fff; /* Match the text color of active */
+  background-color: #234078;
+  /* Match the active color */
+  color: #fff;
+  /* Match the text color of active */
 }
 
 .main-content {
@@ -62,7 +69,8 @@
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  margin-top: 20px; /* Add spacing above the table for better layout */
+  margin-top: 20px;
+  /* Add spacing above the table for better layout */
 }
 
 table {
@@ -71,11 +79,14 @@ table {
 }
 
 thead {
-  background-color: #234078; /* Set background color for table header */
-  color: white; /* Ensure text is readable */
+  background-color: #234078;
+  /* Set background color for table header */
+  color: white;
+  /* Ensure text is readable */
 }
 
-th, td {
+th,
+td {
   text-align: left;
   padding: 16px;
 }
@@ -88,7 +99,8 @@ button.edit {
   margin-right: 8px;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s ease; /* Smooth hover transition for buttons */
+  transition: background-color 0.3s ease;
+  /* Smooth hover transition for buttons */
 }
 
 button.clear {
@@ -98,15 +110,19 @@ button.clear {
   padding: 6px 12px;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s ease; /* Smooth hover transition for buttons */
+  transition: background-color 0.3s ease;
+
 }
 
 button.edit:hover {
-  background-color: #45a049; /* Slightly darker green on hover */
+  background-color: #45a049;
 }
 
+
+
 button.clear:hover {
-  background-color: #d32f2f; /* Slightly darker red on hover */
+  background-color: #d32f2f;
+  /* Slightly darker red on hover */
 }
 
 .box-shadow {
@@ -114,7 +130,8 @@ button.clear:hover {
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  height: auto; /* Adjust height to fit content */
+  height: auto;
+  /* Adjust height to fit content */
   margin-bottom: 20px;
 }
 
@@ -160,7 +177,8 @@ button.clear:hover {
   border-radius: 12px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   margin-bottom: 20px;
-  max-width: 600px; /* Increase the width */
+  max-width: 600px;
+  /* Increase the width */
 }
 
 .card h3 {
@@ -217,10 +235,10 @@ button.clear:hover {
   background-color: #FFFF;
   border-radius: 10px;
   margin-bottom: 30px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+
   padding: 0 0 20px 0;
   overflow: hidden;
-  max-width: 850px; /* Increase the width */
+  max-width: 850px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -244,11 +262,14 @@ table {
 }
 
 thead {
-  background-color: #234078; /* Set background color for table header */
-  color: white; /* Ensure text is readable */
+  background-color: #234078;
+  /* Set background color for table header */
+  color: white;
+  /* Ensure text is readable */
 }
 
-th, td {
+th,
+td {
   padding: 12px 16px;
   border-bottom: 1px solid #ddd;
 }
@@ -271,6 +292,53 @@ td:last-child {
   background-color: #4CAF50;
 }
 
+
 .btn.delete {
   background-color: #f44336;
+}
+
+.btn-group {
+  margin-top: 15px;
+}
+
+.btn-group button {
+  padding: 6px 15px;
+  margin-right: 10px;
+}
+
+
+.setting-toggle {
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #f9f9f9;
+    font-size: 14px;
+    transition: 0.3s ease;
+    cursor: pointer;
+}
+
+.setting-toggle:focus {
+    border-color: #007BFF;
+    outline: none;
+    background-color: #fff;
+}
+
+.save-button-container {
+    margin-top: 20px;
+    text-align: right;
+}
+
+.save-btn {
+    background-color: #062f5b;
+    color: white;
+    padding: 10px 18px;
+    font-size: 15px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.save-button:hover {
+    background-color: #155eac;
 }
