@@ -68,13 +68,13 @@ if ($total_borrowed_result && mysqli_num_rows($total_borrowed_result) > 0) {
 
                 <tbody>
                     <?php
-if ($borrow_result && mysqli_num_rows($borrow_result) > 0) {
-    while ($row = mysqli_fetch_assoc($borrow_result)) {
-        $imageURL = htmlspecialchars($row['book_cover']);
-        $bookTitle = htmlspecialchars($row['book_title']);
-        $author = htmlspecialchars($row['book_author']);
+                    if ($borrow_result && mysqli_num_rows($borrow_result) > 0) {
+                        while ($row = mysqli_fetch_assoc($borrow_result)) {
+                            $imageURL = htmlspecialchars($row['book_cover']);
+                            $bookTitle = htmlspecialchars($row['book_title']);
+                            $author = htmlspecialchars($row['book_author']);
 
-        echo "<tr>
+                            echo "<tr>
             <td class='book-icon-cell'>
                 <button 
                     class='book-details-btn' 
@@ -115,11 +115,11 @@ if ($borrow_result && mysqli_num_rows($borrow_result) > 0) {
                 </button>
             </td>
         </tr>";
-    }
-} else {
-    echo "<tr id='noDataRow'><td colspan='7' style='text-align:center; color:#666; font-style: italic;'>No borrow requests found.</td></tr>";
-}
-?>
+                        }
+                    } else {
+                        echo "<tr id='noDataRow'><td colspan='7' style='text-align:center; color:#666; font-style: italic;'>No borrow requests found.</td></tr>";
+                    }
+                    ?>
 
                     <!-- Initially hidden, show on search filter no matches -->
                     <tr id="noResultsRow" style="display:none;">
@@ -165,6 +165,7 @@ if ($borrow_result && mysqli_num_rows($borrow_result) > 0) {
                         <option value="1">Damaged - Low</option>
                         <option value="2">Damaged - Medium</option>
                         <option value="3">Damaged - High</option>
+                        <option value="4">Book - Lost</option>
                     </select>
                     <div id="proof-section" style="display: none; margin-top: 10px;">
                         <label for="proof_image">Upload Proof of Damage:</label><br>
@@ -175,7 +176,7 @@ if ($borrow_result && mysqli_num_rows($borrow_result) > 0) {
                                 const conditionSelect = Swal.getPopup().querySelector('#book_condition');
                                 const proofSection = Swal.getPopup().querySelector('#proof-section');
                                 conditionSelect.addEventListener('change', () => {
-                                    proofSection.style.display = (conditionSelect.value !== "Good" && conditionSelect.value !== "") ? 'block' : 'none';
+                                    proofSection.style.display = (!["Good", "4"].includes(conditionSelect.value) && conditionSelect.value !== "") ? 'block' : 'none';
                                 });
                             },
                             showCancelButton: true,
@@ -187,7 +188,7 @@ if ($borrow_result && mysqli_num_rows($borrow_result) > 0) {
                                     Swal.showValidationMessage('Please select the book condition.');
                                     return false;
                                 }
-                                if (bookCondition !== "Good" && !proofImage) {
+                                if (!["Good", "4"].includes(bookCondition) && !proofImage) {
                                     Swal.showValidationMessage('Please upload a proof of damage image.');
                                     return false;
                                 }
@@ -226,14 +227,34 @@ if ($borrow_result && mysqli_num_rows($borrow_result) > 0) {
                                     .then(response => {
                                         Swal.fire('Success', response, 'success').then(() => location.reload());
                                     });
+                            } else if (book_condition === "4") {
+                                // LOST
+                                const formData = new FormData();
+                                formData.append("fine_id", book_condition);
+                                formData.append("student_no", student_no);
+                                formData.append("book_id", book_id);
+                                formData.append("borrow_id", borrow_id);
+                                formData.append("damage_description", "Book reported as lost.");
+
+                                fetch('LIBRARIAN_INSERT_STUDENT_FINE.php', {
+                                        method: 'POST',
+                                        body: formData
+                                    })
+                                    .then(res => res.json())
+                                    .then(data => {
+                                        Swal.fire(data.success ? 'Book Marked as Lost' : 'Error', data.message, data.success ? 'warning' : 'error')
+                                            .then(() => data.success && location.reload());
+                                    });
+
                             } else {
+                                // DAMAGED
                                 const formData = new FormData();
                                 formData.append("fine_id", book_condition);
                                 formData.append("student_no", student_no);
                                 formData.append("book_id", book_id);
                                 formData.append("borrow_id", borrow_id);
                                 formData.append("proof_image", proof_image);
-                                formData.append("damage_description", "Damage reported upon return."); // ADD THIS
+                                formData.append("damage_description", "Damage reported upon return.");
 
                                 fetch('LIBRARIAN_INSERT_STUDENT_FINE.php', {
                                         method: 'POST',

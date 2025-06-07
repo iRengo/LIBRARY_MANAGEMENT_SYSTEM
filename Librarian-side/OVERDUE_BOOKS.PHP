@@ -153,12 +153,13 @@ $loggedInUser = $_SESSION['librarian_no'];
                             html: `
                     <p><strong>Book Title:</strong> ${bookTitle}</p>
                     <p><strong>Student No:</strong> ${studentNo}</p>
-                    <select id="book_condition" class="swal2-select" style="width: 80%; padding: 8px; margin-top: 10px;">
+                    <select id="book_condition" class="swal2-select" style="width: 80%; margin-top: 10px;">
                         <option value="">Select Book Condition</option>
                         <option value="Good">Good</option>
-                        <option value="1">Damaged-Low</option>
-                        <option value="2">Damaged-Medium</option>
-                        <option value="3">Damaged-High</option>
+                        <option value="1">Damaged - Low</option>
+                        <option value="2">Damaged - Medium</option>
+                        <option value="3">Damaged - High</option>
+                        <option value="4">Book - Lost</option>
                     </select>
                     <div id="proof-section" style="display: none; margin-top: 10px;">
                         <label for="proof_image">Upload Proof of Damage:</label><br>
@@ -168,13 +169,8 @@ $loggedInUser = $_SESSION['librarian_no'];
                             didOpen: () => {
                                 const conditionSelect = Swal.getPopup().querySelector('#book_condition');
                                 const proofSection = Swal.getPopup().querySelector('#proof-section');
-
                                 conditionSelect.addEventListener('change', () => {
-                                    if (conditionSelect.value !== "Good" && conditionSelect.value !== "") {
-                                        proofSection.style.display = 'block';
-                                    } else {
-                                        proofSection.style.display = 'none';
-                                    }
+                                    proofSection.style.display = (!["Good", "4"].includes(conditionSelect.value) && conditionSelect.value !== "") ? 'block' : 'none';
                                 });
                             },
                             showCancelButton: true,
@@ -182,17 +178,14 @@ $loggedInUser = $_SESSION['librarian_no'];
                             preConfirm: () => {
                                 const bookCondition = Swal.getPopup().querySelector('#book_condition').value;
                                 const proofImage = Swal.getPopup().querySelector('#proof_image').files[0];
-
                                 if (!bookCondition) {
                                     Swal.showValidationMessage('Please select the book condition.');
                                     return false;
                                 }
-
-                                if (bookCondition !== "Good" && !proofImage) {
+                                if (!["Good", "4"].includes(bookCondition) && !proofImage) {
                                     Swal.showValidationMessage('Please upload a proof of damage image.');
                                     return false;
                                 }
-
                                 return {
                                     borrow_id: borrowId,
                                     student_no: studentNo,
@@ -202,51 +195,70 @@ $loggedInUser = $_SESSION['librarian_no'];
                                 };
                             }
                         }).then((result) => {
-                            if (result.isConfirmed && result.value) {
-                                const {
-                                    borrow_id,
-                                    student_no,
-                                    book_id,
-                                    book_condition,
-                                    proof_image
-                                } = result.value;
+                            if (!result.isConfirmed || !result.value) return;
+                            const {
+                                borrow_id,
+                                student_no,
+                                book_id,
+                                book_condition,
+                                proof_image
+                            } = result.value;
 
-                                if (book_condition === "Good") {
-                                    fetch('librarian_returned_book.php', {
-                                            method: 'POST',
-                                            headers: {
-                                                'Content-Type': 'application/x-www-form-urlencoded'
-                                            },
-                                            body: new URLSearchParams({
-                                                borrow_id,
-                                                student_no,
-                                                book_id,
-                                                book_condition
-                                            })
+                            if (book_condition === "Good") {
+                                fetch('LIBRARIAN_BORROW_ACTION.php', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/x-www-form-urlencoded'
+                                        },
+                                        body: new URLSearchParams({
+                                            action: 'return_book',
+                                            borrow_id,
+                                            student_no,
+                                            book_id
                                         })
-                                        .then(res => res.json())
-                                        .then(data => {
-                                            Swal.fire(data.success ? 'Success' : 'Error', data.message, data.success ? 'success' : 'error')
-                                                .then(() => data.success && location.reload());
-                                        });
-                                } else {
-                                    const formData = new FormData();
-                                    formData.append("fine_id", book_condition);
-                                    formData.append("student_no", student_no);
-                                    formData.append("book_id", book_id);
-                                    formData.append("borrow_id", borrow_id);
-                                    formData.append("proof_image", proof_image);
-                                    formData.append("damage_description", "Damage reported upon return."); 
-                                    fetch('LIBRARIAN_INSERT_STUDENT_FINE.php', {
-                                            method: 'POST',
-                                            body: formData
-                                        })
-                                        .then(res => res.json())
-                                        .then(fineRes => {
-                                            Swal.fire(fineRes.success ? 'Fine Issued' : 'Error', fineRes.message, fineRes.success ? 'warning' : 'error')
-                                                .then(() => fineRes.success && location.reload());
-                                        });
-                                }
+                                    })
+                                    .then(res => res.text())
+                                    .then(response => {
+                                        Swal.fire('Success', response, 'success').then(() => location.reload());
+                                    });
+                            } else if (book_condition === "4") {
+                                // LOST
+                                const formData = new FormData();
+                                formData.append("fine_id", book_condition);
+                                formData.append("student_no", student_no);
+                                formData.append("book_id", book_id);
+                                formData.append("borrow_id", borrow_id);
+                                formData.append("damage_description", "Book reported as lost.");
+
+                                fetch('LIBRARIAN_INSERT_STUDENT_FINE.php', {
+                                        method: 'POST',
+                                        body: formData
+                                    })
+                                    .then(res => res.json())
+                                    .then(data => {
+                                        Swal.fire(data.success ? 'Book Marked as Lost' : 'Error', data.message, data.success ? 'warning' : 'error')
+                                            .then(() => data.success && location.reload());
+                                    });
+
+                            } else {
+                                // DAMAGED
+                                const formData = new FormData();
+                                formData.append("fine_id", book_condition);
+                                formData.append("student_no", student_no);
+                                formData.append("book_id", book_id);
+                                formData.append("borrow_id", borrow_id);
+                                formData.append("proof_image", proof_image);
+                                formData.append("damage_description", "Damage reported upon return.");
+
+                                fetch('LIBRARIAN_INSERT_STUDENT_FINE.php', {
+                                        method: 'POST',
+                                        body: formData
+                                    })
+                                    .then(res => res.json())
+                                    .then(data => {
+                                        Swal.fire(data.success ? 'Fine Issued' : 'Error', data.message, data.success ? 'warning' : 'error')
+                                            .then(() => data.success && location.reload());
+                                    });
                             }
                         });
                     });

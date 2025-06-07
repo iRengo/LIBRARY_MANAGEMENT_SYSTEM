@@ -261,11 +261,10 @@ if ($settings_result && $settings_result->num_rows > 0) {
     $max_books_allowed = (int)$row['setting_value'];
 }
 
-// Check how many books the student has currently borrowed
 $borrow_count_query = "
     SELECT COUNT(*) AS borrowed_count 
     FROM borrowed_books 
-    WHERE student_no = ? AND status = 'Borrowed'
+    WHERE student_no = ? AND status IN ('Pending', 'Borrowed')
 ";
 
 if ($borrow_count_stmt = $conn->prepare($borrow_count_query)) {

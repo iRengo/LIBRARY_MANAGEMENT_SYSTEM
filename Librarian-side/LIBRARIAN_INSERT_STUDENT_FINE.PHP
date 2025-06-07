@@ -104,7 +104,7 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
     );
 
     if ($stmt->execute()) {
-        // Step 2: Insert user notification
+        // Step 2: Insert general fine notification
         $notif_type = 'pending_fine';
         $notif_message = "You have been issued a fine due to book damage (₱$damage_fine_amount). " .
             ($overdue_days > 0 ? "Additionally, ₱$overdue_amount was charged for being $overdue_days day(s) late. " : "") .
@@ -115,14 +115,53 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
         $notif_stmt->execute();
         $notif_stmt->close();
 
+        // Step 3: Check if this is a Lost Book fine
+        $fine_name_q = $conn->prepare("SELECT fine_name FROM fines_table WHERE fine_id = ?");
+        $fine_name_q->bind_param("i", $fine_id);
+        $fine_name_q->execute();
+        $fine_name_result = $fine_name_q->get_result();
 
-        $notif_stmt = $conn->prepare("INSERT INTO tbl_user_notifications (student_no, book_id, type, message, created_at) VALUES (?, ?, ?, ?, NOW())");
-        $notif_stmt->bind_param("ssss", $student_no, $book_id, $notif_type, $notif_message);
-        $notif_stmt->execute();
-        $notif_stmt->close();
+        $is_lost_book = false;
+        if ($fine_name_result && $fine_name_result->num_rows > 0) {
+            $fine_row = $fine_name_result->fetch_assoc();
+            $is_lost_book = ($fine_id == 4);
+        }
+        $fine_name_q->close();
 
-        // Step 3: Update borrowed_books status to 'Returned'
-        $update = $conn->prepare("UPDATE borrowed_books SET status = 'Returned' WHERE borrow_id = ?");
+        if ($is_lost_book) {
+            $lost_book = 'lost_fine';
+
+            // Include the total fine amount in the lost book notification message
+            $lost_notif_message = "You have been issued a LOST BOOK fine of ₱$total_fine. Please contact the library immediately.";
+
+            $lost_notif_stmt = $conn->prepare("INSERT INTO tbl_user_notifications (student_no, book_id, type, message, created_at) VALUES (?, ?, ?, ?, NOW())");
+            $lost_notif_stmt->bind_param("ssss", $student_no, $book_id, $lost_book, $lost_notif_message);
+            $lost_notif_stmt->execute();
+            $lost_notif_stmt->close();
+            $book_title_q = $conn->prepare("SELECT book_title FROM tbl_books WHERE book_id = ?");
+            $book_title_q->bind_param("s", $book_id);
+            $book_title_q->execute();
+            $book_title_result = $book_title_q->get_result();
+            $book_title = '';
+
+            if ($book_title_result && $book_title_result->num_rows > 0) {
+                $book_row = $book_title_result->fetch_assoc();
+                $book_title = $book_row['book_title'];
+            }
+            $book_title_q->close();
+
+            $date_reported = date('Y-m-d');
+            $lost_stmt = $conn->prepare("INSERT INTO lost_books (book_id, student_no, borrow_id, book_title, date_reported, fine_amount) VALUES (?, ?, ?, ?, ?, ?)");
+            $lost_stmt->bind_param("ssissd", $book_id, $student_no, $borrow_id, $book_title, $date_reported, $total_fine);
+            $lost_stmt->execute();
+            $lost_stmt->close();
+
+
+            $update = $conn->prepare("UPDATE borrowed_books SET status = 'Lost' WHERE borrow_id = ?");
+        } else {
+            // Not a lost book — set to Returned
+            $update = $conn->prepare("UPDATE borrowed_books SET status = 'Returned' WHERE borrow_id = ?");
+        }
         $update->bind_param("s", $borrow_id);
 
         if ($update->execute()) {
