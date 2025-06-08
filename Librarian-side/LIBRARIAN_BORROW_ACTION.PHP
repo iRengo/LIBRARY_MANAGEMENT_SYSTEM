@@ -191,7 +191,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $new_borrow_id = uniqid('BRW-');
             $preferred_date = $reservation['preferred_date'];
-            $due_date = date('Y-m-d', strtotime($preferred_date . ' +7 days'));
+            $setting_query = $conn->prepare("SELECT setting_value FROM lms_settings WHERE setting_key = 'borrowing_perioid_days' LIMIT 1");
+            $setting_query->execute();
+            $setting_result = $setting_query->get_result();
+            $setting_row = $setting_result->fetch_assoc();
+
+            $max_period_days = isset($setting_row['setting_value']) ? (int)$setting_row['setting_value'] : 3;
+            $due_date = date('Y-m-d', strtotime($preferred_date . " +$max_period_days days"));
             $now = date('Y-m-d H:i:s');
 
             // Get ISBN
@@ -233,11 +239,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $dec_stock->bind_param("i", $book_id);
             $dec_stock->execute();
 
-            // Send notification
+
             $message = "Your reserved book '{$book_title}' is now available and automatically borrowed for you. Please Pickup on {$preferred_date}. you only have 24hours or your Request will automatically cancelled";
             $type = "borrowed";
 
-            // Send email notification to the student
             $mail = new PHPMailer(true);
 
             try {

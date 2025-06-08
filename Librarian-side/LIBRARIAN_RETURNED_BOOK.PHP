@@ -2,10 +2,9 @@
 session_start();
 include '../homepage/db_connect.php';
 
-// Setup error handling
-ini_set('display_errors', 0); // Hide errors from frontend
+ini_set('display_errors', 0); 
 ini_set('log_errors', 1);
-ini_set('error_log', __DIR__ . '/php-error.log'); // Logs errors
+ini_set('error_log', __DIR__ . '/php-error.log'); 
 error_reporting(E_ALL);
 
 // Ensure JSON output only

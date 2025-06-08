@@ -31,7 +31,7 @@ foreach ($data['results'] as $book) {
     $author = isset($book['authors'][0]['name']) ? $conn->real_escape_string($book['authors'][0]['name']) : 'Unknown';
     $cover = isset($book['formats']['image/jpeg']) ? $conn->real_escape_string($book['formats']['image/jpeg']) : null;
     $ebook_no = $conn->real_escape_string($book['id']);
-    $publication_date = date('Y-m-d', strtotime('-1 day'));
+    $publication_date = date('Y-m-d', strtotime('+1 day'));
     $status = 'Upcoming';
     $stocks = 30;
 
