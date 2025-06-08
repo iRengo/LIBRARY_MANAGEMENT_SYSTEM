@@ -118,10 +118,15 @@ unset($_SESSION['error_message']); // Clear error message after displaying
                     <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
                 </div>
                 <?php if (!empty($error_message)) : ?>
-                    <div class="alert alert-danger">
-                        <p style="color:red;"><?php echo $error_message; ?> </p>
-                    </div>
-                <?php endif; ?>
+<script>
+    Swal.fire({
+        icon: 'error',
+        title: 'Login Failed',
+        text: '<?php echo addslashes($error_message); ?>',
+        confirmButtonColor: '#d33'
+    });
+</script>
+<?php endif; ?>
                 <div class="form-group">
                     <div class="g-recaptcha" data-sitekey="6LcbyK0qAAAAAD3K5wZbObRk5Z2_bbEVgir6thO7"></div>
                 </div>
