@@ -179,7 +179,7 @@ a {
     justify-content: flex-start;
     padding: 20px;
     margin-left: 2%;
-    margin-top: 5%;
+    margin-top: 0.5%;
 }
 
 
@@ -313,3 +313,37 @@ a {
     margin: 0 auto;
     margin-left: 50%;
 }
+
+.filter-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding-top: 80px;
+    padding-left: 60px;
+    border-radius: 12px;
+}
+
+.filter-container select {
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid #bbb;
+    background-color: #fff;
+    font-size: 16px;
+    color: #333;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.filter-container label {
+    margin: 0;
+    color: #030303;
+    font-size: 19px;
+}
+
+.filter-container select:hover,
+.filter-container select:focus {
+    border-color: #2320c2;
+    box-shadow: 0 0 5px rgba(10, 13, 221, 0.781);
+    outline: none;
+}
+

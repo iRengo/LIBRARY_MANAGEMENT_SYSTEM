@@ -149,81 +149,79 @@
         $overdue_count = count($overdue_books);
 
 
-        // Get all genres with their counts
-        $sql = "
-        SELECT book_genre, COUNT(*) as total
-        FROM (
-        SELECT b.book_genre FROM borrowed_books bb
-        JOIN tbl_books b ON bb.book_id = b.book_id
-        WHERE bb.student_no = ?
+        // Get all categories with their counts
+$sql = "
+SELECT book_category, COUNT(*) as total
+FROM (
+    SELECT b.book_category FROM borrowed_books bb
+    JOIN tbl_books b ON bb.book_id = b.book_id
+    WHERE bb.student_no = ?
 
-        UNION ALL
+    UNION ALL
 
-        SELECT b.book_genre FROM reserved_books rb
-        JOIN tbl_books b ON rb.book_id = b.book_id
-        WHERE rb.student_no = ?
+    SELECT b.book_category FROM reserved_books rb
+    JOIN tbl_books b ON rb.book_id = b.book_id
+    WHERE rb.student_no = ?
 
-        UNION ALL
+    UNION ALL
 
-        SELECT b.book_genre FROM book_likes_dislikes ld
-        JOIN tbl_books b ON ld.book_id = b.book_id
-        WHERE ld.acc_no = ? AND ld.action = 1
+    SELECT b.book_category FROM book_likes_dislikes ld
+    JOIN tbl_books b ON ld.book_id = b.book_id
+    WHERE ld.acc_no = ? AND ld.action = 1
 
-        UNION ALL
+    UNION ALL
 
-        SELECT b.book_genre FROM collection_books cb
-        JOIN tbl_books b ON cb.book_id = b.book_id
-        WHERE cb.acc_no = ?
-        ) AS activity
-        GROUP BY book_genre
-        ORDER BY total DESC
-        ";
+    SELECT b.book_category FROM collection_books cb
+    JOIN tbl_books b ON cb.book_id = b.book_id
+    WHERE cb.acc_no = ?
+) AS activity
+GROUP BY book_category
+ORDER BY total DESC
+";
 
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("iiii", $acc_no, $acc_no, $acc_no, $acc_no);
-        $stmt->execute();
-        $result = $stmt->get_result();
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("iiii", $acc_no, $acc_no, $acc_no, $acc_no);
+$stmt->execute();
+$result = $stmt->get_result();
 
-        // Get the highest genre count
-        $genres = [];
-        $maxCount = 0;
+// Get the highest category count
+$categories = [];
+$maxCount = 0;
 
-        while ($row = $result->fetch_assoc()) {
-          if ($maxCount == 0) {
-            $maxCount = $row['total'];
-          }
+while ($row = $result->fetch_assoc()) {
+    if ($maxCount == 0) {
+        $maxCount = $row['total'];
+    }
 
-          if ($row['total'] == $maxCount) {
-            $genres[] = $row['book_genre'];
-          } else {
-            break; // Only keep genres with the same top count
-          }
-        }
+    if ($row['total'] == $maxCount) {
+        $categories[] = $row['book_category'];
+    } else {
+        break; // Only keep top categories
+    }
+}
 
-        // Prepare recommendations
-        if (!empty($genres)) {
-          $conditions = [];
-          $params = [];
-          $types = '';
+// Prepare recommendations
+if (!empty($categories)) {
+    $conditions = [];
+    $params = [];
+    $types = '';
 
-          foreach ($genres as $genre) {
-            $conditions[] = 'book_genre LIKE ?';
-            $params[] = '%' . $genre . '%';
-            $types .= 's';
-          }
+    foreach ($categories as $category) {
+        $conditions[] = 'book_category LIKE ?';
+        $params[] = '%' . $category . '%';
+        $types .= 's';
+    }
 
-          $whereClause = implode(' OR ', $conditions);
-          $sql = "SELECT * FROM tbl_books WHERE $whereClause ORDER BY RAND()";
-          $stmt = $conn->prepare($sql);
-          $stmt->bind_param($types, ...$params);
-        } else {
-          $stmt = $conn->prepare("SELECT * FROM tbl_books ORDER BY RAND()");
-        }
+    $whereClause = implode(' OR ', $conditions);
+    $sql = "SELECT * FROM tbl_books WHERE $whereClause ORDER BY RAND()";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param($types, ...$params);
+} else {
+    $stmt = $conn->prepare("SELECT * FROM tbl_books ORDER BY RAND()");
+}
 
-        $stmt->execute();
-        $recommended = $stmt->get_result();
-
-
+$stmt->execute();
+$recommended = $stmt->get_result();
 
 
         ?>
@@ -327,7 +325,7 @@
           <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
           <!-- ======= Styles ====== -->
           <link rel="stylesheet" href="USER_STYLE2.CSS">
-          <link rel="stylesheet" href="USER_DASHBOARD.css">
+          <link rel="stylesheet" href="USER_DASHBOARD1.css">
 
 
 

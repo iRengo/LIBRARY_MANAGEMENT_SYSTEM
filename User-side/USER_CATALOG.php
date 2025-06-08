@@ -29,7 +29,7 @@ if (!isset($_SESSION['acc_no'])) {
     <title>User Catalog</title>
     <link rel="stylesheet" href="USER_STYLE2.CSS">
     <link rel="icon" type="image/png" href="../logosample1.png">
-    <link rel="stylesheet" href="USER_CATALOG1.CSS">
+    <link rel="stylesheet" href="USER_CATALOG.CSS">
 </head>
 <body>
     <?php include 'HEADER-NAVBAR.PHP' ?>
@@ -39,6 +39,7 @@ if (!isset($_SESSION['acc_no'])) {
             <div class="titles">
                 <div class="available">Available Books</div>
             </div>
+
             <div class="search-bar-container">
                 <div class="search-bar">
                     <div class="search-input-wrapper">
@@ -51,6 +52,19 @@ if (!isset($_SESSION['acc_no'])) {
                 </div>
             </div>
         </div>
+    </div>
+    <div class="filter-container">
+        <label for="categoryFilter">Filter by Category:</label>
+            <select id="categoryFilter">
+                <option value="all">All</option>
+                <option value="fiction">Fiction</option>
+                <option value="non-fiction">Non-Fiction</option>
+                <option value="biography">Biography</option>
+                <option value="mystery">Mystery</option>
+                <option value="science">Science</option>
+                <option value="history">History</option>
+                <option value="others">Others</option>
+            </select>
     </div>
 
     <div class="book-list">
@@ -168,68 +182,78 @@ if (!isset($_SESSION['acc_no'])) {
     </div>
 
     <script>
-    const searchInput = document.getElementById('searchInput');
-    const voiceBtn = document.getElementById('voiceSearchBtn');
-    const books = document.querySelectorAll('.book-main-container');
+const searchInput = document.getElementById('searchInput');
+const categoryFilter = document.getElementById('categoryFilter');
+const voiceBtn = document.getElementById('voiceSearchBtn');
+const books = document.querySelectorAll('.book-main-container');
 
-    searchInput.addEventListener('input', () => {
-        const searchTerm = searchInput.value.toLowerCase().trim();
-        books.forEach(book => {
-            const title = book.querySelector('h5').textContent.toLowerCase();
-            const author = book.querySelector('p').textContent.toLowerCase();
-            const category = book.querySelector('.book-category')?.textContent.toLowerCase() || '';
-            book.style.display = (title.includes(searchTerm) || author.includes(searchTerm) || category.includes(searchTerm)) ? 'block' : 'none';
+function filterBooks() {
+    const searchTerm = searchInput.value.toLowerCase().trim();
+    const selectedCategory = categoryFilter.value.toLowerCase();
+
+    books.forEach(book => {
+        const title = book.querySelector('h5').textContent.toLowerCase();
+        const author = book.querySelector('p').textContent.toLowerCase();
+        const category = book.querySelector('.book-category')?.textContent.toLowerCase().trim() || '';
+
+        const matchesSearch = title.includes(searchTerm) || author.includes(searchTerm) || category.includes(searchTerm);
+        const matchesCategory = (selectedCategory === 'all') || (category === selectedCategory);
+
+        book.style.display = (matchesSearch && matchesCategory) ? 'block' : 'none';
+    });
+}
+
+searchInput.addEventListener('input', filterBooks);
+categoryFilter.addEventListener('change', filterBooks);
+
+// Voice recognition
+if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    voiceBtn.addEventListener('click', () => {
+        Swal.fire({
+            title: 'Listening...',
+            text: 'Speak now',
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonText: 'Stop',
+            cancelButtonText: 'Cancel',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+                recognition.start();
+            }
+        }).then((result) => {
+            if (result.dismiss === Swal.DismissReason.cancel || result.isConfirmed) {
+                recognition.stop();
+            }
         });
     });
 
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        const recognition = new SpeechRecognition();
-        recognition.lang = 'en-US';
-        recognition.continuous = false;
-        recognition.interimResults = false;
+    recognition.onresult = event => {
+        Swal.close();
+        const transcript = event.results[0][0].transcript.trim().toLowerCase();
+        searchInput.value = transcript === 'clear' ? '' : transcript;
+        searchInput.dispatchEvent(new Event('input'));
+    };
 
-        voiceBtn.addEventListener('click', () => {
-    Swal.fire({
-        title: 'Listening...',
-        text: 'Speak now',
-        icon: 'info',
-        showCancelButton: true,
-        confirmButtonText: 'Stop',
-        cancelButtonText: 'Cancel',
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        didOpen: () => {
-            Swal.showLoading();
-            recognition.start();
-        }
-    }).then((result) => {
-        if (result.dismiss === Swal.DismissReason.cancel) {
-            recognition.stop();
-        }
-        if (result.isConfirmed) {
-            recognition.stop();
-        }
-    });
-});
+    recognition.onerror = event => {
+        Swal.close();
+        Swal.fire('Error', 'Voice recognition failed: ' + event.error, 'error');
+    };
+} else {
+    voiceBtn.disabled = true;
+    voiceBtn.title = "Voice search not supported in this browser.";
+}
+</script>
 
 
-        recognition.onresult = event => {
-            Swal.close();
-            const transcript = event.results[0][0].transcript.trim().toLowerCase();
-            searchInput.value = transcript === 'clear' ? '' : transcript;
-            searchInput.dispatchEvent(new Event('input'));
-        };
-
-        recognition.onerror = event => {
-            Swal.close();
-            Swal.fire('Error', 'Voice recognition failed: ' + event.error, 'error');
-        };
-    } else {
-        voiceBtn.disabled = true;
-        voiceBtn.title = "Voice search not supported in this browser.";
-    }
-    </script>
+    
 
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
