@@ -97,9 +97,10 @@ $top_books_result = $conn->query($top_books_query);
 <html lang="en">
 
 <head>
-    <title>Librarian Catalog </title>
+    <title>Librarian Dashboard</title>
     <link rel="stylesheet" href="LIBRARIAN_DASHBOARD.CSS">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="icon" type="image/png" href="../logosample1.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 

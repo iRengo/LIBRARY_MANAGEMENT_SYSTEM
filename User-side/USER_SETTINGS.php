@@ -140,7 +140,9 @@ while ($fine_row = $fine_result->fetch_assoc()) {
 
 <head>
     <link rel='stylesheet' href="USER_SETTINGS.CSS">
+    <link rel="icon" type="image/png" href="../logosample1.png">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <title> User Settings </title>
 </head>
 
 <body>

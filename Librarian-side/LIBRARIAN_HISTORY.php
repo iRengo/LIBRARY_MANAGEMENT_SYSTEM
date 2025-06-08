@@ -42,6 +42,7 @@ $fines_result = mysqli_query($conn, $fines_sql);
 <head>
     <title>Librarian History</title>
     <link rel="stylesheet" href="librarian_history.css">
+    <link rel="icon" type="image/png" href="../logosample1.png">
 </head>
 
 <body>

@@ -166,6 +166,8 @@ $users_on_page = array_slice($all_users, $start_index, $users_per_page);
 <head>
 
     <link rel="stylesheet" href="ADMIN_USERS.CSS">
+    <link rel="icon" type="image/png" href="../logosample1.png">
+    <title> Admin User Management </title>
 
 </head>
 

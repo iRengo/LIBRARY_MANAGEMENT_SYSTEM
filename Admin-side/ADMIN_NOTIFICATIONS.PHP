@@ -55,7 +55,8 @@ if ($total_fines_result && $row = mysqli_fetch_assoc($total_fines_result)) {
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>ADMIN NOTIFICATIONS</title>
+    <title>Admin Notifications</title>
+    <link rel="icon" type="image/png" href="../logosample1.png">
     <link rel='stylesheet' href="ADMIN_NOTIFICATIONS.CSS" />
 </head>
 

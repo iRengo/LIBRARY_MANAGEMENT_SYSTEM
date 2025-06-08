@@ -49,7 +49,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mark_repaired'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> LIBRARIAN BORROW REQUEST</title>
+    <title> Manage Under Repair Books</title>
+    <link rel="icon" type="image/png" href="../logosample1.png">
     <link rel='stylesheet' href="LIBRARIAN_NOTIFICATIONS.CSS">
 </head>
 

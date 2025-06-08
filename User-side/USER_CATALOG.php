@@ -28,7 +28,7 @@ if (!isset($_SESSION['acc_no'])) {
 <head>
     <title>User Catalog</title>
     <link rel="stylesheet" href="USER_STYLE2.CSS">
-    <link rel="stylesheet" href="User_css/ADMIN_MODAL.css">
+    <link rel="icon" type="image/png" href="../logosample1.png">
     <link rel="stylesheet" href="USER_CATALOG1.CSS">
 </head>
 <body>

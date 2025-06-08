@@ -15,7 +15,9 @@ if (isset($_SESSION['archive_success'])) {
 <head>
     <!-- ======= Styles ====== -->
     <link rel="stylesheet" href="ADMIN_CATALOG.CSS">
+    <link rel="icon" type="image/png" href="../logosample1.png">
     <link href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet">
+    <title> Admin Catalog </title>
 </head>
 
 <body>
