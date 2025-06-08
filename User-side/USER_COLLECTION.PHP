@@ -136,6 +136,38 @@ if (count($books) > 0) {
         .btn-reserve:hover {
             background-color: #cc8400 !important; /* Darker yellow/orange */
         }
+
+        .category-badge {
+            display: inline-block;
+            padding: 6px 15px;
+            border-radius: 5px;
+            font-size: 15px;
+            color: #fff;
+            font-weight: bold;
+            margin-top: 6px;
+            text-transform: capitalize;
+        }
+
+        /* Sample category background colors */
+        .category-badge.fiction {
+            background-color: #FF9800;
+        }
+
+        .category-badge.action {
+            background-color: #4CAF50;
+        }
+
+        .category-badge.historical {
+            background-color: #FFC107;
+        }
+
+        .category-badge.scifi {
+            background-color: #9C27B0;
+        }
+
+        .category-badge.poetry {
+            background-color: #E91E63;
+        }
     </style>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -221,33 +253,36 @@ if (count($books) > 0) {
     <br>
 
     <div class="container">
-        <h1 style="margin-left: 50px;">RECENTLY ADDED</h1>
-        <div class="book-grid">
-            <?php foreach ($recentBooks as $row): ?>
-                <div class="book-card"
-                    data-title="<?= htmlspecialchars($row['book_title']) ?>"
-                    data-description="<?= htmlspecialchars($row['description']) ?>"
-                    data-image="<?= htmlspecialchars(str_replace(' ', '%20', $row['image_path'])) ?>"
-                    data-remove-link="remove_book.php?collection_id=<?= $row['collection_id'] ?>"
-                    data-book-id="<?= $row['book_id'] ?>"
-                    data-book-stocks="<?= $row['book_stocks'] ?>"
-                    data-author="<?= htmlspecialchars($row['book_author']) ?>"
-                    data-category="<?= htmlspecialchars($row['book_category']) ?>"
-                    onclick="moveToTop(this)">
+    <h1 style="margin-left: 50px;">RECENTLY ADDED</h1>
+    <div class="book-grid">
+        <?php foreach ($recentBooks as $row): ?>
+            <div class="book-card"
+                data-title="<?= htmlspecialchars($row['book_title']) ?>"
+                data-description="<?= htmlspecialchars($row['description']) ?>"
+                data-image="<?= htmlspecialchars(str_replace(' ', '%20', $row['image_path'])) ?>"
+                data-remove-link="remove_book.php?collection_id=<?= $row['collection_id'] ?>"
+                data-book-id="<?= $row['book_id'] ?>"
+                data-book-stocks="<?= $row['book_stocks'] ?>"
+                data-author="<?= htmlspecialchars($row['book_author']) ?>"
+                data-category="<?= htmlspecialchars($row['book_category']) ?>"
+                onclick="moveToTop(this)">
 
-                    <img src="<?= htmlspecialchars(str_replace(' ', '%20', $row['image_path'])) ?>" alt="<?= htmlspecialchars($row['book_title']) ?>">
-                    <div class="info">
-                        <h3><?= htmlspecialchars($row['book_title']) ?></h3>
-                        <p><?= htmlspecialchars($row['book_author']) ?></p>
-                        <div class="colors">
-                            <div class="color-box recommended-book-genre <?= strtolower($row['book_category']) ?>"></div>
-                        </div>
+                <img src="<?= htmlspecialchars(str_replace(' ', '%20', $row['image_path'])) ?>" alt="<?= htmlspecialchars($row['book_title']) ?>">
+                
+                <div class="info">
+                    <h3><?= htmlspecialchars($row['book_title']) ?></h3>
+                    <p><?= htmlspecialchars($row['book_author']) ?></p>
 
-                    </div>
+                <div class="category-badge <?= strtolower($row['book_category']) ?>">
+                    <?= htmlspecialchars($row['book_category']) ?>
                 </div>
-            <?php endforeach; ?>
-        </div>
+
+
+                </div>
+            </div>
+        <?php endforeach; ?>
     </div>
+</div>
 <?php endif; ?>
 
     <?php

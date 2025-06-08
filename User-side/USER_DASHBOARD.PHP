@@ -93,9 +93,8 @@ $stmt->bind_result($student_no);
 $stmt->fetch();
 $stmt->close();
 
-// Fetch borrowed books
 $borrowed_books = [];
-$query = "SELECT book_title, status, due_date FROM borrowed_books WHERE student_no = ?";
+$query = "SELECT book_title, status, due_date FROM borrowed_books WHERE student_no = ? AND status = 'borrowed'";
 $stmt = $conn->prepare($query);
 $stmt->bind_param("i", $student_no);
 $stmt->execute();
@@ -104,6 +103,8 @@ while ($row = $result->fetch_assoc()) {
     $borrowed_books[] = $row;
 }
 $stmt->close();
+
+$borrowed_count = count($borrowed_books); 
 
 // Fetch reserved books
 $reserved_books = [];
@@ -118,9 +119,10 @@ while ($row = $result->fetch_assoc()) {
 $stmt->close();
 
 $due_books = [];
-$due_query = "SELECT book_title, status, due_date FROM borrowed_books WHERE student_no = ? AND due_date >= NOW()";
+$today = date('Y-m-d');
+$due_query = "SELECT book_title, status, due_date FROM borrowed_books WHERE student_no = ? AND due_date = ? AND status = 'borrowed'";
 $stmt = $conn->prepare($due_query);
-$stmt->bind_param("i", $student_no);
+$stmt->bind_param("is", $student_no, $today);
 $stmt->execute();
 $result = $stmt->get_result();
 while ($row = $result->fetch_assoc()) {
@@ -131,7 +133,7 @@ $stmt->close();
 $due_count = count($due_books);
 
 $overdue_books = [];
-$overdue_query = "SELECT book_title, status, due_date FROM borrowed_books WHERE student_no = ? AND due_date < NOW()";
+$overdue_query = "SELECT book_title, status, due_date FROM borrowed_books WHERE student_no = ? AND DATE(due_date) > CURDATE() AND status = 'borrowed'";
 $stmt = $conn->prepare($overdue_query);
 $stmt->bind_param("i", $student_no);
 $stmt->execute();
@@ -143,9 +145,6 @@ $stmt->close();
 
 $overdue_count = count($overdue_books);
 
-
-
-        
 
         // Get all genres with their counts
         $sql = "
@@ -336,7 +335,7 @@ $overdue_count = count($overdue_books);
         <div class="content-item">
         <ion-icon name="calendar-outline" style="font-size: 50px; color: #4CAF50;"></ion-icon>
         <div class="content-text">
-            <p>DUE DATE</p>
+            <p>Due Books</p>
             <h1><?= $due_count ?></h1>
         </div>
         </div>
@@ -378,7 +377,7 @@ $overdue_count = count($overdue_books);
     <h2>Borrowed Books</h2>
     <table>
       <thead>
-        <tr><th>Title</th><th>Status</th><th>Due Date</th></tr>
+        <tr><th>Title</th><th>Status</th></tr>
       </thead>
       <tbody id="borrowedTableBody"></tbody>
     </table>
@@ -417,7 +416,7 @@ $overdue_count = count($overdue_books);
     <h2>Overdue Books</h2>
     <table>
       <thead>
-        <tr><th>Title</th><th>Status</th><th>Due Date</th></tr>
+        <tr><th>Title</th><th>Status</th><th>Overdue Date</th></tr>
       </thead>
       <tbody id="overdueTableBody"></tbody>
     </table>
@@ -641,7 +640,6 @@ $overdue_count = count($overdue_books);
           <tr>
             <td>${book.book_title}</td>
             <td>${book.status}</td>
-            <td>${book.due_date}</td>
           </tr>
         `;
         tbody.innerHTML += row;
