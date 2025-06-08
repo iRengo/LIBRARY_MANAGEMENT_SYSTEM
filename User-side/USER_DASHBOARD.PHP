@@ -230,8 +230,9 @@ $overdue_count = count($overdue_books);
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+        <link rel="icon" type="image/png" href="../logosample1.png">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhgj9UU2gEpeHXKuDjc8+aJBBZ/YYz7wkmP5zPpsjLh4RxJMfP5Jxs6t" crossorigin="anonymous">
-        <title> Admin Dashboard</title>
+        <title> User Dashboard</title>
         <style>
             /* Shared modal overlay */
             .custom-modal-overlay {
@@ -310,7 +311,6 @@ $overdue_count = count($overdue_books);
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <!-- ======= Styles ====== -->
         <link rel="stylesheet" href="USER_STYLE2.CSS">
-        <link rel="stylesheet" href="User_css/ADMIN_MODAL.css">
         <link rel="stylesheet" href="USER_DASHBOARD.css">
 
 
@@ -588,14 +588,7 @@ $overdue_count = count($overdue_books);
 
         <!-- ========================= Main END ==================== -->
 
-        <div id="logoutModal" class="modal">
-        <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2>Confirm Logout</h2>
-        <p>Are you sure you want to logout?</p>
-        <div class="modal-actions">
-        <a href="../Homepage/signin.php" class="btn-action btn-yes">Yes</a>
-        <button class="btn-action btn-no" id="cancelLogout">No</button>
+        
         </div>
         </div>
         </div>

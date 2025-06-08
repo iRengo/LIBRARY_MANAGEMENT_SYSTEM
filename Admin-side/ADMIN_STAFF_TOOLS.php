@@ -42,6 +42,8 @@ $stmt->execute();
 <head>
     <link rel="stylesheet" href="ADMIN_STAFF_TOOLS.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="../logosample1.png">
+    <title> Admin Staff Tools </title>
 
 
 </head>

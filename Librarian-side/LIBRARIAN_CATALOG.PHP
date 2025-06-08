@@ -31,6 +31,7 @@ if ($setting_result) {
     <title>Librarian Catalog</title>
     <link rel="stylesheet" href="LIBRARIAN_CATALOG.CSS">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="icon" type="image/png" href="../logosample1.png">
     <link href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet">
 
 

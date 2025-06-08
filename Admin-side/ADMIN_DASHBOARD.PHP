@@ -123,6 +123,7 @@ if ($result && $result->num_rows > 0) {
     <meta charset="UTF-8" />
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="ADMIN_DASHBOARD.CSS" />
+    <link rel="icon" type="image/png" href="../logosample1.png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">

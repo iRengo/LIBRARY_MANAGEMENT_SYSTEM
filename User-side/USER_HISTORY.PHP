@@ -20,8 +20,9 @@ $reserved_result = $reserved_query->get_result();
 <html lang="en">
 
 <head>
-    <title> USER HISTORY </title>
+    <title> User History </title>
     <link rel="stylesheet" href="USER_HISTORY.css">
+    <link rel="icon" type="image/png" href="../logosample1.png">
 </head>
 
 <body>

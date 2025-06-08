@@ -15,7 +15,9 @@ if (isset($_SESSION['archive_success'])) {
 <head>
     <!-- ======= Styles ====== -->
     <link rel="stylesheet" href="ADMIN_CATALOG.CSS">
+    <link rel="icon" type="image/png" href="../logosample1.png">
     <link href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet">
+    <title> Admin Catalog </title>
 </head>
 
 <body>
@@ -60,7 +62,7 @@ if (isset($_SESSION['archive_success'])) {
     <div id="availableBooksSection" class="book-section">
         <div class="book-list">
             <?php
-            $query = "SELECT book_id, book_cover, book_title,book_category, book_author FROM tbl_books WHERE status = 'available'";
+            $query = "SELECT book_id, book_cover, book_title,book_category, book_author FROM tbl_books WHERE status = 'available' order by book_id desc";
             $result = mysqli_query($conn, $query);
 
             if (mysqli_num_rows($result) > 0) {

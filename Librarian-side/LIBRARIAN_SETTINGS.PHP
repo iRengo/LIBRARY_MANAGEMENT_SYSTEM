@@ -175,8 +175,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['update_profile'])) {
                     <tbody>
                         <tr>
                             <td rowspan="2">Overdue</td>
-                            <td>Daily Fine</td>
-                            <td contenteditable="true">₱5 per day</td>
+                            
                         </tr>
                         <tr>
                             <td>Maximum Fine</td>
@@ -212,7 +211,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['update_profile'])) {
                 </table>
                 <div class="notes">
                     <strong>Notes</strong>
-                    <p><strong>Overdue:</strong> Start after a 3-day grace period</p>
       
                     <p><strong>Damage book:</strong> Librarian assesses damage severity</p>
                 </div>

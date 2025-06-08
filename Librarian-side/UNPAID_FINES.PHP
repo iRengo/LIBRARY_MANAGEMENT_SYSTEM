@@ -34,7 +34,8 @@ $total_unpaid = $fines_result ? mysqli_num_rows($fines_result) : 0;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> LIBRARIAN RESERVED REQUEST</title>
+    <title> Manage Unpaid Fines</title>
+    <link rel="icon" type="image/png" href="../logosample1.png">
     <link rel='stylesheet' href="LIBRARIAN_NOTIFICATIONS.CSS">
 </head>
 
