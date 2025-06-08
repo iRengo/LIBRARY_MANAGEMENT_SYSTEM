@@ -628,8 +628,8 @@
             $message = $_SESSION['message'];
             unset($_SESSION['message']);
 
-            // Determine the icon type
-            $icon = 'info'; // default
+            
+            $icon = 'info'; 
             if (stripos($message, 'successfully') !== false) {
               $icon = 'success';
             } elseif (stripos($message, 'failed') !== false || stripos($message, 'error') !== false) {
