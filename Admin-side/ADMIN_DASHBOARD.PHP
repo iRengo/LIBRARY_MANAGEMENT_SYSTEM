@@ -141,6 +141,9 @@ if ($result && $result->num_rows > 0) {
             <a href="admin_users.php" class="shortcut-btn add-librarian-btn">
                 <i class="fas fa-user-plus"></i> Add Librarian
             </a>
+            <a href="#" class="shortcut-btn add-librarian-btn" onclick="showLostBooks()">
+                <i class="fas fa-book-dead"></i> Lost Book
+            </a>
         </div>
         <div class="dashboard-cards">
             <div class="dashboard-card">
@@ -258,6 +261,26 @@ if ($result && $result->num_rows > 0) {
 
         </div>
     </div>
+
+    <script>
+function showLostBooks() {
+    fetch('ADMIN_FETCH_LOST.php')
+        .then(response => response.text())
+        .then(html => {
+            Swal.fire({
+                title: 'Lost Books',
+                html: html,
+                width: '60%',
+                confirmButtonText: 'Close',
+                showCloseButton: true
+            });
+        })
+        .catch(error => {
+            Swal.fire('Error', 'Could not fetch lost books.', 'error');
+            console.error('Fetch error:', error);
+        });
+}
+</script>
 
     <script>
         const ctx = document.getElementById('genreChart').getContext('2d');

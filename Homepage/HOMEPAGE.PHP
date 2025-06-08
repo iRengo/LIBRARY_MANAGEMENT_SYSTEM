@@ -19,6 +19,7 @@ include 'release_upcoming_books.php';
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ionicons@5.5.4/dist/ionicons/ionicons.min.css"> 
     <link href="https://cdn.jsdelivr.net/npm/ionicons@5.4.0/dist/css/ionicons.min.css" rel="stylesheet">
+        <link rel="icon" type="image/png" href="../logosample1.png">
     <link href="https://fonts.googleapis.com/css2?family=Teachers:ital,wght@0,400..800;1,400..800&family=Viga&family=Zilla+Slab+Highlight:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="homepage.css"> 
     <link href="https://cdn.jsdelivr.net/npm/boxicons/css/boxicons.min.css" rel="stylesheet">
