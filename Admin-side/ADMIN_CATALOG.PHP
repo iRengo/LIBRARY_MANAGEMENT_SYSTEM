@@ -60,7 +60,7 @@ if (isset($_SESSION['archive_success'])) {
     <div id="availableBooksSection" class="book-section">
         <div class="book-list">
             <?php
-            $query = "SELECT book_id, book_cover, book_title,book_category, book_author FROM tbl_books WHERE status = 'available'";
+            $query = "SELECT book_id, book_cover, book_title,book_category, book_author FROM tbl_books WHERE status = 'available' order by book_id desc";
             $result = mysqli_query($conn, $query);
 
             if (mysqli_num_rows($result) > 0) {

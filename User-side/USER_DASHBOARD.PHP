@@ -311,7 +311,6 @@ $overdue_count = count($overdue_books);
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <!-- ======= Styles ====== -->
         <link rel="stylesheet" href="USER_STYLE2.CSS">
-        <link rel="stylesheet" href="User_css/ADMIN_MODAL.css">
         <link rel="stylesheet" href="USER_DASHBOARD.css">
 
 
@@ -589,14 +588,7 @@ $overdue_count = count($overdue_books);
 
         <!-- ========================= Main END ==================== -->
 
-        <div id="logoutModal" class="modal">
-        <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2>Confirm Logout</h2>
-        <p>Are you sure you want to logout?</p>
-        <div class="modal-actions">
-        <a href="../Homepage/signin.php" class="btn-action btn-yes">Yes</a>
-        <button class="btn-action btn-no" id="cancelLogout">No</button>
+        
         </div>
         </div>
         </div>
