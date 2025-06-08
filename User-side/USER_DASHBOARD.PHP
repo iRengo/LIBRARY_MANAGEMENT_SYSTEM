@@ -312,7 +312,7 @@ $overdue_count = count($overdue_books);
         <!-- ======= Styles ====== -->
         <link rel="stylesheet" href="USER_STYLE2.CSS">
         <link rel="stylesheet" href="User_css/ADMIN_MODAL.css">
-        <link rel="stylesheet" href="USER_DASHBOARD1.css">
+        <link rel="stylesheet" href="USER_DASHBOARD.css">
 
 
 
@@ -568,7 +568,7 @@ $overdue_count = count($overdue_books);
 
 
 
-        <div id="bookModal" style="display:none; position:fixed; top:20%; left:50%; transform:translate(-50%, 0); background:white; padding:20px; box-shadow:0px 4px 6px rgba(0,0,0,0.1);">
+        <div id="bookModal" style="display:none; position:fixed; top:10%; left:50%; transform:translate(-50%, 0); background:white; padding:20px; box-shadow:0px 4px 6px rgba(0,0,0,0.1);">
         <h2 id="modal-title"></h2>
         <div id="modal-content"></div>
         <button onclick="document.getElementById('bookModal').style.display='none'">Close</button>
