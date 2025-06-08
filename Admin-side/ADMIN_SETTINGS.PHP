@@ -2,6 +2,69 @@
 include '../Homepage/db_connect.php';
 session_start();
 
+$admin_no = $_SESSION['admin_no'] ?? null;
+
+// Handle password change
+if (isset($_POST['change_password'])) {
+    $current_password = $_POST['current_password'] ?? '';
+    $new_password = $_POST['new_password'] ?? '';
+    $confirm_password = $_POST['confirm_password'] ?? '';
+
+    if (!$current_password || !$new_password || !$confirm_password) {
+        $_SESSION['error'] = "Please fill in all password fields.";
+    } elseif ($new_password !== $confirm_password) {
+        $_SESSION['error'] = "New password and confirm password do not match.";
+    } else {
+        // Validate new password strength
+        // At least 8 characters, 1 number, and 1 special character
+        if (!preg_match('/^(?=.*[0-9])(?=.*[\W_]).{8,}$/', $new_password)) {
+            $_SESSION['error'] = "New password must be at least 8 characters long, contain at least 1 number and 1 special character.";
+        } else {
+            // Fetch current hashed password from DB
+            $stmt = $conn->prepare("SELECT password FROM admin_acc WHERE admin_no = ?");
+            $stmt->bind_param("s", $admin_no);
+            $stmt->execute();
+            $stmt->store_result();
+            $stmt->bind_result($hashed_password);
+            if ($stmt->fetch()) {
+                if (password_verify($current_password, $hashed_password)) {
+                    // Current password matches, update with new password hash
+                    $new_hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+                    $update_stmt = $conn->prepare("UPDATE admin_acc SET password = ? WHERE admin_no = ?");
+                    $update_stmt->bind_param("ss", $new_hashed_password, $admin_no);
+
+                    if ($update_stmt->execute()) {
+                        $_SESSION['success'] = "Password updated successfully.";
+                    } else {
+                        $_SESSION['error'] = "Failed to update password. Please try again.";
+                    }
+                    $update_stmt->close();
+                } else {
+                    $_SESSION['error'] = "Current password is incorrect.";
+                }
+            } else {
+                $_SESSION['error'] = "User not found.";
+            }
+
+            $stmt->close();
+        }
+    }
+
+    // Redirect to avoid form resubmission
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit();
+}
+
+if ($admin_no) {
+    $stmt = $conn->prepare("SELECT admin_no, password, first_name, last_name, email FROM admin_acc WHERE admin_no = ?");
+    $stmt->bind_param("s", $admin_no);
+    $stmt->execute();
+    $stmt->store_result();  // Add store_result here too for consistency
+    $stmt->bind_result($fetched_admin_no, $fetched_password, $first_name, $last_name, $email);
+    $stmt->fetch();
+    $stmt->close();
+}
+
 $query = "SELECT * FROM lms_settings";
 $result = $conn->query($query);
 
@@ -21,7 +84,6 @@ if ($result) {
     }
 }
 
-
 $settings = [
     4 => '0',
     5 => '0'
@@ -36,6 +98,7 @@ if ($result) {
 } else {
     error_log("Failed to fetch settings: " . mysqli_error($conn));
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -47,6 +110,8 @@ if ($result) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="ADMIN_SETTINGS.CSS">
     <link rel="icon" type="image/png" href="../logosample1.png">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
 
     </style>
@@ -58,6 +123,7 @@ if ($result) {
         <div class="library-settings">
             <h2>Library settings</h2>
             <ul>
+                <li data-tab="account">Account</li>
                 <li class="active" data-tab="user-management">User management</li>
                 <li data-tab="library-policies">Library policies</li>
                 <li data-tab="catalog-collection">Catalog & collection</li>
@@ -193,12 +259,90 @@ if ($result) {
                         </div>
                     </div>
 
-                   
+
                 </div>
             </div>
+
+
+            <div class="settings-section" data-tab="account" style="display: none;">
+                <div class="box-shadow">
+                    <h1>Account Settings</h1>
+
+                    <div class="flex-row">
+                        <div class="field-group">
+                            <label for="admin-no">Admin No:</label>
+                            <input type="text" id="admin-no" name="admin_no" value="<?php echo htmlspecialchars($fetched_admin_no); ?>" disabled>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="first-name">First Name:</label>
+                            <input type="text" id="first-name" name="first_name" value="<?php echo htmlspecialchars($first_name); ?>" disabled>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="last-name">Last Name:</label>
+                            <input type="text" id="last-name" name="last_name" value="<?php echo htmlspecialchars($last_name); ?>" disabled>
+                        </div>
+                    </div>
+
+                    <div class="field-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($email); ?>" disabled>
+                    </div>
+
+                    <form method="POST" action="">
+                        <div class="flex-row">
+                            <div class="field-group">
+                                <label for="current-password">Current Password:</label>
+                                <input type="password" id="current-password" name="current_password" required>
+                            </div>
+
+                            <div class="field-group">
+                                <label for="new-password">New Password:</label>
+                                <input type="password" id="new-password" name="new_password" required>
+                            </div>
+
+                            <div class="field-group">
+                                <label for="confirm-password">Confirm New Password:</label>
+                                <input type="password" id="confirm-password" name="confirm_password" required>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 20px;">
+                            <button type="submit" name="change_password" class="save-btn">Update Password</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+
         </main>
     </div>
+    <?php if (isset($_SESSION['success'])): ?>
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: '<?php echo addslashes($_SESSION["success"]); ?>',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'OK'
+            });
+        </script>
+    <?php unset($_SESSION['success']);
+    endif; ?>
 
+    <?php if (isset($_SESSION['error'])): ?>
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: '<?php echo addslashes($_SESSION["error"]); ?>',
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'OK'
+            });
+        </script>
+    <?php unset($_SESSION['error']);
+    endif; ?>
     <script>
         function enableEdit(btn) {
             const row = btn.closest('tr');

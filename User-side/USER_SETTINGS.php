@@ -35,8 +35,6 @@ $stmt = $conn->prepare("UPDATE stud_acc SET last_logged_in = ? WHERE student_no 
 $stmt->bind_param("si", $login_time, $acc_no);
 $stmt->execute();
 
-// Assuming you've already connected to your database
-
 $query = "SELECT student_no, email, last_name, first_name, contact FROM stud_acc WHERE acc_no = ?";
 $stmt = $conn->prepare($query);
 $stmt->bind_param("i", $acc_no);
@@ -53,51 +51,82 @@ if ($row = $result->fetch_assoc()) {
     $student_no = $email = $last_name = $first_name = $contact = "Not available";
 }
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["save_password"])) {
+    $current_password = $_POST["current_password"];
     $new_password = $_POST["new_password"];
     $confirm_password = $_POST["confirm_password"];
 
-    if ($new_password === $confirm_password) {
-        $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+    $get_pass_query = "SELECT password FROM stud_acc WHERE acc_no = ?";
+    $stmt = $conn->prepare($get_pass_query);
+    $stmt->bind_param("i", $acc_no);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-        $update_query = "UPDATE stud_acc SET password = ? WHERE acc_no = ?";
-        $stmt = $conn->prepare($update_query);
-        $stmt->bind_param("si", $hashed_password, $acc_no);
+    if ($row = $result->fetch_assoc()) {
+        $stored_hashed_password = $row["password"];
 
-        if ($stmt->execute()) {
-            echo "<script>
-                window.addEventListener('DOMContentLoaded', function () {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Password Updated',
-                        text: 'Your password has been changed successfully!',
-                        confirmButtonColor: '#3085d6'
-                    });
-                });
-            </script>";
-        } else {
+        if (!password_verify($current_password, $stored_hashed_password)) {
             echo "<script>
                 window.addEventListener('DOMContentLoaded', function () {
                     Swal.fire({
                         icon: 'error',
-                        title: 'Update Failed',
-                        text: 'There was an error updating your password.',
+                        title: 'Incorrect Current Password',
+                        text: 'Your current password is incorrect.',
                         confirmButtonColor: '#d33'
                     });
                 });
             </script>";
-        }
-    } else {
-        // Just in case JS validation fails
-        echo "<script>
-            window.addEventListener('DOMContentLoaded', function () {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Password Mismatch',
-                    text: 'New password and confirmation do not match.',
-                    confirmButtonColor: '#d33'
+        } elseif ($new_password !== $confirm_password) {
+            echo "<script>
+                window.addEventListener('DOMContentLoaded', function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Password Mismatch',
+                        text: 'New password and confirmation do not match.',
+                        confirmButtonColor: '#d33'
+                    });
                 });
-            });
-        </script>";
+            </script>";
+        } elseif (!preg_match('/^(?=.*[0-9])(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/', $new_password)) {
+            echo "<script>
+                window.addEventListener('DOMContentLoaded', function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Weak Password',
+                        html: 'Password must be at least <b>8 characters</b>, include a <b>special character</b> and a <b>number</b>.',
+                        confirmButtonColor: '#d33'
+                    });
+                });
+            </script>";
+        } else {
+            $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+            $update_query = "UPDATE stud_acc SET password = ? WHERE acc_no = ?";
+            $stmt = $conn->prepare($update_query);
+            $stmt->bind_param("si", $hashed_password, $acc_no);
+
+            if ($stmt->execute()) {
+                echo "<script>
+                    window.addEventListener('DOMContentLoaded', function () {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Password Updated',
+                            text: 'Your password has been changed successfully!',
+                            confirmButtonColor: '#3085d6'
+                        });
+                    });
+                </script>";
+            } else {
+                echo "<script>
+                    window.addEventListener('DOMContentLoaded', function () {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Update Failed',
+                            text: 'There was an error updating your password.',
+                            confirmButtonColor: '#d33'
+                        });
+                    });
+                </script>";
+            }
+        }
     }
 }
 
@@ -210,6 +239,12 @@ while ($fine_row = $fine_result->fetch_assoc()) {
             <form method="POST" action="" id="password-form">
                 <div class="form-row">
                     <div class="form-group">
+                        <label for="current-password">Current Password</label>
+                        <input type="password" id="current-password" name="current_password" placeholder="Enter current password" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
                         <label for="new-password">New Password</label>
                         <input type="password" id="new-password" name="new_password" placeholder="Enter new password" disabled required>
                     </div>
@@ -218,7 +253,6 @@ while ($fine_row = $fine_result->fetch_assoc()) {
                         <input type="password" id="confirm-password" name="confirm_password" placeholder="Confirm new password" disabled required>
                     </div>
                 </div>
-
                 <div class="form-row">
                     <button type="button" id="edit-password-btn" class="edit-button">Edit</button>
                     <button type="submit" id="save-password-btn" name="save_password" class="save-button" style="display: none;">Save</button>
@@ -347,29 +381,46 @@ while ($fine_row = $fine_result->fetch_assoc()) {
         window.onload = () => {
             showContent('account');
         };
-        // Handle "Edit" button click
-        document.getElementById("edit-password-btn").addEventListener("click", function() {
-            document.getElementById("new-password").disabled = false;
-            document.getElementById("confirm-password").disabled = false;
-            document.getElementById("save-password-btn").style.display = "inline-block";
-            this.style.display = "none";
-        });
+        document.getElementById("edit-password-btn").addEventListener("click", function () {
+    document.getElementById("new-password").disabled = false;
+    document.getElementById("confirm-password").disabled = false;
+    document.getElementById("save-password-btn").style.display = "inline-block";
+    this.style.display = "none";
+});
 
-        // Handle form submission and validate passwords
-        document.getElementById("password-form").addEventListener("submit", function(e) {
-            const pw1 = document.getElementById("new-password").value;
-            const pw2 = document.getElementById("confirm-password").value;
+document.getElementById("password-form").addEventListener("submit", function (e) {
+    const currentPw = document.getElementById("current-password").value.trim();
+    const newPw = document.getElementById("new-password").value.trim();
+    const confirmPw = document.getElementById("confirm-password").value.trim();
 
-            if (pw1 !== pw2) {
-                e.preventDefault(); // stop the form from submitting
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Password Mismatch',
-                    text: 'New password and confirm password do not match!',
-                    confirmButtonColor: '#d33'
-                });
-            }
+    const passwordPattern = /^(?=.*[0-9])(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
+
+    if (!currentPw || !newPw || !confirmPw) {
+        e.preventDefault();
+        Swal.fire({
+            icon: 'error',
+            title: 'Missing Fields',
+            text: 'All fields are required.',
+            confirmButtonColor: '#d33'
         });
+    } else if (!passwordPattern.test(newPw)) {
+        e.preventDefault();
+        Swal.fire({
+            icon: 'error',
+            title: 'Weak Password',
+            html: 'Password must be at least <b>8 characters</b> long, include a <b>special character</b> and a <b>number</b>.',
+            confirmButtonColor: '#d33'
+        });
+    } else if (newPw !== confirmPw) {
+        e.preventDefault();
+        Swal.fire({
+            icon: 'error',
+            title: 'Password Mismatch',
+            text: 'New password and confirm password do not match!',
+            confirmButtonColor: '#d33'
+        });
+    }
+});
         document.addEventListener('DOMContentLoaded', function() {
             const proofButtons = document.querySelectorAll('.view-proof-btn');
 

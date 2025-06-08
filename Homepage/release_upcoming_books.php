@@ -51,7 +51,8 @@ while ($book = $result->fetch_assoc()) {
             $isbn_stmt->bind_param("i", $book_id);
             $isbn_stmt->execute();
             $isbn_result = $isbn_stmt->get_result();
-            $isbn = $isbn_result->fetch_assoc()['ISBN'] ?? '';
+            $isbn_row = $isbn_result->fetch_assoc();
+            $isbn = $isbn_row ? $isbn_row['ISBN'] : '';
 
             // Insert into borrowed_books
             $insert_borrow = $conn->prepare("INSERT INTO borrowed_books 
@@ -119,7 +120,6 @@ while ($book = $result->fetch_assoc()) {
             } catch (Exception $e) {
                 error_log("Email to {$email} failed: {$mail->ErrorInfo}");
             }
-
         }
 
         $res_stmt->close();

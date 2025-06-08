@@ -24,8 +24,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $confirm_password = mysqli_real_escape_string($conn, $_POST['confirm_password']);
     $contact = mysqli_real_escape_string($conn, $_POST['contact']);
 
-    // Check if passwords match
-    if ($password !== $confirm_password) {
+    // Check password strength
+    if (!preg_match('/^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/', $password)) {
+        $error_message = "Password must be at least 8 characters long and include at least one number and one special character.";
+    } elseif ($password !== $confirm_password) {
         $error_message = "Passwords do not match!";
     } else {
         // Hash the password
@@ -221,17 +223,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <label for="email">Email Address</label>
                 </div>
 
-                <!-- Password and Confirm Password -->
-                <div class="form-group-row">
-                    <div class="form-group" style="flex: 1; margin-right: 10px;">
-                        <input type="password" id="password" name="password" style=" font-size:16px;" class="form-control" placeholder=" " required>
-                        <label for="password">Password</label>
-                    </div>
-                    <div class="form-group" style="flex: 1;">
-                        <input type="password" id="confirm_password" name="confirm_password" style=" font-size:16px;" class="form-control" placeholder=" " required>
-                        <label for="confirm_password">Confirm Password</label>
-                    </div>
-                </div>
+                <div class="form-group-row" style="display: flex; gap: 10px; margin-bottom: 1rem;">
+    <div class="form-group" style="flex: 1;">
+        <label for="password">Password</label>
+        <input 
+            type="password" 
+            id="password" 
+            name="password" 
+            class="form-control" 
+            style="font-size:16px;" 
+            placeholder=" " 
+            required 
+            oninput="validatePassword()">
+        <small id="passwordHelp" style="color: red; display: none;">
+            Password must be at least 8 characters long and include a number and a special character.
+        </small>
+    </div>
+    <div class="form-group" style="flex: 1;">
+        <label for="confirm_password">Confirm Password</label>
+        <input 
+            type="password" 
+            id="confirm_password" 
+            name="confirm_password" 
+            class="form-control" 
+            style="font-size:16px;" 
+            placeholder=" " 
+            required 
+            oninput="checkPasswordMatch()">
+        <small id="confirmHelp" style="color: red; display: none;">
+            Passwords do not match.
+        </small>
+    </div>
+</div>
+
 
                 <!-- Contact Number -->
                 <div class="form-group">
@@ -305,6 +329,44 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
 <script>
+     function validatePassword() {
+        const password = document.getElementById("password").value;
+        const passwordHelp = document.getElementById("passwordHelp");
+
+        const isValid = /^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/.test(password);
+        
+        if (!isValid) {
+            passwordHelp.style.display = "block";
+        } else {
+            passwordHelp.style.display = "none";
+        }
+
+        return isValid;
+    }
+
+    function checkPasswordMatch() {
+        const password = document.getElementById("password").value;
+        const confirm = document.getElementById("confirm_password").value;
+        const confirmHelp = document.getElementById("confirmHelp");
+
+        if (password !== confirm) {
+            confirmHelp.style.display = "block";
+        } else {
+            confirmHelp.style.display = "none";
+        }
+
+        return password === confirm;
+    }
+
+    // Prevent form submission if validations fail
+    document.querySelector("form").addEventListener("submit", function (e) {
+        const isPasswordValid = validatePassword();
+        const isMatch = checkPasswordMatch();
+
+        if (!isPasswordValid || !isMatch) {
+            e.preventDefault(); // stop submission
+        }
+    });
     // Get modal element
     var modal = document.getElementById("termsModal");
 

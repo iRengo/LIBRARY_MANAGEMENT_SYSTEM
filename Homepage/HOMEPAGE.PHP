@@ -3,6 +3,8 @@ include 'archiver.php';
 include 'db_connect.php';
 include 'UNCLAIMED_BOOK_CHECKER.PHP';
 include 'due_overdue_checkr.php';
+include 'release_upcoming_books.php';
+
 ?>
 
 <!DOCTYPE html>

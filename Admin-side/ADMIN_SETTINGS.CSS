@@ -342,3 +342,20 @@ td:last-child {
 .save-button:hover {
     background-color: #155eac;
 }
+
+.flex-row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.flex-row .field-group {
+    flex: 1;
+    min-width: 200px; /* Optional, for responsiveness */
+}
+
+.field-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}

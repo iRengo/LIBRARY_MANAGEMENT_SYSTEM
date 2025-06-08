@@ -56,6 +56,9 @@ if (isset($_GET['book_id'])) {
 }
 
 
+$alertType = null;
+$alertMessage = null;
+
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_to_collection'])) {
     $book_id = $_POST['book_id'];
     $user_id = $_SESSION['acc_no']; // Ensure user is logged in
@@ -68,7 +71,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_to_collection'])) 
     $result = mysqli_stmt_get_result($stmt);
 
     if (mysqli_num_rows($result) > 0) {
-        echo "<script>alert('Book already in your collection!');</script>";
+        $alertType = 'info';
+        $alertMessage = 'Book already in your collection!';
     } else {
         // Fetch book details
         $book_query = "SELECT book_title, book_author, book_cover, book_description FROM tbl_books WHERE book_id = ?";
@@ -90,15 +94,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_to_collection'])) 
             mysqli_stmt_bind_param($stmt, "iissss", $user_id, $book_id, $book_title, $author, $image_path, $description);
 
             if (mysqli_stmt_execute($stmt)) {
-                echo "<script>alert('Book added successfully!');</script>";
+                $alertType = 'success';
+                $alertMessage = 'Book added successfully!';
             } else {
-                echo "<script>alert('Error adding book: " . mysqli_error($conn) . "');</script>";
+                $alertType = 'error';
+                $alertMessage = 'Error adding book: ' . mysqli_error($conn);
             }
         } else {
-            echo "<script>alert('Book not found!');</script>";
+            $alertType = 'error';
+            $alertMessage = 'Book not found!';
         }
     }
 }
+
 
 // Check if book_id is provided
 if (!isset($_GET['book_id']) || empty($_GET['book_id'])) {
@@ -356,6 +364,7 @@ if ($result && mysqli_num_rows($result) > 0) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($book['book_title']); ?> - Book Details</title>
+     <link rel="icon" type="image/png" href="../logosample1.png">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -641,6 +650,18 @@ if ($result && mysqli_num_rows($result) > 0) {
 
     </div>
 
+    <?php if ($alertType && $alertMessage): ?>
+<script>
+    Swal.fire({
+        icon: '<?= $alertType ?>',
+        title: '<?= $alertType === 'success' ? 'Success' : 'Notice' ?>',
+        text: '<?= addslashes($alertMessage) ?>',
+        timer: 2500,
+        showConfirmButton: false
+    });
+</script>
+<?php endif; ?>
+
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const reserveBtn = document.getElementById("reserve-button");
@@ -784,6 +805,12 @@ if ($result && mysqli_num_rows($result) > 0) {
 
         document.getElementById('due_date').value = formatDate(dueDate);
     });
+
+ 
+    function redirectToBook(bookId) {
+    window.location.href = 'book-details.php?book_id=' + encodeURIComponent(bookId);
+}
+
 </script>
 
 

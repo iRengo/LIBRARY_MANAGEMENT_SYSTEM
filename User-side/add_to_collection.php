@@ -9,6 +9,7 @@ if (!isset($_SESSION['acc_no']) || empty($_SESSION['acc_no'])) {
     exit;
 }
 
+
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['book_id'])) {
     $book_id = intval($_POST['book_id']);
     $acc_no = $_SESSION['acc_no'];
