@@ -263,17 +263,17 @@ a {
 }
 
 .genre-fiction {
-    background-color: #007bff; /* Blue */
+    background-color: #fd7e14; /* Blue */
+    color: white;
+}
+    
+.genre-drama {
+    background-color: #6f42c1; /* Green */
     color: white;
 }
 
-.genre-nonfiction {
-    background-color: #28a745; /* Green */
-    color: white;
-}
-
-.genre-biography {
-    background-color: #fd7e14; /* Orange */
+.genre-action {
+    background-color: #28a745; /* Orange */
     color: white;
 }
 
@@ -282,8 +282,8 @@ a {
     color: white;
 }
 
-.genre-science {
-    background-color: #17a2b8; /* Teal */
+.genre-non-fiction {
+    background-color: #9C27B0; /* Teal */
     color: white;
 }
 
@@ -293,7 +293,7 @@ a {
 }
 
 .genre-others {
-    background-color: #6c757d; 
+    background-color: #6f42c1; 
     color: white;
 }
 

@@ -59,11 +59,9 @@ if (!isset($_SESSION['acc_no'])) {
                 <option value="all">All</option>
                 <option value="fiction">Fiction</option>
                 <option value="non-fiction">Non-Fiction</option>
-                <option value="biography">Biography</option>
-                <option value="mystery">Mystery</option>
-                <option value="science">Science</option>
-                <option value="history">History</option>
-                <option value="others">Others</option>
+                <option value="action">Action</option>
+                <option value="drama">Drama</option>
+                
             </select>
     </div>
 
@@ -79,17 +77,17 @@ if (!isset($_SESSION['acc_no'])) {
                     if ($category === 'fiction') {
                         $categoryClass = 'genre-fiction';
                     } else if ($category === 'non-fiction' || $category === 'non fiction') {
-                        $categoryClass = 'genre-nonfiction';
-                    } else if ($category === 'biography') {
-                        $categoryClass = 'genre-biography';
+                        $categoryClass = 'genre-non-fiction';
+                    } else if ($category === 'drama') {
+                        $categoryClass = 'genre-drama';
                     } else if ($category === 'mystery') {
                         $categoryClass = 'genre-mystery';
                     } else if ($category === 'science') {
                         $categoryClass = 'genre-science';
                     } else if ($category === 'history') {
                         $categoryClass = 'genre-history';
-                    } else if ($category === 'others' || $category === 'other') {
-                        $categoryClass = 'genre-others';
+                    } else if ($category === 'action' || $category === 'action') {
+                        $categoryClass = 'genre-action';
                     }
                 ?>
                 <div class="book-main-container">
@@ -127,7 +125,7 @@ if (!isset($_SESSION['acc_no'])) {
             </div>
         </div>
     </div>
-
+  <br> <Br><Br><Br>
     <div class="book-list">
         <?php
         $upcomingQuery = "SELECT book_id, book_cover, book_title, book_category, book_author FROM tbl_books WHERE status = 'Upcoming'";

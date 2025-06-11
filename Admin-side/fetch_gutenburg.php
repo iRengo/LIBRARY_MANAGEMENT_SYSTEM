@@ -33,12 +33,10 @@ foreach ($data['results'] as $book) {
     $ebook_no = $conn->real_escape_string($book['id']);
     $publication_date = date('Y-m-d', strtotime('+1 day'));
     $status = 'Upcoming';
-    $stocks = 30;
+    $stocks = 5;
 
     // Description from languages
-    $description = isset($book['languages']) && !empty($book['languages']) ?
-        implode(', ', array_map('strtoupper', $book['languages'])) : 'Unknown';
-    $description = $conn->real_escape_string($description);
+    $description = "A book is a gateway to knowledge, imagination, and exploration. Within its pages lie stories, ideas, and information carefully crafted to educate, entertain, or inspire. Whether it is fiction or nonfiction, a book serves as a medium through which authors communicate their thoughts, experiences, or creativity to readers around the world. Each book offers a unique journey — one that can transport readers to distant worlds, provide insight into real-life events, or offer solutions to everyday challenges. Timeless and diverse, books are fundamental tools for learning, growth, and cultural connection across generations.";
 
     // Genre from subjects
     if (isset($book['subjects']) && !empty($book['subjects'])) {

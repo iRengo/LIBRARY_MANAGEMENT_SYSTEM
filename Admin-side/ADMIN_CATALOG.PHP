@@ -8,7 +8,47 @@ if (isset($_SESSION['archive_success'])) {
     unset($_SESSION['archive_success']); // Prevent repeat display
 }
 ?>
+<style>
+    .genre-non-fiction {
+    background-color:rgb(179, 36, 36); /* Blue */
+    color: white;
+}
 
+.genre-action {
+    background-color: #28a745; /* Green */
+    color: white;
+}
+
+.genre-fiction {
+    background-color: #fd7e14; /* Orange */
+    color: white;
+}
+
+.genre-mystery {
+    background-color: #6f42c1; /* Purple */
+    color: white;
+}
+
+.genre-science {
+    background-color: #17a2b8; /* Teal */
+    color: white;
+}
+
+.genre-history {
+    background-color: #ffc107; /* Yellow */
+    color: black;
+}
+
+.genre-others {
+    background-color: #6f42c1; /* Gray */
+    color: white;
+}
+
+.genre-default {
+    background-color: #343a40; /* Dark fallback */
+    color: white;
+}
+</style>
 <!DOCTYPE html>
 <html lang="en">
 

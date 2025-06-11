@@ -73,13 +73,12 @@ include 'release_upcoming_books.php';
         <div class="overlay-text3">
             <div class="hours-dropdown">
                 <button class="hours-button">
-                    <i class="bx bx-alarm"></i> HOURS 
+                    <i class="bx bx-alarm"></i> LIBRARY DAYS
                     <i class="bx bx-chevron-down"></i>
                 </button>
                 <div class="dropdown-content">
                     <ul>
-                        <li><b>OPEN HOURS</b></li>
-                        <li>9:00 AM - 5:00 PM</li>
+                
                         <li><b> ( MON - FRI )</b></li>
                     </ul>
                 </div>
